@@ -1,0 +1,34 @@
+---
+import { formatRadicand, parseTextSegments } from "./expression";
+import Radical from "./Radical.astro";
+
+interface Props {
+  value: string;
+}
+
+const { value } = Astro.props;
+const segments = parseTextSegments(value);
+---
+
+{
+  segments.map((segment) =>
+    segment.kind === "text" ? (
+      segment.value
+    ) : segment.kind === "power" ? (
+      <span class="power">{segment.value}</span>
+    ) : segment.kind === "sqrt" ? (
+      <Radical radicand={formatRadicand(segment.value)} />
+    ) : (
+      <Radical radicand={formatRadicand(segment.value)} index="3" />
+    )
+  )
+}
+
+<style>
+  .power {
+    position: relative;
+    top: -0.35em;
+    font-size: 0.82em;
+    line-height: 0;
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  radicand: string;
+  index?: "3";
+}
+
+const { radicand, index } = Astro.props;
+---
+
+{
+  index ? (
+    <math class="radical-root" aria-hidden="true">
+      <mroot>
+        <mtext set:text={radicand} />
+        <mn>3</mn>
+      </mroot>
+    </math>
+  ) : (
+    <math class="radical-root" aria-hidden="true">
+      <msqrt>
+        <mtext set:text={radicand} />
+      </msqrt>
+    </math>
+  )
+}
+
+<style>
+  .radical-root {
+    display: inline math;
+    margin: 0 0.35mm;
+    color: inherit;
+    font-family: "Cambria Math", "STIX Two Math", serif;
+    font-size: 1em;
+    font-weight: 700;
+    vertical-align: -0.08em;
+    white-space: nowrap;
+  }
+</style>

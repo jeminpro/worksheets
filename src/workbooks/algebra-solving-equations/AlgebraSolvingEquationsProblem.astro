@@ -1,5 +1,6 @@
 ---
 import type { EquationProblem } from "./types";
+import EquationText from "./EquationText.astro";
 import { formatAccessibleEquation, parseEquation } from "./expression";
 
 interface Props {
@@ -29,11 +30,15 @@ const accessibleExpression =
       {
         equationParts.map((part) =>
           part.kind === "text" ? (
-            part.value
+            <EquationText value={part.value} />
           ) : (
             <span class="fraction" aria-hidden="true">
-              <span class="numerator">{part.numerator}</span>
-              <span class="denominator">{part.denominator}</span>
+              <span class="numerator">
+                <EquationText value={part.numerator} />
+              </span>
+              <span class="denominator">
+                <EquationText value={part.denominator} />
+              </span>
             </span>
           )
         )

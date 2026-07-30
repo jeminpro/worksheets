@@ -76,7 +76,7 @@ export const workbooks = [
   {
     id: "algebra-solving-equations",
     title: "Solving Equations",
-    description: "Linear equations from one-step through brackets and both sides across six pages.",
+    description: "Linear equations from one-step through brackets, powers and roots across ten pages.",
     href: withBase("topic/algebra-solving-equations/"),
     pageCount: algebraSolvingEquationsSheets.length,
     status: "ready",
