@@ -18,7 +18,7 @@ export const workbooks = [
   {
     id: "subtraction",
     title: "Subtraction",
-    description: "Three- and four-digit column subtraction with borrowing.",
+    description: "Three-, four- and five-digit column subtraction with borrowing.",
     href: withBase("workbooks/subtraction/"),
     pageCount: subtractionSheets.length,
     status: "ready",
