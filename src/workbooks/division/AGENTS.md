@@ -8,7 +8,7 @@ A4 pages of bus-stop long division. Page 1 is single-digit divisors into 3-digit
 - `types.ts` — `DivisionSheet` / `DivisionPair`.
 - `DivisionSheet.astro` — page chrome, header, 4-column grid with row count from problem count.
 - `DivisionProblem.astro` — bus-stop notation inside each card; answer is `dividend / divisor`.
-- Route: `src/pages/workbooks/division/index.astro`.
+- Route: `src/pages/topic/division/index.astro`.
 
 ## Constraints
 

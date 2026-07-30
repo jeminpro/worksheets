@@ -8,7 +8,7 @@ A4 practice for adding and subtracting positive and negative integers. Six pages
 - `types.ts` — `IntegerExpression` / `PositiveNegativeSheet`.
 - `PositiveNegativeSheet.astro` — page header, instruction and 3×5 grid.
 - `PositiveNegativeProblem.astro` — formatted signed expression, answer reveal and working space.
-- Route: `src/pages/workbooks/positive-negative/index.astro`.
+- Route: `src/pages/topic/positive-negative/index.astro`.
 
 ## Constraints
 

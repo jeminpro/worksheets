@@ -2,10 +2,11 @@
 import { withBase } from "../lib/base";
 
 interface Props {
+  workbookId: string;
   workbookTitle: string;
 }
 
-const { workbookTitle } = Astro.props;
+const { workbookId, workbookTitle } = Astro.props;
 ---
 
 <nav class="viewer-bar" aria-label="Worksheet viewer controls">
@@ -15,7 +16,17 @@ const { workbookTitle } = Astro.props;
       <span>Workbooks</span>
     </a>
     <span class="viewer-divider" aria-hidden="true"></span>
-    <p class="viewer-title">{workbookTitle}</p>
+    <div class="viewer-heading">
+      <p class="viewer-title">{workbookTitle}</p>
+      <p
+        class="print-date"
+        data-print-date
+        data-workbook-id={workbookId}
+        hidden
+      >
+        Printed <time></time>
+      </p>
+    </div>
   </div>
 
   <div class="viewer-actions">
@@ -25,9 +36,33 @@ const { workbookTitle } = Astro.props;
 </nav>
 
 <script>
+  import {
+    formatPrintDate,
+    getPrintDate,
+    setPrintDate
+  } from "../lib/print-date";
+
   const answersButton = document.querySelector(".answers-button");
   const printButton = document.querySelector(".print-button");
   const pages = document.getElementById("pages");
+  const printDateEl = document.querySelector("[data-print-date]");
+
+  function showPrintDate(iso: string) {
+    if (!(printDateEl instanceof HTMLElement)) return;
+    const timeEl = printDateEl.querySelector("time");
+    if (!(timeEl instanceof HTMLTimeElement)) return;
+    timeEl.dateTime = iso;
+    timeEl.textContent = formatPrintDate(iso);
+    printDateEl.hidden = false;
+  }
+
+  const workbookId = printDateEl instanceof HTMLElement
+    ? printDateEl.dataset.workbookId
+    : undefined;
+  if (workbookId) {
+    const saved = getPrintDate(workbookId);
+    if (saved) showPrintDate(saved);
+  }
 
   answersButton?.addEventListener("click", () => {
     if (!(answersButton instanceof HTMLButtonElement) || !pages) return;
@@ -40,6 +75,9 @@ const { workbookTitle } = Astro.props;
   });
 
   printButton?.addEventListener("click", () => {
+    if (workbookId) {
+      showPrintDate(setPrintDate(workbookId));
+    }
     window.print();
   });
 </script>
@@ -119,6 +157,12 @@ const { workbookTitle } = Astro.props;
     background: rgb(43 131 184 / 22%);
   }
 
+  .viewer-heading {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
   .viewer-title {
     margin: 0;
     min-width: 0;
@@ -129,6 +173,15 @@ const { workbookTitle } = Astro.props;
     font-optical-sizing: auto;
     line-height: 1.2;
     letter-spacing: -0.02em;
+  }
+
+  .print-date {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
   }
 
   .viewer-actions {

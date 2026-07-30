@@ -11,7 +11,7 @@ A4 order-of-operations practice. Twelve pages progress from early multiply/divid
 - `Radical.astro` — native MathML square/cube roots with connected vincula.
 - `BidmasSheet.astro` — page header, instruction and responsive row count.
 - `BidmasProblem.astro` — expression card, answer reveal and blank working space.
-- Route: `src/pages/workbooks/bidmas/index.astro`.
+- Route: `src/pages/topic/bidmas/index.astro`.
 
 ## Constraints
 

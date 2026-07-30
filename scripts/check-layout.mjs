@@ -37,11 +37,11 @@ function discoverWorkbooks() {
     .readdirSync(workbooksDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
-    .filter((id) => fs.existsSync(path.join(root, "src", "pages", "workbooks", id, "index.astro")))
+    .filter((id) => fs.existsSync(path.join(root, "src", "pages", "topic", id, "index.astro")))
     .sort()
     .map((id) => ({
       id,
-      path: `/workbooks/${id}/`,
+      path: `/topic/${id}/`,
       sharedPaths: [
         path.join("src", "components"),
         path.join("src", "layouts"),
@@ -49,7 +49,7 @@ function discoverWorkbooks() {
       ],
       localPaths: [
         path.join("src", "workbooks", id),
-        path.join("src", "pages", "workbooks", id)
+        path.join("src", "pages", "topic", id)
       ]
     }));
 }

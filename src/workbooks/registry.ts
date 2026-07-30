@@ -12,7 +12,7 @@ export const workbooks = [
     id: "addition",
     title: "Addition",
     description: "Three- and four-digit long addition with carry space.",
-    href: withBase("workbooks/addition/"),
+    href: withBase("topic/addition/"),
     pageCount: additionSheets.length,
     status: "ready",
     icon: "+"
@@ -21,7 +21,7 @@ export const workbooks = [
     id: "subtraction",
     title: "Subtraction",
     description: "Three-, four- and five-digit column subtraction with borrowing.",
-    href: withBase("workbooks/subtraction/"),
+    href: withBase("topic/subtraction/"),
     pageCount: subtractionSheets.length,
     status: "ready",
     icon: "−"
@@ -30,7 +30,7 @@ export const workbooks = [
     id: "positive-negative",
     title: "Adding + & −",
     description: "Six progressive sheets of three-term integer addition and subtraction.",
-    href: withBase("workbooks/positive-negative/"),
+    href: withBase("topic/positive-negative/"),
     pageCount: positiveNegativeSheets.length,
     status: "ready",
     icon: "±"
@@ -39,7 +39,7 @@ export const workbooks = [
     id: "multiplication",
     title: "Multiplication",
     description: "Two-digit and three-digit long multiplication with working space.",
-    href: withBase("workbooks/multiplication/"),
+    href: withBase("topic/multiplication/"),
     pageCount: multiplicationSheets.length,
     status: "ready",
     icon: "×"
@@ -48,7 +48,7 @@ export const workbooks = [
     id: "division",
     title: "Division",
     description: "Single-digit into three-digit bus-stop division with working space.",
-    href: withBase("workbooks/division/"),
+    href: withBase("topic/division/"),
     pageCount: divisionSheets.length,
     status: "ready",
     icon: "÷"
@@ -57,7 +57,7 @@ export const workbooks = [
     id: "bidmas",
     title: "BIDMAS",
     description: "Progressive order-of-operations practice with brackets, indices, and roots.",
-    href: withBase("workbooks/bidmas/"),
+    href: withBase("topic/bidmas/"),
     pageCount: bidmasSheets.length,
     status: "ready",
     icon: "()"

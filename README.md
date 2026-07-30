@@ -37,7 +37,7 @@ Open [http://127.0.0.1:4321](http://127.0.0.1:4321). From the home page, open a 
 src/
   pages/
     index.astro                      # home picker
-    workbooks/<id>/index.astro       # one route per workbook
+    topic/<id>/index.astro           # one route per workbook
   workbooks/
     registry.ts                      # home-page catalog
     types.ts                         # shared workbook metadata types
@@ -91,7 +91,7 @@ Checklist the LLM should follow:
 1. Copy `src/workbooks/division/` → `src/workbooks/<id>/` and rename types/components.
 2. Fill `data.ts` with real problems for the topic.
 3. Adjust `<Topic>Problem.astro` for the operation (symbol, aria label, answer formula).
-4. Add `src/pages/workbooks/<id>/index.astro`.
+4. Add `src/pages/topic/<id>/index.astro`.
 5. Register the workbook in `src/workbooks/registry.ts`.
 6. Write `src/workbooks/<id>/AGENTS.md`.
 7. Run:
@@ -113,7 +113,7 @@ npm run check:layout -- --workbook=<id>
 
 | Workbook | Status | Notes |
 | --- | --- | --- |
-| [Long Multiplication](/workbooks/multiplication/) | Ready | 22 pages, 540 questions |
-| [Long Division](/workbooks/division/) | Template | One sample page to copy from |
+| [Long Multiplication](/topic/multiplication/) | Ready | 22 pages, 540 questions |
+| [Long Division](/topic/division/) | Template | One sample page to copy from |
 
 More agent-oriented detail lives in root [`AGENTS.md`](AGENTS.md) and each workbook’s own `AGENTS.md`.

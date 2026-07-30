@@ -22,14 +22,14 @@ npm run watch:layout -- --workbook=multiplication
 - `src/pages/index.astro` — home picker.
 - `src/workbooks/registry.ts` — workbook cards on the home page.
 - `src/workbooks/<id>/` — topic data, components, and `AGENTS.md`.
-- `src/pages/workbooks/<id>/index.astro` — workbook route.
+- `src/pages/topic/<id>/index.astro` — workbook route.
 - `src/components/` and `src/layouts/` — shared A4 shell, toolbar, details, page number.
 - `scripts/check-layout.mjs` — Playwright A4 checks against the Astro server.
 
 ## Add a workbook
 
 1. Copy `src/workbooks/division/` to `src/workbooks/<id>/` and rename the local components/types.
-2. Add `src/pages/workbooks/<id>/index.astro` that imports only that workbook’s data/components.
+2. Add `src/pages/topic/<id>/index.astro` that imports only that workbook’s data/components.
 3. Register metadata in `src/workbooks/registry.ts`.
 4. Write `src/workbooks/<id>/AGENTS.md`.
 5. Run `npm run check` and `npm run check:layout -- --workbook=<id>`.

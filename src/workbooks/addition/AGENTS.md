@@ -8,7 +8,7 @@
 - `types.ts` — `AdditionSheet` / `AddendPair`.
 - `AdditionSheet.astro` — page chrome, header, grid.
 - `AdditionProblem.astro` — stacked addition; answer is `top + bottom`.
-- Route: `src/pages/workbooks/addition/index.astro`.
+- Route: `src/pages/topic/addition/index.astro`.
 
 ## Constraints
 

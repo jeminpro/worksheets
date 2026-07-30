@@ -8,7 +8,7 @@
 - `types.ts` — `MultiplicationSheet` / `FactorPair`.
 - `MultiplicationSheet.astro` — page chrome, header, grid.
 - `MultiplicationProblem.astro` — one question, answer, working lines.
-- Route: `src/pages/workbooks/multiplication/index.astro`.
+- Route: `src/pages/topic/multiplication/index.astro`.
 
 ## Edit rules
 

@@ -8,7 +8,7 @@
 - `types.ts` — `SubtractionSheet` / `MinuendPair`.
 - `SubtractionSheet.astro` — page chrome, header, grid.
 - `SubtractionProblem.astro` — stacked subtraction; answer is `top - bottom`.
-- Route: `src/pages/workbooks/subtraction/index.astro`.
+- Route: `src/pages/topic/subtraction/index.astro`.
 
 ## Constraints
 
