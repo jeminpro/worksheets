@@ -1,0 +1,141 @@
+---
+import type { SubstitutionProblem } from "./types";
+
+interface Props {
+  problem: SubstitutionProblem;
+  index: number;
+}
+
+const { problem, index } = Astro.props;
+
+function formatAnswer(value: number): string {
+  return value < 0 ? `−${Math.abs(value)}` : String(value);
+}
+
+function speakSubstitution(text: string): string {
+  return text.replace(/=/g, " equals ").replace(/,/g, ", ");
+}
+
+const accessibleExpression =
+  `Find ${problem.expression} when ${speakSubstitution(problem.substitution)}`;
+---
+
+<article
+  class="problem"
+  aria-label={`Question ${index + 1}: ${accessibleExpression}`}
+>
+  <span class="problem-number">{index + 1}</span>
+
+  <div class="prompt">
+    <div class="expression">
+      <span class="expression-body">{problem.expression}</span>
+      <span class="answer-line">
+        <span class="equals" aria-hidden="true">=</span>
+        <span class="answer-box">
+          <span class="answer">{formatAnswer(problem.answer)}</span>
+        </span>
+      </span>
+    </div>
+    <p class="substitution">{problem.substitution}</p>
+  </div>
+
+  <div class="working" aria-hidden="true"></div>
+</article>
+
+<style>
+  .problem {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 2mm;
+    min-width: 0;
+    min-height: 0;
+    padding: 5.5mm 3mm 2.5mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 1.6mm;
+    left: 1.8mm;
+    color: var(--blue-strong);
+    font-size: 6.5pt;
+    font-weight: 800;
+  }
+
+  .prompt {
+    display: grid;
+    gap: 1.5mm;
+    justify-items: start;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 4mm;
+    box-sizing: border-box;
+  }
+
+  .substitution {
+    margin: 0;
+    color: var(--muted);
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 10pt;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: left;
+  }
+
+  .expression {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5mm;
+    align-items: baseline;
+    width: 100%;
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  .expression-body {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .answer-line {
+    display: flex;
+    flex: 1 1 auto;
+    gap: 1.5mm;
+    align-items: baseline;
+    min-width: 10mm;
+  }
+
+  .equals {
+    flex: 0 0 auto;
+    color: var(--muted);
+  }
+
+  .answer-box {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 10mm;
+    min-height: 1.1em;
+    align-items: baseline;
+    border-bottom: 0.45mm solid var(--ink);
+  }
+
+  .answer {
+    color: var(--blue-strong);
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .working {
+    min-height: 0;
+  }
+</style>

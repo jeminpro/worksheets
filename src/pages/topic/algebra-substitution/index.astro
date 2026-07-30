@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import AlgebraSubstitutionSheet from "../../../workbooks/algebra-substitution/AlgebraSubstitutionSheet.astro";
+import { sheets } from "../../../workbooks/algebra-substitution/data";
+---
+
+<WorkbookLayout
+  title="Algebra Substitution Worksheets"
+  workbookId="algebra-substitution"
+  expectedPages={sheets.length}
+  workbookTitle="Algebra Substitution"
+>
+  {sheets.map((sheet) => <AlgebraSubstitutionSheet sheet={sheet} />)}
+</WorkbookLayout>

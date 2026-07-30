@@ -6,6 +6,7 @@ import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
 import { sheets as bidmasSheets } from "./bidmas/data";
 import { sheets as positiveNegativeSheets } from "./positive-negative/data";
+import { sheets as algebraSubstitutionSheets } from "./algebra-substitution/data";
 
 export const workbooks = [
   {
@@ -61,6 +62,15 @@ export const workbooks = [
     pageCount: bidmasSheets.length,
     status: "ready",
     icon: "()"
+  },
+  {
+    id: "algebra-substitution",
+    title: "Algebra Substitution",
+    description: "Substitute values into expressions — easy through expert across eight pages.",
+    href: withBase("topic/algebra-substitution/"),
+    pageCount: algebraSubstitutionSheets.length,
+    status: "ready",
+    icon: "x"
   }
 ] as const satisfies readonly WorkbookMeta[];
 
