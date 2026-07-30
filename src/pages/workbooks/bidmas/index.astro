@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import BidmasSheet from "../../../workbooks/bidmas/BidmasSheet.astro";
+import { sheets } from "../../../workbooks/bidmas/data";
+---
+
+<WorkbookLayout
+  title="BIDMAS Worksheets"
+  workbookId="bidmas"
+  expectedPages={sheets.length}
+  workbookTitle="BIDMAS"
+>
+  {sheets.map((sheet) => <BidmasSheet sheet={sheet} />)}
+</WorkbookLayout>

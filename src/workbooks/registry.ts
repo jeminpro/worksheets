@@ -4,6 +4,7 @@ import { sheets as additionSheets } from "./addition/data";
 import { sheets as subtractionSheets } from "./subtraction/data";
 import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
+import { sheets as bidmasSheets } from "./bidmas/data";
 
 export const workbooks = [
   {
@@ -41,6 +42,15 @@ export const workbooks = [
     pageCount: divisionSheets.length,
     status: "ready",
     icon: "÷"
+  },
+  {
+    id: "bidmas",
+    title: "BIDMAS",
+    description: "Progressive order-of-operations practice with brackets and indices.",
+    href: withBase("workbooks/bidmas/"),
+    pageCount: bidmasSheets.length,
+    status: "ready",
+    icon: "()"
   }
 ] as const satisfies readonly WorkbookMeta[];
 
