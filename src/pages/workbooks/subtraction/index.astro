@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import SubtractionSheet from "../../../workbooks/subtraction/SubtractionSheet.astro";
+import { sheets } from "../../../workbooks/subtraction/data";
+---
+
+<WorkbookLayout
+  title="Subtraction Worksheets"
+  workbookId="subtraction"
+  expectedPages={sheets.length}
+  workbookTitle="Subtraction"
+>
+  {sheets.map((sheet) => <SubtractionSheet sheet={sheet} />)}
+</WorkbookLayout>

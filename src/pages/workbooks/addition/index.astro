@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import AdditionSheet from "../../../workbooks/addition/AdditionSheet.astro";
+import { sheets } from "../../../workbooks/addition/data";
+---
+
+<WorkbookLayout
+  title="Addition Worksheets"
+  workbookId="addition"
+  expectedPages={sheets.length}
+  workbookTitle="Addition"
+>
+  {sheets.map((sheet) => <AdditionSheet sheet={sheet} />)}
+</WorkbookLayout>

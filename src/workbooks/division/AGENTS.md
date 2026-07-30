@@ -1,6 +1,6 @@
 # Division workbook
 
-A4 pages of bus-stop long division. Page 1 is single-digit divisors into 3-digit dividends (4×5). Page 2 is single-digit divisors into 4-digit dividends (4×4). Each card has quotient space above the bar and working space below.
+A4 pages of bus-stop long division. Page 1 is single-digit divisors into 3-digit dividends (4×5). Page 2 is single-digit divisors into 4-digit dividends (4×4). Pages 3–4 are two-digit divisors into 5-digit dividends (4×3). Each card has quotient space above the bar and working space below.
 
 ## Files
 
@@ -14,7 +14,7 @@ A4 pages of bus-stop long division. Page 1 is single-digit divisors into 3-digit
 
 - Page 1: dividend is 3 digits (100–999); 20 problems in a 4×5 grid.
 - Page 2: dividend is 4 digits (1000–9999); 16 problems in a 4×4 grid.
-- Divisor is always a single digit (2–9).
+- Pages 3–4: dividend is 5 digits (10000–99999), divisor is 2 digits; 12 problems in a 4×3 grid.
 - Divisions must be exact so revealed answers are whole numbers.
 - Digits stay 14pt; question numbers stay 6.5pt.
 - Keep the classic bus-stop look (divisor, curve, overline, dividend) with empty work space under the bracket.
@@ -25,7 +25,7 @@ A4 pages of bus-stop long division. Page 1 is single-digit divisors into 3-digit
 ```ts
 {
   page: number;
-  problems: readonly [number, number][]; // 20 for 4×5, 16 for 4×4
+  problems: readonly [number, number][]; // 20 for 4×5, 16 for 4×4, 12 for 4×3
   title?: string;
   label?: string;
 }

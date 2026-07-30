@@ -1,0 +1,78 @@
+---
+import SheetShell from "../../components/SheetShell.astro";
+import StudentDetails from "../../components/StudentDetails.astro";
+import PageNumber from "../../components/PageNumber.astro";
+import AdditionProblem from "./AdditionProblem.astro";
+import type { AdditionSheet } from "./types";
+
+interface Props {
+  sheet: AdditionSheet;
+}
+
+const { sheet } = Astro.props;
+const title = sheet.title ?? "Long Addition";
+const label = sheet.label ?? "Long addition";
+const gridClass = sheet.grid ? `problem-grid ${sheet.grid}` : "problem-grid";
+const questionCount = sheet.problems.length;
+---
+
+<SheetShell label={`${label} worksheet, page ${sheet.page}`}>
+  <header class="worksheet-header">
+    <div class="title-icon" aria-hidden="true">+</div>
+    <h1>{title}</h1>
+    <PageNumber page={sheet.page} />
+  </header>
+
+  <StudentDetails questionCount={questionCount} />
+
+  <section class={gridClass} aria-label={`${questionCount} addition questions`}>
+    {
+      sheet.problems.map((pair, index) => (
+        <AdditionProblem pair={pair} index={index} />
+      ))
+    }
+  </section>
+</SheetShell>
+
+<style>
+  .worksheet-header {
+    display: flex;
+    align-items: center;
+    gap: 4mm;
+    border-bottom: 1mm solid var(--blue-strong);
+  }
+
+  .title-icon {
+    display: grid;
+    width: 14mm;
+    height: 14mm;
+    place-items: center;
+    border-radius: 4mm;
+    color: #fff;
+    background: var(--blue-strong);
+    font-size: 22pt;
+    font-weight: 900;
+    line-height: 1;
+    transform: rotate(-3deg);
+  }
+
+  .worksheet-header h1 {
+    flex: 1;
+    margin: 0;
+    font-size: 20pt;
+    line-height: 1;
+    letter-spacing: 0.2pt;
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: 3mm;
+    min-height: 0;
+  }
+
+  .problem-grid-25 {
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+  }
+</style>

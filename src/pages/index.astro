@@ -2,7 +2,7 @@
 import SiteLayout from "../layouts/SiteLayout.astro";
 import { workbooks } from "../workbooks/registry";
 
-const readyCount = workbooks.filter((w) => w.status === "ready").length;
+const topicCount = workbooks.length;
 ---
 
 <SiteLayout
@@ -26,7 +26,7 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
 
     <div class="home-inner">
       <header class="hero">
-        <h1 class="brand">Worksheet Workbooks</h1>
+        <h1 class="brand">Worksheets</h1>
         <p class="lead">
           Pick a topic, open the workbook, then print the pages you need.
         </p>
@@ -34,24 +34,22 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
 
       <section class="catalog" aria-label="Available workbooks">
         <div class="catalog-head">
-          <h2 class="catalog-title">Topics</h2>
-          <p class="catalog-count">{readyCount} ready to print</p>
+          <h2 class="catalog-title">
+            <span>Topics</span>
+            <span class="catalog-count">{topicCount}</span>
+          </h2>
         </div>
 
         <ul class="catalog-list">
           {
-            workbooks.map((workbook, index) => (
-              <li style={`--i: ${index}`}>
+            workbooks.map((workbook) => (
+              <li>
                 <a class="card" href={workbook.href}>
                   <span class="card-icon" aria-hidden="true">{workbook.icon}</span>
                   <span class="card-body">
                     <span class="card-title-row">
                       <strong>{workbook.title}</strong>
-                      <span class={`status status-${workbook.status}`}>
-                        {workbook.status === "ready" ? "Ready" : "Template"}
-                      </span>
                     </span>
-                    <span class="card-description">{workbook.description}</span>
                     <span class="card-meta">
                       {workbook.pageCount} page{workbook.pageCount === 1 ? "" : "s"}
                     </span>
@@ -73,6 +71,7 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
     isolation: isolate;
     min-height: 100vh;
     overflow: hidden;
+    background: linear-gradient(180deg, #e8f4fb 0%, var(--viewer) 55%, #e4ebf0 100%);
     font-family: "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
   }
 
@@ -85,12 +84,10 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
 
   .atmosphere-glow {
     position: absolute;
-    inset: -20% -10% auto;
-    height: 70%;
+    inset: -20% -10% 0;
     background:
       radial-gradient(ellipse 70% 55% at 18% 20%, rgb(43 131 184 / 22%), transparent 70%),
-      radial-gradient(ellipse 55% 45% at 88% 8%, rgb(224 122 63 / 14%), transparent 65%),
-      linear-gradient(180deg, #e8f4fb 0%, var(--viewer) 55%, #e4ebf0 100%);
+      radial-gradient(ellipse 55% 45% at 88% 8%, rgb(224 122 63 / 14%), transparent 65%);
   }
 
   .atmosphere-grid {
@@ -112,7 +109,6 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
 
   .hero {
     margin-bottom: clamp(36px, 6vh, 52px);
-    animation: rise 0.7s ease both;
   }
 
   .brand {
@@ -129,16 +125,12 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
 
   .lead {
     margin: 0;
-    max-width: 28rem;
+    max-width: none;
     color: var(--muted);
     font-size: clamp(16px, 2.4vw, 18px);
     font-weight: 400;
     line-height: 1.55;
-    animation: rise 0.7s ease 0.08s both;
-  }
-
-  .catalog {
-    animation: rise 0.7s ease 0.16s both;
+    white-space: nowrap;
   }
 
   .catalog-head {
@@ -152,6 +144,9 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
   }
 
   .catalog-title {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
     margin: 0;
     color: var(--ink);
     font-size: 13px;
@@ -161,10 +156,16 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
   }
 
   .catalog-count {
-    margin: 0;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
+    display: inline-grid;
+    min-width: 22px;
+    padding: 2px 8px;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--blue-strong);
+    background: rgb(43 131 184 / 12%);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
   }
 
   .catalog-list {
@@ -173,11 +174,6 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
     margin: 0;
     padding: 0;
     list-style: none;
-  }
-
-  .catalog-list li {
-    animation: rise 0.55s ease both;
-    animation-delay: calc(0.22s + var(--i) * 0.07s);
   }
 
   .card {
@@ -252,30 +248,6 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
     letter-spacing: -0.01em;
   }
 
-  .status {
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-
-  .status-ready {
-    color: #0f5132;
-    background: #d1e7dd;
-  }
-
-  .status-template {
-    color: #8d481f;
-    background: var(--peach);
-  }
-
-  .card-description {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.45;
-  }
-
   .card-meta {
     color: var(--ink);
     font-size: 13px;
@@ -299,18 +271,11 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
     transform: translateX(3px);
   }
 
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   @media (max-width: 560px) {
+    .lead {
+      white-space: normal;
+    }
+
     .card {
       grid-template-columns: auto 1fr;
       gap: 14px;
@@ -326,13 +291,6 @@ const readyCount = workbooks.filter((w) => w.status === "ready").length;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero,
-    .lead,
-    .catalog,
-    .catalog-list li {
-      animation: none;
-    }
-
     .card,
     .card-arrow {
       transition: none;
