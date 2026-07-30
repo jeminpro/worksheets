@@ -1,4 +1,5 @@
 import type { WorkbookMeta } from "./types";
+import { withBase } from "../lib/base";
 import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
 
@@ -7,7 +8,7 @@ export const workbooks = [
     id: "multiplication",
     title: "Long Multiplication",
     description: "Two-digit and three-digit long multiplication with working space.",
-    href: "/workbooks/multiplication/",
+    href: withBase("workbooks/multiplication/"),
     pageCount: multiplicationSheets.length,
     status: "ready",
     icon: "×"
@@ -16,7 +17,7 @@ export const workbooks = [
     id: "division",
     title: "Long Division",
     description: "Single-digit into three-digit bus-stop division with working space.",
-    href: "/workbooks/division/",
+    href: withBase("workbooks/division/"),
     pageCount: divisionSheets.length,
     status: "ready",
     icon: "÷"

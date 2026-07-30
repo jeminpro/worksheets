@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../lib/base";
+
 interface Props {
   workbookTitle: string;
 }
@@ -8,7 +10,7 @@ const { workbookTitle } = Astro.props;
 
 <nav class="viewer-bar" aria-label="Worksheet viewer controls">
   <p>
-    <a class="home-link" href="/">Workbooks</a>
+    <a class="home-link" href={withBase()}>Workbooks</a>
     <span aria-hidden="true"> · </span>
     <strong>{workbookTitle}</strong>
   </p>

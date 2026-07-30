@@ -3,6 +3,7 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import astroConfig from "../astro.config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -11,7 +12,10 @@ const A4 = {
   heightPx: (297 * 96) / 25.4
 };
 const TOLERANCE_PX = 1;
-const BASE_URL = "http://127.0.0.1:4321";
+const ORIGIN = "http://127.0.0.1:4321";
+// The dev/preview server serves pages under the configured `base`.
+const basePath = (astroConfig.base ?? "").replace(/^\/|\/$/g, "");
+const BASE_URL = basePath ? `${ORIGIN}/${basePath}` : ORIGIN;
 
 function parseArgs(argv) {
   let workbook = null;
