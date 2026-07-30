@@ -1,0 +1,163 @@
+---
+import type { EquationProblem } from "./types";
+import { formatAccessibleEquation, parseEquation } from "./expression";
+
+interface Props {
+  problem: EquationProblem;
+  index: number;
+}
+
+const { problem, index } = Astro.props;
+const equationParts = parseEquation(problem.equation);
+
+function formatAnswer(value: number): string {
+  return value < 0 ? `−${Math.abs(value)}` : String(value);
+}
+
+const accessibleExpression =
+  `Solve ${formatAccessibleEquation(problem.equation)} for ${problem.variable}`;
+---
+
+<article
+  class="problem"
+  aria-label={`Question ${index + 1}: ${accessibleExpression}`}
+>
+  <span class="problem-number">{index + 1}</span>
+
+  <div class="prompt">
+    <div class="equation">
+      {
+        equationParts.map((part) =>
+          part.kind === "text" ? (
+            part.value
+          ) : (
+            <span class="fraction" aria-hidden="true">
+              <span class="numerator">{part.numerator}</span>
+              <span class="denominator">{part.denominator}</span>
+            </span>
+          )
+        )
+      }
+    </div>
+    <div class="solution">
+      <span class="variable">{problem.variable}</span>
+      <span class="equals" aria-hidden="true">=</span>
+      <span class="answer-box">
+        <span class="answer">{formatAnswer(problem.answer)}</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="working" aria-hidden="true"></div>
+</article>
+
+<style>
+  .problem {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 2mm;
+    min-width: 0;
+    min-height: 0;
+    padding: 5.5mm 3mm 2.5mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 1.6mm;
+    left: 1.8mm;
+    color: var(--blue-strong);
+    font-size: 6.5pt;
+    font-weight: 800;
+  }
+
+  .prompt {
+    display: grid;
+    gap: 2mm;
+    justify-items: start;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 4mm;
+    box-sizing: border-box;
+  }
+
+  .equation,
+  .solution {
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  .equation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1mm;
+    align-items: baseline;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .fraction {
+    display: inline-grid;
+    grid-template-rows: auto auto;
+    min-width: 5mm;
+    margin: 0 0.6mm;
+    vertical-align: middle;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .numerator {
+    padding: 0 1mm 0.6mm;
+    border-bottom: 0.45mm solid currentColor;
+  }
+
+  .denominator {
+    padding: 0.6mm 1mm 0;
+  }
+
+  .solution {
+    display: flex;
+    gap: 1.5mm;
+    align-items: baseline;
+    width: 100%;
+  }
+
+  .variable {
+    flex: 0 0 auto;
+  }
+
+  .equals {
+    flex: 0 0 auto;
+    color: var(--muted);
+  }
+
+  .answer-box {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 10mm;
+    min-height: 1.1em;
+    align-items: baseline;
+    border-bottom: 0.45mm solid var(--ink);
+  }
+
+  .answer {
+    color: var(--blue-strong);
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .working {
+    min-height: 0;
+  }
+</style>

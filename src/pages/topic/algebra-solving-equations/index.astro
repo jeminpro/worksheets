@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import AlgebraSolvingEquationsSheet from "../../../workbooks/algebra-solving-equations/AlgebraSolvingEquationsSheet.astro";
+import { sheets } from "../../../workbooks/algebra-solving-equations/data";
+---
+
+<WorkbookLayout
+  title="Algebra Solving Equations Worksheets"
+  workbookId="algebra-solving-equations"
+  expectedPages={sheets.length}
+  workbookTitle="Algebra Solving Equations"
+>
+  {sheets.map((sheet) => <AlgebraSolvingEquationsSheet sheet={sheet} />)}
+</WorkbookLayout>

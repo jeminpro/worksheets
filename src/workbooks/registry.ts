@@ -7,6 +7,7 @@ import { sheets as divisionSheets } from "./division/data";
 import { sheets as bidmasSheets } from "./bidmas/data";
 import { sheets as positiveNegativeSheets } from "./positive-negative/data";
 import { sheets as algebraSubstitutionSheets } from "./algebra-substitution/data";
+import { sheets as algebraSolvingEquationsSheets } from "./algebra-solving-equations/data";
 
 export const workbooks = [
   {
@@ -71,6 +72,15 @@ export const workbooks = [
     pageCount: algebraSubstitutionSheets.length,
     status: "ready",
     icon: "x"
+  },
+  {
+    id: "algebra-solving-equations",
+    title: "Solving Equations",
+    description: "Linear equations from one-step through brackets and both sides across six pages.",
+    href: withBase("topic/algebra-solving-equations/"),
+    pageCount: algebraSolvingEquationsSheets.length,
+    status: "ready",
+    icon: "="
   }
 ] as const satisfies readonly WorkbookMeta[];
 
