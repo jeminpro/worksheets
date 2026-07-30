@@ -1,18 +1,19 @@
 # Division workbook
 
-One A4 page of bus-stop long division: single-digit divisors into 3-digit dividends, in a 4×5 grid of problem cards with quotient space above the bar and working space below.
+A4 pages of bus-stop long division. Page 1 is single-digit divisors into 3-digit dividends (4×5). Page 2 is single-digit divisors into 4-digit dividends (4×4). Each card has quotient space above the bar and working space below.
 
 ## Files
 
-- `data.ts` — exact `[dividend, divisor]` pairs (whole-number quotients only). 20 problems per page.
+- `data.ts` — exact `[dividend, divisor]` pairs (whole-number quotients only).
 - `types.ts` — `DivisionSheet` / `DivisionPair`.
-- `DivisionSheet.astro` — page chrome, header, fixed 4×5 grid that fills the page.
+- `DivisionSheet.astro` — page chrome, header, 4-column grid with row count from problem count.
 - `DivisionProblem.astro` — bus-stop notation inside each card; answer is `dividend / divisor`.
 - Route: `src/pages/workbooks/division/index.astro`.
 
 ## Constraints
 
-- Dividend is always 3 digits (100–999).
+- Page 1: dividend is 3 digits (100–999); 20 problems in a 4×5 grid.
+- Page 2: dividend is 4 digits (1000–9999); 16 problems in a 4×4 grid.
 - Divisor is always a single digit (2–9).
 - Divisions must be exact so revealed answers are whole numbers.
 - Digits stay 14pt; question numbers stay 6.5pt.
@@ -24,7 +25,7 @@ One A4 page of bus-stop long division: single-digit divisors into 3-digit divide
 ```ts
 {
   page: number;
-  problems: readonly [number, number][]; // 20 for a full 4×5 page
+  problems: readonly [number, number][]; // 20 for 4×5, 16 for 4×4
   title?: string;
   label?: string;
 }

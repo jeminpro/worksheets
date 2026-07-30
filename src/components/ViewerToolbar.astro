@@ -9,11 +9,15 @@ const { workbookTitle } = Astro.props;
 ---
 
 <nav class="viewer-bar" aria-label="Worksheet viewer controls">
-  <p>
-    <a class="home-link" href={withBase()}>Workbooks</a>
-    <span aria-hidden="true"> · </span>
-    <strong>{workbookTitle}</strong>
-  </p>
+  <div class="viewer-brand">
+    <a class="home-link" href={withBase()}>
+      <span class="home-chevron" aria-hidden="true">←</span>
+      <span>Workbooks</span>
+    </a>
+    <span class="viewer-divider" aria-hidden="true"></span>
+    <p class="viewer-title">{workbookTitle}</p>
+  </div>
+
   <div class="viewer-actions">
     <button class="answers-button" type="button" aria-pressed="false">Answers</button>
     <button class="print-button" type="button">Print</button>
@@ -46,60 +50,198 @@ const { workbookTitle } = Astro.props;
     top: 0;
     z-index: 10;
     display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
     align-items: center;
     justify-content: space-between;
-    min-height: 16mm;
-    padding: 3mm 6mm;
-    color: #fff;
-    background: var(--ink);
-    box-shadow: 0 2px 10px rgb(23 50 77 / 22%);
+    min-height: 58px;
+    padding: 10px clamp(14px, 3vw, 28px);
+    color: var(--ink);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 92%) 0%, rgb(248 251 253 / 88%) 100%);
+    border-bottom: 1px solid rgb(43 131 184 / 16%);
+    box-shadow: 0 8px 24px rgb(23 50 77 / 6%);
+    backdrop-filter: blur(12px);
+    font-family: "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
   }
 
-  .viewer-bar p {
-    margin: 0;
-    font-size: 10pt;
+  .viewer-brand {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    align-items: center;
+    min-width: 0;
   }
 
   .home-link {
-    color: inherit;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 10px 6px 8px;
+    border-radius: 999px;
+    color: var(--muted);
+    background: transparent;
     text-decoration: none;
+    font-size: 13px;
     font-weight: 700;
+    letter-spacing: 0.01em;
+    transition:
+      color 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .home-chevron {
+    font-size: 14px;
+    line-height: 1;
+    transition: transform 0.15s ease;
   }
 
   .home-link:hover,
   .home-link:focus-visible {
-    text-decoration: underline;
+    color: var(--ink);
+    background: rgb(43 131 184 / 10%);
+    outline: none;
+  }
+
+  .home-link:focus-visible {
+    outline: 2px solid var(--blue-strong);
+    outline-offset: 2px;
+  }
+
+  .home-link:hover .home-chevron,
+  .home-link:focus-visible .home-chevron {
+    transform: translateX(-2px);
+  }
+
+  .viewer-divider {
+    width: 1px;
+    height: 18px;
+    background: rgb(43 131 184 / 22%);
+  }
+
+  .viewer-title {
+    margin: 0;
+    min-width: 0;
+    color: var(--ink);
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(16px, 2.4vw, 19px);
+    font-weight: 650;
+    font-optical-sizing: auto;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
   }
 
   .viewer-actions {
     display: flex;
-    gap: 3mm;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .answers-button,
   .print-button {
-    min-width: 28mm;
-    padding: 2.2mm 4mm;
-    border: 0;
+    min-width: 7.5rem;
+    padding: 9px 16px;
+    border: 1px solid transparent;
     border-radius: 999px;
-    color: var(--ink);
-    background: #fff;
-    font: 700 10pt/1 "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+    font: 700 13px/1 "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
+    letter-spacing: 0.01em;
     cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .answers-button {
+    color: var(--ink);
+    background: var(--paper);
+    border-color: rgb(43 131 184 / 22%);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 80%) inset;
+  }
+
+  .print-button {
+    color: #fff;
+    background: linear-gradient(145deg, #3a96c9 0%, var(--blue-strong) 100%);
+    box-shadow: 0 6px 14px rgb(43 131 184 / 28%);
   }
 
   .answers-button:hover,
-  .answers-button:focus-visible,
+  .answers-button:focus-visible {
+    border-color: var(--blue-strong);
+    background: var(--blue);
+    outline: none;
+    transform: translateY(-1px);
+  }
+
   .print-button:hover,
   .print-button:focus-visible {
-    background: var(--blue);
-    outline: 2px solid #fff;
+    background: linear-gradient(145deg, #48a3d4 0%, #3279a9 100%);
+    outline: none;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgb(43 131 184 / 34%);
+  }
+
+  .answers-button:focus-visible,
+  .print-button:focus-visible {
+    outline: 2px solid var(--blue-strong);
     outline-offset: 2px;
   }
 
   .answers-button[aria-pressed="true"] {
     color: #fff;
     background: var(--blue-strong);
+    border-color: var(--blue-strong);
+    box-shadow: 0 6px 14px rgb(43 131 184 / 24%);
+  }
+
+  .answers-button[aria-pressed="true"]:hover,
+  .answers-button[aria-pressed="true"]:focus-visible {
+    background: #3279a9;
+    border-color: #3279a9;
+  }
+
+  @media (max-width: 560px) {
+    .viewer-bar {
+      align-items: stretch;
+    }
+
+    .viewer-brand {
+      width: 100%;
+    }
+
+    .viewer-divider {
+      display: none;
+    }
+
+    .viewer-actions {
+      width: 100%;
+    }
+
+    .answers-button,
+    .print-button {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-link,
+    .home-chevron,
+    .answers-button,
+    .print-button {
+      transition: none;
+    }
+
+    .home-link:hover .home-chevron,
+    .home-link:focus-visible .home-chevron,
+    .answers-button:hover,
+    .answers-button:focus-visible,
+    .print-button:hover,
+    .print-button:focus-visible {
+      transform: none;
+    }
   }
 
   @media print {

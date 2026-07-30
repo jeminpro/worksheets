@@ -13,6 +13,8 @@ const { sheet } = Astro.props;
 const title = sheet.title ?? "Long Division";
 const label = sheet.label ?? "Long division";
 const questionCount = sheet.problems.length;
+const columns = 4;
+const rows = Math.ceil(questionCount / columns);
 ---
 
 <SheetShell label={`${label} worksheet, page ${sheet.page}`}>
@@ -24,7 +26,11 @@ const questionCount = sheet.problems.length;
 
   <StudentDetails questionCount={questionCount} />
 
-  <section class="problem-grid" aria-label={`${questionCount} division questions`}>
+  <section
+    class="problem-grid"
+    style={`--rows: ${rows}`}
+    aria-label={`${questionCount} division questions`}
+  >
     {
       sheet.problems.map((pair, index) => (
         <DivisionProblem pair={pair} index={index} />
@@ -66,7 +72,7 @@ const questionCount = sheet.problems.length;
   .problem-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(5, minmax(0, 1fr));
+    grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
     gap: 3mm;
     height: 100%;
     min-height: 0;

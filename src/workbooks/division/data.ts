@@ -1,6 +1,6 @@
 import type { DivisionSheet } from "./types";
 
-/** Exact 3-digit ÷ single-digit long division (whole-number quotients). */
+/** Exact long division sheets (whole-number quotients). */
 export const sheets = [
   {
     page: 1,
@@ -27,6 +27,29 @@ export const sheets = [
       [728, 4],
       [945, 5],
       [816, 2]
+    ]
+  },
+  {
+    page: 2,
+    title: "Long Division",
+    label: "Long division",
+    problems: [
+      [1452, 4],
+      [2367, 3],
+      [3848, 8],
+      [5675, 5],
+      [6729, 9],
+      [4816, 8],
+      [3528, 6],
+      [2947, 7],
+      [8192, 2],
+      [4536, 6],
+      [7389, 3],
+      [1568, 4],
+      [9270, 9],
+      [5832, 8],
+      [4158, 6],
+      [7644, 4]
     ]
   }
 ] satisfies readonly DivisionSheet[];
