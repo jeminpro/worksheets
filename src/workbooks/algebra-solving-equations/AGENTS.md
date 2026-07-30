@@ -21,6 +21,7 @@ A4 practice for solving linear equations. Ten pages progress from one-step addit
 - Store each problem as `{ equation, variable, answer }`.
 - Store division with `÷` in source data; render every division as a stacked fraction.
 - Use superscript digits for squares and cubes (`x²`, `x³`); use `√` and `∛` for roots.
+- Write a coefficient before a root with an explicit multiply sign (`3 × √x`, not `3√x`).
 - Use typographic minus signs (`−`) in equations and answers.
 - Keep every answer a whole number.
 - Problem equations stay 14pt; question numbers stay 6.5pt.

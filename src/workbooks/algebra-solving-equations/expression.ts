@@ -90,6 +90,7 @@ export function formatAccessibleEquation(equation: string): string {
     .replace(/x³/g, "x cubed")
     .replace(/(\d+)²/g, "$1 squared")
     .replace(/(\d+)³/g, "$1 cubed")
+    .replaceAll("×", "times")
     .replaceAll("÷", "divided by")
     .replaceAll("−", "minus")
     .replace(/=/g, " equals ")

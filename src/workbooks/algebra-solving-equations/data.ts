@@ -173,9 +173,9 @@ export const sheets = [
       { equation: "∛x = 2", variable: "x", answer: 8 },
       { equation: "∛x = 3", variable: "x", answer: 27 },
       { equation: "∛x = 4", variable: "x", answer: 64 },
-      { equation: "2√x = 8", variable: "x", answer: 16 },
-      { equation: "3√x = 15", variable: "x", answer: 25 },
-      { equation: "2∛x = 6", variable: "x", answer: 27 },
+      { equation: "2 × √x = 8", variable: "x", answer: 16 },
+      { equation: "3 × √x = 15", variable: "x", answer: 25 },
+      { equation: "2 × ∛x = 6", variable: "x", answer: 27 },
       { equation: "x³ = 125", variable: "x", answer: 5 },
       { equation: "√x = 7", variable: "x", answer: 49 }
     ]
@@ -213,9 +213,9 @@ export const sheets = [
       { equation: "x² ÷ 4 + 3 = 7", variable: "x", answer: 4 },
       { equation: "∛x + 2 = 5", variable: "x", answer: 27 },
       { equation: "∛x − 1 = 3", variable: "x", answer: 64 },
-      { equation: "2√x + 1 = 11", variable: "x", answer: 25 },
+      { equation: "2 × √x + 1 = 11", variable: "x", answer: 25 },
       { equation: "x³ + 1 = 9", variable: "x", answer: 2 },
-      { equation: "3∛x = 6", variable: "x", answer: 8 },
+      { equation: "3 × ∛x = 6", variable: "x", answer: 8 },
       { equation: "x² − 3 = 6", variable: "x", answer: 3 },
       { equation: "√x ÷ 2 + 4 = 7", variable: "x", answer: 36 }
     ]
