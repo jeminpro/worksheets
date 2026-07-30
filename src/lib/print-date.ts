@@ -28,6 +28,13 @@ export function setPrintDate(workbookId: string, date = new Date()): string {
   return iso;
 }
 
+export function clearPrintDate(workbookId: string): void {
+  const dates = getPrintDates();
+  if (!(workbookId in dates)) return;
+  delete dates[workbookId];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dates));
+}
+
 export function formatPrintDate(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;

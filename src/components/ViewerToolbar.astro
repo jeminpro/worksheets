@@ -18,14 +18,17 @@ const { workbookId, workbookTitle } = Astro.props;
     <span class="viewer-divider" aria-hidden="true"></span>
     <div class="viewer-heading">
       <p class="viewer-title">{workbookTitle}</p>
-      <p
+      <button
         class="print-date"
+        type="button"
         data-print-date
         data-workbook-id={workbookId}
         hidden
+        aria-label="Remove printed date"
+        title="Remove printed date"
       >
         Printed <time></time>
-      </p>
+      </button>
     </div>
   </div>
 
@@ -36,7 +39,9 @@ const { workbookId, workbookTitle } = Astro.props;
 </nav>
 
 <script>
+  import { confirmModal } from "../lib/confirm-modal";
   import {
+    clearPrintDate,
     formatPrintDate,
     getPrintDate,
     setPrintDate
@@ -56,6 +61,16 @@ const { workbookId, workbookTitle } = Astro.props;
     printDateEl.hidden = false;
   }
 
+  function hidePrintDate() {
+    if (!(printDateEl instanceof HTMLElement)) return;
+    printDateEl.hidden = true;
+    const timeEl = printDateEl.querySelector("time");
+    if (timeEl instanceof HTMLTimeElement) {
+      timeEl.removeAttribute("datetime");
+      timeEl.textContent = "";
+    }
+  }
+
   const workbookId = printDateEl instanceof HTMLElement
     ? printDateEl.dataset.workbookId
     : undefined;
@@ -63,6 +78,21 @@ const { workbookId, workbookTitle } = Astro.props;
     const saved = getPrintDate(workbookId);
     if (saved) showPrintDate(saved);
   }
+
+  printDateEl?.addEventListener("click", async () => {
+    if (!workbookId || !(printDateEl instanceof HTMLElement) || printDateEl.hidden) {
+      return;
+    }
+    const confirmed = await confirmModal({
+      title: "Remove printed date?",
+      message: "This clears the printed date for this workbook.",
+      confirmLabel: "Remove",
+      cancelLabel: "Cancel"
+    });
+    if (!confirmed) return;
+    clearPrintDate(workbookId);
+    hidePrintDate();
+  });
 
   answersButton?.addEventListener("click", () => {
     if (!(answersButton instanceof HTMLButtonElement) || !pages) return;
@@ -177,11 +207,31 @@ const { workbookId, workbookTitle } = Astro.props;
 
   .print-date {
     margin: 0;
+    padding: 0;
+    border: 0;
     color: var(--muted);
+    background: transparent;
+    font: inherit;
     font-size: 12px;
     font-weight: 600;
     line-height: 1.3;
     letter-spacing: 0.01em;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .print-date:hover,
+  .print-date:focus-visible {
+    color: var(--ink);
+    text-decoration: underline;
+    outline: none;
+  }
+
+  .print-date:focus-visible {
+    outline: 2px solid var(--blue-strong);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 
   .viewer-actions {
@@ -283,7 +333,8 @@ const { workbookId, workbookTitle } = Astro.props;
     .home-link,
     .home-chevron,
     .answers-button,
-    .print-button {
+    .print-button,
+    .print-date {
       transition: none;
     }
 
