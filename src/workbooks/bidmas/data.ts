@@ -207,5 +207,45 @@ export const sheets = [
       { expression: "2³ × (6² − 12) ÷ (9 − 5)", answer: 48 },
       { expression: "5 × ((3 + 1)² − 2 × 3) + 7", answer: 57 }
     ]
+  },
+  {
+    page: 11,
+    title: "BIDMAS: Square Roots",
+    label: "BIDMAS square roots",
+    instruction: "Evaluate square roots before multiplying or dividing.",
+    problems: [
+      { expression: "√16 + 3", answer: 7 },
+      { expression: "√25 − 2", answer: 3 },
+      { expression: "2 × √9 + 4", answer: 10 },
+      { expression: "√36 ÷ 3", answer: 2 },
+      { expression: "5 + √49", answer: 12 },
+      { expression: "√64 − √16", answer: 4 },
+      { expression: "3 × √4 + 6", answer: 12 },
+      { expression: "√(9 + 7)", answer: 4 },
+      { expression: "√81 ÷ 9", answer: 1 },
+      { expression: "10 − √25", answer: 5 },
+      { expression: "4 × √(16 + 9)", answer: 20 },
+      { expression: "√100 + 2³", answer: 18 }
+    ]
+  },
+  {
+    page: 12,
+    title: "BIDMAS: Cube Roots & Mixed",
+    label: "BIDMAS cube roots and mixed",
+    instruction: "Use cube roots, square roots, powers and brackets together.",
+    problems: [
+      { expression: "∛8 + 2", answer: 4 },
+      { expression: "∛27 − 1", answer: 2 },
+      { expression: "2 × ∛8 + 5", answer: 9 },
+      { expression: "7 + ∛125", answer: 12 },
+      { expression: "∛(8 + 19)", answer: 3 },
+      { expression: "3 × ∛27", answer: 9 },
+      { expression: "2 × √16 + 3²", answer: 17 },
+      { expression: "∛27 × 2 − 5", answer: 1 },
+      { expression: "3² + ∛8 × 4", answer: 17 },
+      { expression: "5 × (√49 − 3)", answer: 20 },
+      { expression: "√(25 + 11) + ∛8", answer: 8 },
+      { expression: "∛125 + √(9 + 16) − 2", answer: 8 }
+    ]
   }
 ] satisfies readonly BidmasSheet[];

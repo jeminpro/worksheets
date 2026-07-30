@@ -1,5 +1,11 @@
 ---
 import type { BidmasProblem } from "./types";
+import ExpressionText from "./ExpressionText.astro";
+import {
+  formatAccessibleExpression,
+  getDisplayExpression,
+  parseExpression
+} from "./expression";
 
 interface Props {
   problem: BidmasProblem;
@@ -7,54 +13,9 @@ interface Props {
 }
 
 const { problem, index } = Astro.props;
-
-type ExpressionPart =
-  | { kind: "text"; value: string }
-  | { kind: "fraction"; numerator: string; denominator: string };
-
-const operandPattern = String.raw`(\([^()]+\)[²³⁴]?|\d+[²³⁴]?)`;
-const divisionPattern = new RegExp(
-  `${operandPattern}\\s*÷\\s*${operandPattern}`,
-  "g"
-);
-
-function unwrapBrackets(value: string): string {
-  return value.replace(/^\((.*)\)$/, "$1");
-}
-
-function parseExpression(expression: string): ExpressionPart[] {
-  const parts: ExpressionPart[] = [];
-  let cursor = 0;
-
-  for (const match of expression.matchAll(divisionPattern)) {
-    const matchIndex = match.index;
-    if (matchIndex > cursor) {
-      parts.push({ kind: "text", value: expression.slice(cursor, matchIndex) });
-    }
-
-    parts.push({
-      kind: "fraction",
-      numerator: unwrapBrackets(match[1]),
-      denominator: unwrapBrackets(match[2])
-    });
-    cursor = matchIndex + match[0].length;
-  }
-
-  if (cursor < expression.length) {
-    parts.push({ kind: "text", value: expression.slice(cursor) });
-  }
-
-  return parts;
-}
-
-const displayExpression = problem.expression
-  .replace(/\s*×\s*(?=\()/g, "")
-  .replace(/\)\s*×\s*/g, ")");
+const displayExpression = getDisplayExpression(problem);
 const expressionParts = parseExpression(displayExpression);
-const accessibleExpression = problem.expression
-  .replaceAll("÷", "divided by")
-  .replaceAll("×", "times")
-  .replaceAll("−", "minus");
+const accessibleExpression = formatAccessibleExpression(problem.expression);
 ---
 
 <article
@@ -68,11 +29,15 @@ const accessibleExpression = problem.expression
       {
         expressionParts.map((part) =>
           part.kind === "text" ? (
-            part.value
+            <ExpressionText value={part.value} />
           ) : (
             <span class="fraction" aria-hidden="true">
-              <span class="numerator">{part.numerator}</span>
-              <span class="denominator">{part.denominator}</span>
+              <span class="numerator">
+                <ExpressionText value={part.numerator} />
+              </span>
+              <span class="denominator">
+                <ExpressionText value={part.denominator} />
+              </span>
             </span>
           )
         )

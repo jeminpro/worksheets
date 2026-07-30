@@ -56,7 +56,7 @@ export const workbooks = [
   {
     id: "bidmas",
     title: "BIDMAS",
-    description: "Progressive order-of-operations practice with brackets and indices.",
+    description: "Progressive order-of-operations practice with brackets, indices, and roots.",
     href: withBase("workbooks/bidmas/"),
     pageCount: bidmasSheets.length,
     status: "ready",
