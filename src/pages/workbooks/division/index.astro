@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import DivisionSheet from "../../../workbooks/division/DivisionSheet.astro";
+import { sheets } from "../../../workbooks/division/data";
+---
+
+<WorkbookLayout
+  title="Division Worksheets"
+  workbookId="division"
+  expectedPages={sheets.length}
+  workbookTitle="Division"
+>
+  {sheets.map((sheet) => <DivisionSheet sheet={sheet} />)}
+</WorkbookLayout>

@@ -1,0 +1,13 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<section class="page" aria-label={label}>
+  <div class="page-inner">
+    <slot />
+  </div>
+</section>

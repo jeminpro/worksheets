@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import MultiplicationSheet from "../../../workbooks/multiplication/MultiplicationSheet.astro";
+import { sheets } from "../../../workbooks/multiplication/data";
+---
+
+<WorkbookLayout
+  title="Multiplication Worksheets"
+  workbookId="multiplication"
+  expectedPages={sheets.length}
+  workbookTitle="Multiplication"
+>
+  {sheets.map((sheet) => <MultiplicationSheet sheet={sheet} />)}
+</WorkbookLayout>

@@ -1,0 +1,35 @@
+---
+interface Props {
+  questionCount: number;
+}
+
+const { questionCount } = Astro.props;
+---
+
+<section class="details" aria-label="Student details">
+  <div>Name:<span class="write-line"></span></div>
+  <div>Time taken:<span class="write-line"></span></div>
+  <div class="score">Score:<span class="write-line"></span>/ {questionCount}</div>
+</section>
+
+<style>
+  .details {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    align-items: center;
+    gap: 6mm;
+    padding: 0 3mm;
+    border-radius: 3mm;
+    background: var(--blue);
+    font-size: 8.5pt;
+    font-weight: 700;
+  }
+
+  .score {
+    text-align: right;
+  }
+
+  .score :global(.write-line) {
+    width: 12mm;
+  }
+</style>

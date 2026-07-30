@@ -1,0 +1,20 @@
+{
+  "name": "worksheet-workbooks",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "check:layout": "node scripts/check-layout.mjs",
+    "watch:layout": "node scripts/check-layout.mjs --watch",
+    "check:layout:preview": "node scripts/check-layout.mjs --preview"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "astro": "^7.1.6",
+    "playwright": "^1.62.0",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,24 @@
+---
+interface Props {
+  page: number;
+}
+
+const { page } = Astro.props;
+---
+
+<div class="page-number" aria-label={`Page ${page}`}>{page}</div>
+
+<style>
+  .page-number {
+    display: grid;
+    width: 8mm;
+    height: 8mm;
+    place-items: center;
+    border: 0.5mm solid var(--blue-strong);
+    border-radius: 50%;
+    color: var(--blue-strong);
+    font-size: 8pt;
+    font-weight: 900;
+    line-height: 1;
+  }
+</style>

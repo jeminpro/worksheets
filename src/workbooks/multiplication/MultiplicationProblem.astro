@@ -1,0 +1,120 @@
+---
+import type { FactorPair } from "./types";
+
+interface Props {
+  pair: FactorPair;
+  index: number;
+  workingLines: number;
+}
+
+const { pair, index, workingLines } = Astro.props;
+const [top, bottom] = pair;
+const answer = top * bottom;
+const lines = Array.from({ length: workingLines }, (_, i) => i);
+---
+
+<article class="problem" aria-label={`Question ${index + 1}: ${top} times ${bottom}`}>
+  <span class="problem-number">{index + 1}</span>
+  <div class="operation">
+    <div class="carry-space" aria-hidden="true"></div>
+    <div>{top}</div>
+    <div class="factor"><span class="times">×</span><span>{bottom}</span></div>
+    <div class="answer-rule"></div>
+    <div class="answer" aria-hidden="true">{answer}</div>
+  </div>
+  <div class="working-space">
+    {lines.map(() => <span class="working-line" />)}
+  </div>
+</article>
+
+<style>
+  .problem {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: end;
+    min-width: 0;
+    min-height: 0;
+    padding: 2.4mm 3mm 2mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: linear-gradient(180deg, #fff 0%, #fff 73%, #f8fbfd 100%);
+    overflow: hidden;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 2mm;
+    left: 2.3mm;
+    color: var(--blue-strong);
+    font-size: 6.5pt;
+    font-weight: 800;
+  }
+
+  .operation {
+    position: relative;
+    width: 22mm;
+    margin: 0 0 1.6mm;
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.02;
+    text-align: right;
+  }
+
+  .carry-space {
+    height: 4.6mm;
+    margin-bottom: 0.6mm;
+  }
+
+  .factor {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.3mm;
+    padding-top: 0.4mm;
+  }
+
+  .times {
+    color: var(--peach-strong);
+  }
+
+  .answer-rule {
+    height: 0;
+    border-top: 0.65mm solid var(--ink);
+  }
+
+  .answer {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.8mm;
+    padding-left: 1.2mm;
+    background: var(--paper);
+    color: var(--blue-strong);
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .working-space {
+    display: grid;
+    grid-auto-rows: 1fr;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .working-line {
+    border-bottom: 0.25mm dotted var(--rule);
+  }
+
+  .working-line:nth-last-child(2) {
+    border-bottom-color: var(--muted);
+  }
+
+  .working-line:last-child {
+    border-bottom: 0;
+  }
+</style>

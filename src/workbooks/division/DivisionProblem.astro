@@ -1,0 +1,138 @@
+---
+import type { DivisionPair } from "./types";
+
+interface Props {
+  pair: DivisionPair;
+  index: number;
+}
+
+const { pair, index } = Astro.props;
+const [dividend, divisor] = pair;
+const answer = dividend / divisor;
+---
+
+<article
+  class="problem"
+  aria-label={`Question ${index + 1}: ${dividend} divided by ${divisor}`}
+>
+  <span class="problem-number">{index + 1}</span>
+
+  <div class="sum">
+    <div class="quotient-row" aria-hidden="true">
+      <span class="answer">{answer}</span>
+    </div>
+
+    <span class="divisor">{divisor}</span>
+
+    <div class="dividend-box">
+      <svg
+        class="curve"
+        viewBox="0 0 30 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M0 0 Q24 50 0 100"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.3"
+          stroke-linecap="round"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
+      <span class="dividend">{dividend}</span>
+    </div>
+
+    <div class="work-area" aria-hidden="true"></div>
+  </div>
+</article>
+
+<style>
+  .problem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    padding: 4mm 2.5mm 2mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 1.6mm;
+    left: 1.8mm;
+    color: var(--blue-strong);
+    font-size: 6.5pt;
+    font-weight: 800;
+  }
+
+  .sum {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    flex: 1 1 auto;
+    width: max-content;
+    max-width: 100%;
+    min-height: 0;
+    margin: 0 auto;
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .quotient-row {
+    display: flex;
+    grid-area: 1 / 2 / 2 / 3;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 7mm;
+    padding-right: 1.5mm;
+  }
+
+  .answer {
+    margin-right: -0.3em;
+    letter-spacing: 0.3em;
+    color: var(--blue-strong);
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .divisor {
+    grid-area: 2 / 1 / 3 / 2;
+    padding: 1.6mm 1.4mm 0 0;
+  }
+
+  .dividend-box {
+    position: relative;
+    grid-area: 2 / 2 / 3 / 3;
+    padding: 1.6mm 1.5mm 1.6mm 3.4mm;
+    border-top: 0.6mm solid var(--ink);
+  }
+
+  .curve {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 2.6mm;
+    overflow: visible;
+  }
+
+  .dividend {
+    margin-right: -0.3em;
+    letter-spacing: 0.3em;
+  }
+
+  .work-area {
+    grid-area: 3 / 1 / 4 / 3;
+    min-height: 14mm;
+  }
+</style>
