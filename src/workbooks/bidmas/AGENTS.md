@@ -1,10 +1,10 @@
 # BIDMAS workbook
 
-A4 order-of-operations practice. The four pages progress from multiplication and division before addition and subtraction, through brackets and indices, to mixed BIDMAS challenges.
+A4 order-of-operations practice. Ten pages progress from early multiply/divide, through brackets and indices, into nested brackets, left-to-right traps, comparison pairs and expert multi-step challenges.
 
 ## Files
 
-- `data.ts` — expressions and their answers, grouped into four progressive sheets.
+- `data.ts` — expressions and their answers, grouped into ten progressive sheets.
 - `types.ts` — `BidmasProblem` / `BidmasSheet`.
 - `BidmasSheet.astro` — page header, instruction and responsive row count.
 - `BidmasProblem.astro` — expression card, stacked fractions, answer reveal and blank working space.
@@ -13,7 +13,7 @@ A4 order-of-operations practice. The four pages progress from multiplication and
 ## Constraints
 
 - Pages 1–2 have 15 problems in a 3×5 grid.
-- Pages 3–4 have 12 problems in a 3×4 grid for longer mixed expressions.
+- Pages 3–10 have 12 problems in a 3×4 grid for longer mixed expressions.
 - Store expressions with typographic operators (`×`, `÷`, `−`) and superscript digits for indices.
 - Render every `÷` operation as a stacked fraction; retain the source operator for accessible labels.
 - Omit `×` visually when multiplication is adjacent to a bracket; retain “times” in accessible labels.

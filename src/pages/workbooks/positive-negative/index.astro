@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import PositiveNegativeSheet from "../../../workbooks/positive-negative/PositiveNegativeSheet.astro";
+import { sheets } from "../../../workbooks/positive-negative/data";
+---
+
+<WorkbookLayout
+  title="Adding + & − Worksheets"
+  workbookId="positive-negative"
+  expectedPages={sheets.length}
+  workbookTitle="Adding + & −"
+>
+  {sheets.map((sheet) => <PositiveNegativeSheet sheet={sheet} />)}
+</WorkbookLayout>

@@ -194,7 +194,6 @@ const topicCount = workbooks.length;
     transition:
       border-color 0.2s ease,
       box-shadow 0.2s ease,
-      transform 0.2s ease,
       background 0.2s ease;
   }
 
@@ -205,7 +204,6 @@ const topicCount = workbooks.length;
     box-shadow:
       0 1px 0 rgb(255 255 255 / 90%) inset,
       0 14px 32px rgb(43 131 184 / 14%);
-    transform: translateY(-2px);
     outline: none;
   }
 
@@ -296,8 +294,8 @@ const topicCount = workbooks.length;
       transition: none;
     }
 
-    .card:hover,
-    .card:focus-visible {
+    .card:hover .card-arrow,
+    .card:focus-visible .card-arrow {
       transform: none;
     }
   }

@@ -12,16 +12,14 @@ type ExpressionPart =
   | { kind: "text"; value: string }
   | { kind: "fraction"; numerator: string; denominator: string };
 
-const operandPattern = String.raw`(\([^()]+\)|\d+[²³⁴]?)`;
+const operandPattern = String.raw`(\([^()]+\)[²³⁴]?|\d+[²³⁴]?)`;
 const divisionPattern = new RegExp(
   `${operandPattern}\\s*÷\\s*${operandPattern}`,
   "g"
 );
 
 function unwrapBrackets(value: string): string {
-  return value.startsWith("(") && value.endsWith(")")
-    ? value.slice(1, -1)
-    : value;
+  return value.replace(/^\((.*)\)$/, "$1");
 }
 
 function parseExpression(expression: string): ExpressionPart[] {

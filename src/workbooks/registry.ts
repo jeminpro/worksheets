@@ -5,6 +5,7 @@ import { sheets as subtractionSheets } from "./subtraction/data";
 import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
 import { sheets as bidmasSheets } from "./bidmas/data";
+import { sheets as positiveNegativeSheets } from "./positive-negative/data";
 
 export const workbooks = [
   {
@@ -24,6 +25,15 @@ export const workbooks = [
     pageCount: subtractionSheets.length,
     status: "ready",
     icon: "−"
+  },
+  {
+    id: "positive-negative",
+    title: "Adding + & −",
+    description: "Six progressive sheets of three-term integer addition and subtraction.",
+    href: withBase("workbooks/positive-negative/"),
+    pageCount: positiveNegativeSheets.length,
+    status: "ready",
+    icon: "±"
   },
   {
     id: "multiplication",
