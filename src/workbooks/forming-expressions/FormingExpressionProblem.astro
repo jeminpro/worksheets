@@ -1,0 +1,101 @@
+---
+import { formatExpression, speakExpression } from "./expression";
+import type { FormingExpressionProblem } from "./types";
+
+interface Props {
+  problem: FormingExpressionProblem;
+  index: number;
+}
+
+const { problem, index } = Astro.props;
+const answer = formatExpression(problem.expression);
+const spokenAnswer = speakExpression(problem.expression);
+---
+
+<article
+  class="problem"
+  aria-label={`Question ${index + 1}: ${problem.prompt}`}
+  data-answer={spokenAnswer}
+>
+  <span class="problem-number">{index + 1}</span>
+  <p class="prompt">{problem.prompt}</p>
+
+  <div class="response">
+    <span class="response-label">Expression:</span>
+    <span class="answer-line">
+      <span class="answer">{answer}</span>
+    </span>
+  </div>
+
+  <div class="working" aria-hidden="true"></div>
+</article>
+
+<style>
+  .problem {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 2mm;
+    min-height: 0;
+    padding: 4mm 4mm 2.5mm 7mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 1.8mm;
+    left: 2mm;
+    color: var(--blue-strong);
+    font-size: 6.5pt;
+    font-weight: 800;
+  }
+
+  .prompt {
+    margin: 0;
+    color: #152b3d;
+    font-size: 10pt;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .response {
+    display: flex;
+    gap: 2mm;
+    align-items: baseline;
+    min-width: 0;
+    font-size: 10pt;
+    font-weight: 700;
+  }
+
+  .response-label {
+    color: var(--muted);
+  }
+
+  .answer-line {
+    display: inline-flex;
+    min-width: 62mm;
+    min-height: 1.3em;
+    align-items: baseline;
+    justify-content: center;
+    border-bottom: 0.45mm solid var(--ink);
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    line-height: 1;
+  }
+
+  .answer {
+    color: var(--blue-strong);
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .working {
+    min-height: 0;
+  }
+</style>

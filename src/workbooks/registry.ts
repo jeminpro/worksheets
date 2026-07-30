@@ -8,6 +8,7 @@ import { sheets as bidmasSheets } from "./bidmas/data";
 import { sheets as positiveNegativeSheets } from "./positive-negative/data";
 import { sheets as algebraSubstitutionSheets } from "./algebra-substitution/data";
 import { sheets as algebraSolvingEquationsSheets } from "./algebra-solving-equations/data";
+import { sheets as formingExpressionsSheets } from "./forming-expressions/data";
 
 export const workbooks = [
   {
@@ -81,6 +82,15 @@ export const workbooks = [
     pageCount: algebraSolvingEquationsSheets.length,
     status: "ready",
     icon: "="
+  },
+  {
+    id: "forming-expressions",
+    title: "Forming Expressions",
+    description: "Translate word problems into algebraic expressions, from one-step to multi-variable.",
+    href: withBase("topic/forming-expressions/"),
+    pageCount: formingExpressionsSheets.length,
+    status: "ready",
+    icon: "xy"
   }
 ] as const satisfies readonly WorkbookMeta[];
 

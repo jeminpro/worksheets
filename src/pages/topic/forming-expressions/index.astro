@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import FormingExpressionsSheet from "../../../workbooks/forming-expressions/FormingExpressionsSheet.astro";
+import { sheets } from "../../../workbooks/forming-expressions/data";
+---
+
+<WorkbookLayout
+  title="Forming Expressions Worksheets"
+  workbookId="forming-expressions"
+  expectedPages={sheets.length}
+  workbookTitle="Forming Expressions"
+>
+  {sheets.map((sheet) => <FormingExpressionsSheet sheet={sheet} />)}
+</WorkbookLayout>
