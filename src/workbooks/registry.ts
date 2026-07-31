@@ -58,6 +58,15 @@ export const workbooks = [
     icon: "÷"
   },
   {
+    id: "simplify-calculations",
+    title: "Simplify Calculations",
+    description: "Cancel common factors in product fractions, then evaluate — easy through hard.",
+    href: withBase("topic/simplify-calculations/"),
+    pageCount: simplifyCalculationsSheets.length,
+    status: "ready",
+    icon: "∕"
+  },
+  {
     id: "bidmas",
     title: "BIDMAS",
     description: "Progressive order-of-operations practice with brackets, indices, and roots.",
@@ -92,15 +101,6 @@ export const workbooks = [
     pageCount: formingExpressionsSheets.length,
     status: "ready",
     icon: "xy"
-  },
-  {
-    id: "simplify-calculations",
-    title: "Simplify Calculations",
-    description: "Cancel common factors in product fractions, then evaluate — easy through hard.",
-    href: withBase("topic/simplify-calculations/"),
-    pageCount: simplifyCalculationsSheets.length,
-    status: "ready",
-    icon: "∕"
   }
 ] as const satisfies readonly WorkbookMeta[];
 
