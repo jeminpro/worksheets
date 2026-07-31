@@ -44,9 +44,22 @@ const noteTiles = [
           <span>Workbooks</span>
         </a>
         <h1 class="brand">Notes</h1>
-        <p class="lead">
-          All workbook notes in one place. Tap a tile to add or edit.
-        </p>
+        <div class="notes-actions">
+          <button class="notes-action" type="button" data-export-notes>
+            Export
+          </button>
+          <button class="notes-action" type="button" data-import-notes>
+            Import
+          </button>
+          <input
+            class="notes-import-input"
+            type="file"
+            accept="application/json,.json"
+            data-import-input
+            hidden
+          />
+          <p class="notes-status" data-notes-status role="status" aria-live="polite" hidden></p>
+        </div>
       </header>
 
       <section class="mosaic" aria-label="Workbook notes">
@@ -85,14 +98,100 @@ const noteTiles = [
 </SiteLayout>
 
 <script>
-  import { GENERAL_NOTE_ID, getWorkbookNotes } from "../../lib/workbook-notes";
+  import { confirmModal } from "../../lib/confirm-modal";
   import { openNoteModal } from "../../lib/note-modal";
+  import {
+    GENERAL_NOTE_ID,
+    buildNotesExport,
+    getWorkbookNotes,
+    parseNotesImport,
+    replaceWorkbookNotes
+  } from "../../lib/workbook-notes";
 
   const grid = document.querySelector("[data-mosaic-grid]");
   const tiles = Array.from(document.querySelectorAll("[data-note-tile]"));
   const items = Array.from(document.querySelectorAll("[data-mosaic-item]"));
+  const exportButton = document.querySelector("[data-export-notes]");
+  const importButton = document.querySelector("[data-import-notes]");
+  const importInput = document.querySelector("[data-import-input]");
+  const statusEl = document.querySelector("[data-notes-status]");
 
   const GAP = 18;
+
+  function setStatus(message: string): void {
+    if (!(statusEl instanceof HTMLElement)) return;
+    statusEl.textContent = message;
+    statusEl.hidden = !message;
+  }
+
+  function exportFileName(): string {
+    const stamp = new Date().toISOString().slice(0, 10);
+    return `worksheets-notes-${stamp}.json`;
+  }
+
+  function downloadNotes(): void {
+    const payload = buildNotesExport();
+    const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {
+      type: "application/json"
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = exportFileName();
+    anchor.click();
+    URL.revokeObjectURL(url);
+
+    const count = Object.keys(payload.notes).length;
+    setStatus(
+      count === 0
+        ? "Exported empty notes file."
+        : `Exported ${count} note${count === 1 ? "" : "s"}.`
+    );
+  }
+
+  async function importNotesFile(file: File): Promise<void> {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(await file.text());
+    } catch {
+      setStatus("Import failed: file is not valid JSON.");
+      return;
+    }
+
+    const notes = parseNotesImport(parsed);
+    if (!notes) {
+      setStatus("Import failed: unrecognised notes file.");
+      return;
+    }
+
+    const current = getWorkbookNotes();
+    const incomingCount = Object.keys(notes).length;
+    const currentCount = Object.keys(current).length;
+
+    if (currentCount > 0) {
+      const confirmed = await confirmModal({
+        title: "Replace notes?",
+        message:
+          incomingCount === 0
+            ? "This file has no notes. Importing it will clear all current notes."
+            : `Import ${incomingCount} note${incomingCount === 1 ? "" : "s"}? This replaces all current notes.`,
+        confirmLabel: "Import",
+        cancelLabel: "Cancel"
+      });
+      if (!confirmed) {
+        setStatus("Import cancelled.");
+        return;
+      }
+    }
+
+    replaceWorkbookNotes(notes);
+    refreshAll();
+    setStatus(
+      incomingCount === 0
+        ? "Imported empty notes file. All notes cleared."
+        : `Imported ${incomingCount} note${incomingCount === 1 ? "" : "s"}.`
+    );
+  }
 
   function columnCount(width: number): number {
     if (width >= 1060) return 4;
@@ -192,6 +291,27 @@ const noteTiles = [
     });
   }
 
+  if (exportButton instanceof HTMLButtonElement) {
+    exportButton.addEventListener("click", () => downloadNotes());
+  }
+
+  if (
+    importButton instanceof HTMLButtonElement &&
+    importInput instanceof HTMLInputElement
+  ) {
+    importButton.addEventListener("click", () => {
+      importInput.value = "";
+      importInput.click();
+    });
+
+    importInput.addEventListener("change", async () => {
+      const file = importInput.files?.[0];
+      if (!file) return;
+      await importNotesFile(file);
+      importInput.value = "";
+    });
+  }
+
   refreshAll();
 
   const resizeObserver =
@@ -283,13 +403,52 @@ const noteTiles = [
     letter-spacing: -0.03em;
   }
 
-  .lead {
-    margin: 0;
-    max-width: 36rem;
+  .notes-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 18px;
+  }
+
+  .notes-action {
+    min-width: 5.5rem;
+    padding: 9px 14px;
+    border: 1px solid rgb(43 131 184 / 22%);
+    border-radius: 999px;
+    color: var(--ink);
+    background: var(--paper);
+    font: 700 13px/1 "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .notes-action:hover,
+  .notes-action:focus-visible {
+    border-color: var(--blue-strong);
+    background: var(--blue);
+    outline: none;
+  }
+
+  .notes-action:focus-visible {
+    outline: 2px solid var(--blue-strong);
+    outline-offset: 2px;
+  }
+
+  .notes-status {
+    flex: 1 1 100%;
+    margin: 2px 0 0;
     color: var(--muted);
-    font-size: clamp(16px, 2.4vw, 18px);
-    font-weight: 400;
-    line-height: 1.55;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .notes-status[hidden] {
+    display: none;
   }
 
   .mosaic-grid {
