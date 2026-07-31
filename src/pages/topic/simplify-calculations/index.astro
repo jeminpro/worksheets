@@ -1,0 +1,18 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import SimplifyCalculationsSheet from "../../../workbooks/simplify-calculations/SimplifyCalculationsSheet.astro";
+import { sheets } from "../../../workbooks/simplify-calculations/data";
+---
+
+<WorkbookLayout
+  title="Simplify Calculations Worksheets"
+  workbookId="simplify-calculations"
+  expectedPages={sheets.length}
+  workbookTitle="Simplify Calculations"
+>
+  {
+    sheets.map((sheet) => (
+      <SimplifyCalculationsSheet sheet={sheet} />
+    ))
+  }
+</WorkbookLayout>

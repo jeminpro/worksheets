@@ -1,0 +1,123 @@
+---
+import type { SimplifyCalculationsProblem as Problem } from "./types";
+import {
+  formatAccessibleExpression,
+  getAnswer,
+  getDenominatorText,
+  getNumeratorText
+} from "./expression";
+
+interface Props {
+  problem: Problem;
+  index: number;
+}
+
+const { problem, index } = Astro.props;
+const answer = getAnswer(problem);
+const accessibleExpression = formatAccessibleExpression(problem);
+const numerator = getNumeratorText(problem);
+const denominator = getDenominatorText(problem);
+---
+
+<article
+  class="problem"
+  aria-label={`Question ${index + 1}: ${accessibleExpression}`}
+>
+  <span class="problem-number">{index + 1}</span>
+
+  <div class="expression">
+    <span class="fraction" aria-hidden="true">
+      <span class="numerator">{numerator}</span>
+      <span class="denominator">{denominator}</span>
+    </span>
+    <span class="equals" aria-hidden="true">=</span>
+    <span class="answer-box">
+      <span class="answer">{answer}</span>
+    </span>
+  </div>
+
+  <div class="working" aria-hidden="true"></div>
+</article>
+
+<style>
+  .problem {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 2mm;
+    min-width: 0;
+    min-height: 0;
+    padding: 5.5mm 3mm 2.5mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 1.6mm;
+    left: 1.8mm;
+    color: var(--blue-strong);
+    font-size: 6.5pt;
+    font-weight: 800;
+  }
+
+  .expression {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5mm;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .fraction {
+    display: inline-grid;
+    grid-template-rows: auto auto;
+    min-width: 7mm;
+    margin: 0 0.8mm;
+    vertical-align: middle;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .numerator {
+    padding: 0 1.2mm 0.6mm;
+    border-bottom: 0.45mm solid currentColor;
+  }
+
+  .denominator {
+    padding: 0.6mm 1.2mm 0;
+  }
+
+  .equals {
+    color: var(--muted);
+  }
+
+  .answer-box {
+    display: inline-flex;
+    min-width: 10mm;
+    min-height: 1.1em;
+    justify-content: center;
+    border-bottom: 0.45mm solid var(--ink);
+  }
+
+  .answer {
+    color: var(--blue-strong);
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .working {
+    min-height: 0;
+  }
+</style>

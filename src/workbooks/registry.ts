@@ -9,6 +9,7 @@ import { sheets as positiveNegativeSheets } from "./positive-negative/data";
 import { sheets as algebraSubstitutionSheets } from "./algebra-substitution/data";
 import { sheets as algebraSolvingEquationsSheets } from "./algebra-solving-equations/data";
 import { sheets as formingExpressionsSheets } from "./forming-expressions/data";
+import { sheets as simplifyCalculationsSheets } from "./simplify-calculations/data";
 
 export const workbooks = [
   {
@@ -91,6 +92,15 @@ export const workbooks = [
     pageCount: formingExpressionsSheets.length,
     status: "ready",
     icon: "xy"
+  },
+  {
+    id: "simplify-calculations",
+    title: "Simplify Calculations",
+    description: "Cancel common factors in product fractions, then evaluate — easy through hard.",
+    href: withBase("topic/simplify-calculations/"),
+    pageCount: simplifyCalculationsSheets.length,
+    status: "ready",
+    icon: "∕"
   }
 ] as const satisfies readonly WorkbookMeta[];
 
