@@ -33,6 +33,18 @@ const { workbookId, workbookTitle } = Astro.props;
   </div>
 
   <div class="viewer-actions">
+    <button
+      class="viewer-note"
+      type="button"
+      data-workbook-note
+      data-workbook-id={workbookId}
+      data-workbook-title={workbookTitle}
+      data-has-note="false"
+      aria-label="Add note"
+      title="Add a note for this workbook"
+    >
+      <span class="note-label">Add note</span>
+    </button>
     <button class="answers-button" type="button" aria-pressed="false">Answers</button>
     <button class="print-button" type="button">Print</button>
   </div>
@@ -40,6 +52,7 @@ const { workbookId, workbookTitle } = Astro.props;
 
 <script>
   import { confirmModal } from "../lib/confirm-modal";
+  import { bindNoteButton } from "../lib/note-modal";
   import {
     clearPrintDate,
     formatPrintDate,
@@ -51,6 +64,7 @@ const { workbookId, workbookTitle } = Astro.props;
   const printButton = document.querySelector(".print-button");
   const pages = document.getElementById("pages");
   const printDateEl = document.querySelector("[data-print-date]");
+  const noteButton = document.querySelector(".viewer-note[data-workbook-note]");
 
   function showPrintDate(iso: string) {
     if (!(printDateEl instanceof HTMLElement)) return;
@@ -77,6 +91,13 @@ const { workbookId, workbookTitle } = Astro.props;
   if (workbookId) {
     const saved = getPrintDate(workbookId);
     if (saved) showPrintDate(saved);
+  }
+
+  if (noteButton instanceof HTMLElement && workbookId) {
+    bindNoteButton(noteButton, {
+      workbookId,
+      workbookTitle: noteButton.dataset.workbookTitle
+    });
   }
 
   printDateEl?.addEventListener("click", async () => {
@@ -221,11 +242,66 @@ const { workbookId, workbookTitle } = Astro.props;
     transition: color 0.15s ease;
   }
 
+  .viewer-note {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    width: max-content;
+    max-width: min(16rem, 40vw);
+    margin: 0;
+    padding: 8px 12px;
+    overflow: hidden;
+    border: 1px solid rgb(23 50 77 / 10%);
+    border-radius: 999px;
+    color: var(--muted);
+    background: rgb(237 242 245 / 90%);
+    box-shadow: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .viewer-note :global(.note-glyph) {
+    flex: 0 0 auto;
+    display: block;
+  }
+
+  .viewer-note :global(.note-label) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .viewer-note[data-has-note="true"] {
+    color: var(--ink);
+  }
+
+  .viewer-note[data-has-note="true"] :global(.note-glyph) {
+    color: var(--blue-strong);
+  }
+
   .print-date:hover,
   .print-date:focus-visible {
     color: var(--ink);
     text-decoration: underline;
     outline: none;
+  }
+
+  .viewer-note:hover,
+  .viewer-note:focus-visible {
+    outline: none;
+    color: var(--ink);
+    background: #e4ebf0;
+    border-color: rgb(43 131 184 / 28%);
   }
 
   .print-date:focus-visible {
@@ -234,10 +310,16 @@ const { workbookId, workbookTitle } = Astro.props;
     border-radius: 2px;
   }
 
+  .viewer-note:focus-visible {
+    outline: 2px solid var(--blue-strong);
+    outline-offset: 2px;
+  }
+
   .viewer-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    align-items: center;
   }
 
   .answers-button,
@@ -322,6 +404,11 @@ const { workbookId, workbookTitle } = Astro.props;
       width: 100%;
     }
 
+    .viewer-note {
+      max-width: 100%;
+      flex: 1 1 100%;
+    }
+
     .answers-button,
     .print-button {
       flex: 1;
@@ -334,7 +421,8 @@ const { workbookId, workbookTitle } = Astro.props;
     .home-chevron,
     .answers-button,
     .print-button,
-    .print-date {
+    .print-date,
+    .viewer-note {
       transition: none;
     }
 
