@@ -4,7 +4,7 @@ import {
 } from "./workbook-notes";
 
 const DIALOG_ID = "worksheets-note-dialog";
-const STYLE_ID = "worksheets-note-dialog-style-v4";
+const STYLE_ID = "worksheets-note-dialog-style-v5";
 
 export type NoteModalOptions = {
   workbookId: string;
@@ -22,7 +22,8 @@ function ensureStyles(): void {
     STYLE_ID,
     "worksheets-note-dialog-style",
     "worksheets-note-dialog-style-v2",
-    "worksheets-note-dialog-style-v3"
+    "worksheets-note-dialog-style-v3",
+    "worksheets-note-dialog-style-v4"
   ]) {
     document.getElementById(id)?.remove();
   }
@@ -106,6 +107,10 @@ function ensureStyles(): void {
     }
 
     #${DIALOG_ID} .note-modal-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35em 0.55em;
+      align-items: baseline;
       margin: 0;
       flex: 0 0 auto;
       padding-right: 0.5rem;
@@ -115,6 +120,13 @@ function ensureStyles(): void {
       letter-spacing: -0.02em;
       line-height: 1.25;
       color: var(--ink, #17324d);
+    }
+
+    #${DIALOG_ID} .note-modal-topic {
+      color: var(--muted, #5e7183);
+      font-size: 0.82em;
+      font-weight: 550;
+      letter-spacing: -0.01em;
     }
 
     #${DIALOG_ID} .note-modal-textarea {
@@ -164,7 +176,6 @@ function ensureDialog(): HTMLDialogElement {
       <h2 class="note-modal-title" id="worksheets-note-title"></h2>
       <textarea
         class="note-modal-textarea"
-        placeholder="all correct, need improvement…"
       ></textarea>
     </div>
   `;
@@ -222,7 +233,17 @@ export function openNoteModal(options: NoteModalOptions): Promise<string | undef
   }
 
   const existing = getWorkbookNote(workbookId) ?? "";
-  titleEl.textContent = workbookTitle ? `Note · ${workbookTitle}` : "Note";
+  if (workbookTitle) {
+    titleEl.replaceChildren(
+      document.createTextNode("Note"),
+      Object.assign(document.createElement("span"), {
+        className: "note-modal-topic",
+        textContent: workbookTitle
+      })
+    );
+  } else {
+    titleEl.textContent = "Note";
+  }
   textarea.value = existing;
 
   return new Promise((resolve) => {

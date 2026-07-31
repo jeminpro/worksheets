@@ -1,8 +1,10 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import { withBase } from "../lib/base";
 import { workbooks } from "../workbooks/registry";
 
 const topicCount = workbooks.length;
+const notesHref = withBase("notes/");
 ---
 
 <SiteLayout
@@ -38,6 +40,10 @@ const topicCount = workbooks.length;
             <span>Topics</span>
             <span class="catalog-count">{topicCount}</span>
           </h2>
+          <a class="notes-link" href={notesHref}>
+            <span>Notes</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
 
         <ul class="catalog-list">
@@ -245,6 +251,31 @@ const topicCount = workbooks.length;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.02em;
+  }
+
+  .notes-link {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    color: var(--blue-strong);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.15s ease;
+  }
+
+  .notes-link:hover,
+  .notes-link:focus-visible {
+    color: var(--ink);
+    outline: none;
+  }
+
+  .notes-link:focus-visible {
+    outline: 2px solid var(--blue-strong);
+    outline-offset: 3px;
+    border-radius: 4px;
   }
 
   .catalog-list {

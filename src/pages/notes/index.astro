@@ -1,0 +1,430 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { withBase } from "../../lib/base";
+import { GENERAL_NOTE_ID } from "../../lib/workbook-notes";
+import { workbooks } from "../../workbooks/registry";
+
+const noteTiles = [
+  {
+    id: GENERAL_NOTE_ID,
+    title: "General",
+    general: true as const
+  },
+  ...workbooks.map((workbook) => ({
+    id: workbook.id,
+    title: workbook.title,
+    general: false as const
+  }))
+];
+---
+
+<SiteLayout
+  title="Notes · Worksheet Workbooks"
+  description="View and edit notes for every maths workbook."
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,650;9..144,750&family=Source+Sans+3:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="notes-page">
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere-glow"></div>
+      <div class="atmosphere-grid"></div>
+    </div>
+
+    <div class="notes-inner">
+      <header class="notes-header">
+        <a class="back-link" href={withBase()}>
+          <span aria-hidden="true">←</span>
+          <span>Workbooks</span>
+        </a>
+        <h1 class="brand">Notes</h1>
+        <p class="lead">
+          All workbook notes in one place. Tap a tile to add or edit.
+        </p>
+      </header>
+
+      <section class="mosaic" aria-label="Workbook notes">
+        <ul class="mosaic-grid" data-mosaic-grid>
+          {
+            noteTiles.map((tile) => (
+              <li class:list={["tile", { "tile-general": tile.general }]} data-mosaic-item>
+                <button
+                  class:list={["sticky", { "sticky-general": tile.general }]}
+                  type="button"
+                  data-note-tile
+                  data-workbook-id={tile.id}
+                  data-workbook-title={tile.title}
+                  data-has-note="false"
+                  aria-label={
+                    tile.general ? "Add general note" : `Add note for ${tile.title}`
+                  }
+                >
+                  <span class="sticky-title">{tile.title}</span>
+                  <span class="sticky-body" data-note-body>
+                    <span class="sticky-text" data-note-text hidden></span>
+                    <span class="sticky-empty" data-note-empty>
+                      {tile.general ? "Add a general note…" : "Add a note…"}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </main>
+</SiteLayout>
+
+<script>
+  import { GENERAL_NOTE_ID, getWorkbookNotes } from "../../lib/workbook-notes";
+  import { openNoteModal } from "../../lib/note-modal";
+
+  const grid = document.querySelector("[data-mosaic-grid]");
+  const tiles = Array.from(document.querySelectorAll("[data-note-tile]"));
+  const items = Array.from(document.querySelectorAll("[data-mosaic-item]"));
+
+  const GAP = 18;
+
+  function columnCount(width: number): number {
+    if (width >= 1060) return 4;
+    if (width >= 820) return 3;
+    if (width >= 560) return 2;
+    return 1;
+  }
+
+  function layoutMosaic() {
+    if (!(grid instanceof HTMLElement)) return;
+
+    const width = grid.clientWidth;
+    const cols = columnCount(width);
+    const colWidth = (width - GAP * (cols - 1)) / cols;
+    const heights = Array.from({ length: cols }, () => 0);
+
+    for (const item of items) {
+      if (!(item instanceof HTMLElement)) continue;
+      item.style.position = "absolute";
+      item.style.width = `${colWidth}px`;
+      item.style.left = "0";
+      item.style.top = "0";
+    }
+
+    // Measure after width is applied so heights reflect content.
+    // Place each tile into the shortest column so order reads left → right.
+    for (const item of items) {
+      if (!(item instanceof HTMLElement)) continue;
+      const col = heights.indexOf(Math.min(...heights));
+      const left = col * (colWidth + GAP);
+      const top = heights[col] ?? 0;
+      item.style.left = `${left}px`;
+      item.style.top = `${top}px`;
+      heights[col] = top + item.offsetHeight + GAP;
+    }
+
+    const totalHeight = Math.max(0, ...heights) - (cols > 0 ? GAP : 0);
+    grid.style.height = `${Math.max(totalHeight, 0)}px`;
+    grid.dataset.ready = "true";
+  }
+
+  function renderTile(button: HTMLElement, note: string | undefined) {
+    const textEl = button.querySelector("[data-note-text]");
+    const emptyEl = button.querySelector("[data-note-empty]");
+    if (!(textEl instanceof HTMLElement) || !(emptyEl instanceof HTMLElement)) return;
+
+    const id = button.dataset.workbookId;
+    const title = button.dataset.workbookTitle ?? "workbook";
+    const isGeneral = id === GENERAL_NOTE_ID;
+    const text = note ?? "";
+
+    if (text.trim()) {
+      button.dataset.hasNote = "true";
+      button.setAttribute(
+        "aria-label",
+        isGeneral ? "Edit general note" : `Edit note for ${title}`
+      );
+      textEl.textContent = text;
+      textEl.hidden = false;
+      emptyEl.hidden = true;
+    } else {
+      button.dataset.hasNote = "false";
+      button.setAttribute(
+        "aria-label",
+        isGeneral ? "Add general note" : `Add note for ${title}`
+      );
+      textEl.textContent = "";
+      textEl.hidden = true;
+      emptyEl.hidden = false;
+    }
+  }
+
+  function refreshAll() {
+    const notes = getWorkbookNotes();
+
+    for (const tile of tiles) {
+      if (!(tile instanceof HTMLElement)) continue;
+      const id = tile.dataset.workbookId;
+      if (!id) continue;
+      renderTile(tile, notes[id]);
+    }
+
+    layoutMosaic();
+  }
+
+  for (const tile of tiles) {
+    if (!(tile instanceof HTMLElement)) continue;
+    tile.addEventListener("click", async () => {
+      const workbookId = tile.dataset.workbookId;
+      if (!workbookId) return;
+      const result = await openNoteModal({
+        workbookId,
+        workbookTitle: tile.dataset.workbookTitle
+      });
+      if (result === false) return;
+      refreshAll();
+    });
+  }
+
+  refreshAll();
+
+  const resizeObserver =
+    typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(() => layoutMosaic())
+      : null;
+  if (grid instanceof HTMLElement) resizeObserver?.observe(grid);
+  window.addEventListener("resize", layoutMosaic);
+</script>
+
+<style>
+  .notes-page {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, #e8f4fb 0%, var(--viewer) 55%, #e4ebf0 100%);
+    font-family: "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
+  }
+
+  .atmosphere {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .atmosphere-glow {
+    position: absolute;
+    inset: -20% -10% 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 18% 20%, rgb(43 131 184 / 22%), transparent 70%),
+      radial-gradient(ellipse 55% 45% at 88% 8%, rgb(224 122 63 / 14%), transparent 65%);
+  }
+
+  .atmosphere-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.45;
+    background-image:
+      linear-gradient(rgb(43 131 184 / 7%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(43 131 184 / 7%) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(180deg, rgb(0 0 0 / 55%) 0%, transparent 78%);
+  }
+
+  .notes-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(28px, 5vh, 56px) 20px 64px;
+  }
+
+  .notes-header {
+    margin-bottom: clamp(28px, 5vh, 40px);
+  }
+
+  .back-link {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 18px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .back-link:hover,
+  .back-link:focus-visible {
+    color: var(--ink);
+    outline: none;
+  }
+
+  .back-link:focus-visible {
+    outline: 2px solid var(--blue-strong);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .brand {
+    margin: 0 0 12px;
+    color: var(--ink);
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(40px, 7vw, 58px);
+    font-weight: 750;
+    font-optical-sizing: auto;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .lead {
+    margin: 0;
+    max-width: 36rem;
+    color: var(--muted);
+    font-size: clamp(16px, 2.4vw, 18px);
+    font-weight: 400;
+    line-height: 1.55;
+  }
+
+  .mosaic-grid {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-height: 1px;
+  }
+
+  .mosaic-grid:not([data-ready="true"]) .tile {
+    margin-bottom: 18px;
+  }
+
+  .tile {
+    box-sizing: border-box;
+  }
+
+  .sticky {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 16px 16px 18px;
+    border: 1px solid rgb(214 175 58 / 35%);
+    border-radius: 4px 4px 10px 10px;
+    color: var(--ink);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 35%) 0%, transparent 28%),
+      #fff8dc;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 70%) inset,
+      0 10px 22px rgb(23 50 77 / 10%);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .sticky:hover,
+  .sticky:focus-visible {
+    border-color: rgb(214 175 58 / 55%);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 80%) inset,
+      0 16px 28px rgb(23 50 77 / 14%);
+    outline: none;
+  }
+
+  .sticky:focus-visible {
+    outline: 2px solid var(--blue-strong);
+    outline-offset: 3px;
+  }
+
+  .sticky[data-has-note="false"] {
+    border-style: dashed;
+    border-color: rgb(23 50 77 / 16%);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 50%) 0%, transparent 28%),
+      #f7f1d8;
+    opacity: 0.92;
+  }
+
+  .sticky-general {
+    gap: 6px;
+    padding: 18px 18px 20px;
+    border: 1px solid rgb(43 131 184 / 28%);
+    border-radius: 14px;
+    background:
+      linear-gradient(165deg, rgb(255 255 255 / 55%) 0%, transparent 42%),
+      linear-gradient(180deg, #e8f4fb 0%, #dceef8 100%);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 80%) inset,
+      0 12px 26px rgb(43 131 184 / 12%);
+  }
+
+  .sticky-general:hover,
+  .sticky-general:focus-visible {
+    border-color: var(--blue-strong);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 90%) inset,
+      0 16px 30px rgb(43 131 184 / 18%);
+  }
+
+  .sticky-general[data-has-note="false"] {
+    border-style: solid;
+    border-color: rgb(43 131 184 / 22%);
+    background:
+      linear-gradient(165deg, rgb(255 255 255 / 60%) 0%, transparent 42%),
+      linear-gradient(180deg, #eef7fc 0%, #e4f1f8 100%);
+    opacity: 1;
+  }
+
+  .sticky-general .sticky-title {
+    font-size: 1.18rem;
+  }
+
+  .sticky-title {
+    min-width: 0;
+    font-family: Fraunces, Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .sticky-body {
+    min-width: 0;
+  }
+
+  .sticky-text {
+    display: block;
+    color: var(--ink);
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .sticky-text[hidden],
+  .sticky-empty[hidden] {
+    display: none;
+  }
+
+  .sticky-empty {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky {
+      transition: none;
+    }
+  }
+</style>

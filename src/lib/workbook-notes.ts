@@ -1,5 +1,8 @@
 const STORAGE_KEY = "worksheets-notes";
 
+/** Reserved note id for free-form notes not tied to a workbook topic. */
+export const GENERAL_NOTE_ID = "general";
+
 export type WorkbookNotes = Record<string, string>;
 
 export function getWorkbookNotes(): WorkbookNotes {
