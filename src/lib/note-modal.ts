@@ -4,7 +4,7 @@ import {
 } from "./workbook-notes";
 
 const DIALOG_ID = "worksheets-note-dialog";
-const STYLE_ID = "worksheets-note-dialog-style-v5";
+const STYLE_ID = "worksheets-note-dialog-style-v8";
 
 export type NoteModalOptions = {
   workbookId: string;
@@ -23,7 +23,10 @@ function ensureStyles(): void {
     "worksheets-note-dialog-style",
     "worksheets-note-dialog-style-v2",
     "worksheets-note-dialog-style-v3",
-    "worksheets-note-dialog-style-v4"
+    "worksheets-note-dialog-style-v4",
+    "worksheets-note-dialog-style-v5",
+    "worksheets-note-dialog-style-v6",
+    "worksheets-note-dialog-style-v7"
   ]) {
     document.getElementById(id)?.remove();
   }
@@ -41,12 +44,12 @@ function ensureStyles(): void {
       max-height: calc(100dvh - 2.5rem);
       margin: 0;
       padding: 0;
-      border: 1px solid rgb(214 175 58 / 35%);
-      border-radius: 14px;
+      border: 1px solid rgb(180 160 70 / 28%);
+      border-radius: 10px;
       color: var(--ink, #17324d);
-      background: #fff8dc;
+      background: #fff9e8;
       box-shadow:
-        0 1px 0 rgb(255 255 255 / 70%) inset,
+        0 1px 0 rgb(255 255 255 / 55%) inset,
         0 18px 40px rgb(23 50 77 / 16%);
       font-family: "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
       flex-direction: column;
@@ -63,47 +66,16 @@ function ensureStyles(): void {
       cursor: pointer;
     }
 
-    #${DIALOG_ID} .note-modal-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 2;
-      display: grid;
-      width: 2rem;
-      height: 2rem;
-      place-items: center;
-      margin: 0;
-      padding: 0;
-      border: 1px solid rgb(43 131 184 / 18%);
-      border-radius: 999px;
-      color: var(--ink, #17324d);
-      background: rgb(255 255 255 / 75%);
-      font: 700 1.15rem/1 "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
-      cursor: pointer;
-      transition:
-        background 0.15s ease,
-        border-color 0.15s ease;
-    }
-
-    #${DIALOG_ID} .note-modal-close:hover,
-    #${DIALOG_ID} .note-modal-close:focus-visible {
-      background: #fff;
-      border-color: var(--blue-strong, #2b83b8);
-      outline: none;
-    }
-
-    #${DIALOG_ID} .note-modal-close:focus-visible {
-      outline: 2px solid var(--blue-strong, #2b83b8);
-      outline-offset: 2px;
-    }
-
-    #${DIALOG_ID} .note-modal-body {
+    #${DIALOG_ID} .note-modal-header {
       display: flex;
-      flex: 1 1 auto;
-      flex-direction: column;
+      flex: 0 0 auto;
       gap: 12px;
-      min-height: 0;
-      padding: 22px 48px 22px 22px;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 2.75rem;
+      padding: 10px 10px 10px 18px;
+      border-bottom: 1px solid rgb(180 160 70 / 18%);
+      background: #fff2ab;
     }
 
     #${DIALOG_ID} .note-modal-title {
@@ -112,10 +84,9 @@ function ensureStyles(): void {
       gap: 0.35em 0.55em;
       align-items: baseline;
       margin: 0;
-      flex: 0 0 auto;
-      padding-right: 0.5rem;
+      min-width: 0;
       font-family: Fraunces, Georgia, serif;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 650;
       letter-spacing: -0.02em;
       line-height: 1.25;
@@ -123,17 +94,57 @@ function ensureStyles(): void {
     }
 
     #${DIALOG_ID} .note-modal-topic {
-      color: var(--muted, #5e7183);
+      color: rgb(82 83 84);
       font-size: 0.82em;
       font-weight: 550;
       letter-spacing: -0.01em;
+    }
+
+    #${DIALOG_ID} .note-modal-close {
+      display: grid;
+      flex: 0 0 auto;
+      width: 2rem;
+      height: 2rem;
+      place-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      color: #4a5560;
+      background: transparent;
+      font: 400 1.35rem/1 "Segoe UI", "Source Sans 3", sans-serif;
+      cursor: pointer;
+      transition:
+        background 0.15s ease,
+        color 0.15s ease;
+    }
+
+    #${DIALOG_ID} .note-modal-close:hover,
+    #${DIALOG_ID} .note-modal-close:focus-visible {
+      color: #1f2933;
+      background: rgb(23 50 77 / 8%);
+      outline: none;
+    }
+
+    #${DIALOG_ID} .note-modal-close:focus-visible {
+      outline: 2px solid var(--blue-strong, #2b83b8);
+      outline-offset: 1px;
+    }
+
+    #${DIALOG_ID} .note-modal-body {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      min-height: 0;
+      padding: 16px 18px 18px;
+      background: #fff9e8;
     }
 
     #${DIALOG_ID} .note-modal-textarea {
       width: 100%;
       flex: 1 1 auto;
       min-height: 0;
-      padding: 8px 2px;
+      padding: 4px 2px;
       border: 0;
       border-radius: 0;
       color: var(--ink, #17324d);
@@ -171,12 +182,12 @@ function ensureDialog(): HTMLDialogElement {
   dialog.id = DIALOG_ID;
   dialog.setAttribute("aria-labelledby", "worksheets-note-title");
   dialog.innerHTML = `
-    <button class="note-modal-close" type="button" aria-label="Close note">×</button>
-    <div class="note-modal-body">
+    <div class="note-modal-header">
       <h2 class="note-modal-title" id="worksheets-note-title"></h2>
-      <textarea
-        class="note-modal-textarea"
-      ></textarea>
+      <button class="note-modal-close" type="button" aria-label="Close note">×</button>
+    </div>
+    <div class="note-modal-body">
+      <textarea class="note-modal-textarea"></textarea>
     </div>
   `;
   document.body.appendChild(dialog);
