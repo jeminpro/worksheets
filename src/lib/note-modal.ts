@@ -75,7 +75,7 @@ function ensureStyles(): void {
       min-height: 2.75rem;
       padding: 10px 10px 10px 18px;
       border-bottom: 1px solid rgb(180 160 70 / 18%);
-      background: #fff2ab;
+      background: #f9f2cd;
     }
 
     #${DIALOG_ID} .note-modal-title {
