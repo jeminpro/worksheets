@@ -240,6 +240,7 @@ export function openNoteModal(options: NoteModalOptions): Promise<string | undef
       dialog.removeEventListener("click", onDialogClick);
       closeButton.removeEventListener("click", onCloseClick);
       textarea.removeEventListener("input", onInput);
+      textarea.removeEventListener("keydown", onKeyDown);
       if (dialog.open) dialog.close();
       resolve(result);
     };
@@ -262,11 +263,20 @@ export function openNoteModal(options: NoteModalOptions): Promise<string | undef
         persist();
       }, 250);
     };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) return;
+      event.preventDefault();
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      textarea.setRangeText("\t", start, end, "end");
+      onInput();
+    };
 
     dialog.addEventListener("cancel", onCancel);
     dialog.addEventListener("click", onDialogClick);
     closeButton.addEventListener("click", onCloseClick);
     textarea.addEventListener("input", onInput);
+    textarea.addEventListener("keydown", onKeyDown);
     dialog.showModal();
     textarea.focus();
     textarea.setSelectionRange(textarea.value.length, textarea.value.length);
