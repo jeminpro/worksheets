@@ -1,38 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Worksheets">
-  <defs>
-    <linearGradient id="bg" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3a96c9"/>
-      <stop offset="1" stop-color="#2b83b8"/>
-    </linearGradient>
-    <linearGradient id="sheet" x1="10" y1="6" x2="22" y2="26" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#f3f8fb"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Worksheets">
+  <g stroke="#603028" stroke-width="3.1" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Back pink sheet with top-left dog-ear -->
+    <path
+      fill="#f06888"
+      d="M20.5 7.2
+         H38.8
+         Q42.8 7.2 42.8 11.2
+         V44.8
+         Q42.8 48.8 38.8 48.8
+         H15.2
+         Q11.2 48.8 11.2 44.8
+         V19.2
+         L20.5 7.2
+         Z"
+    />
+    <path fill="none" d="M11.2 19.2 H20.5 V7.2" />
 
-  <!-- App tile -->
-  <rect width="32" height="32" rx="8" fill="url(#bg)"/>
-
-  <!-- Back sheet (slightly rotated) -->
-  <g opacity="0.55">
-    <rect x="11.2" y="5.4" width="13" height="17.5" rx="1.6" fill="#dff2ff" transform="rotate(10 17.7 14.15)"/>
+    <!-- Front white sheet with top-left dog-ear -->
+    <path
+      fill="#ffffff"
+      d="M27.8 15.2
+         H46.2
+         Q50.2 15.2 50.2 19.2
+         V53.8
+         Q50.2 57.8 46.2 57.8
+         H21.8
+         Q17.8 57.8 17.8 53.8
+         V27.2
+         L27.8 15.2
+         Z"
+    />
+    <path fill="none" d="M17.8 27.2 H27.8 V15.2" />
   </g>
 
-  <!-- Front worksheet -->
-  <rect x="8" y="6.5" width="13.5" height="18.5" rx="1.6" fill="url(#sheet)"/>
-  <rect x="8" y="6.5" width="13.5" height="18.5" rx="1.6" fill="none" stroke="#17324d" stroke-opacity="0.08"/>
+  <g stroke="#603028" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="23.6" y="29.4" width="6.2" height="6.2" rx="1.1" fill="#7daffc" />
+    <path fill="none" d="M33.2 30.8 H46.2" />
+    <path fill="none" d="M33.2 34.4 H42" />
 
-  <!-- Margin rule -->
-  <path d="M11.1 8.2v15.1" stroke="#e07a3f" stroke-width="1" stroke-linecap="round" opacity="0.85"/>
+    <rect x="23.6" y="39.6" width="6.2" height="6.2" rx="1.1" fill="#7daffc" />
+    <path fill="none" d="M33.2 41 H46.2" />
+    <path fill="none" d="M33.2 44.6 H42" />
 
-  <!-- Ruled lines -->
-  <g stroke="#2b83b8" stroke-width="1.15" stroke-linecap="round" opacity="0.7">
-    <path d="M12.6 11.2h6.4"/>
-    <path d="M12.6 14.4h6.4"/>
-    <path d="M12.6 17.6h6.4"/>
-    <path d="M12.6 20.8h4.2"/>
+    <rect x="23.6" y="49.8" width="6.2" height="6.2" rx="1.1" fill="#7daffc" />
+    <path fill="none" d="M33.2 51.2 H46.2" />
+    <path fill="none" d="M33.2 54.8 H42" />
   </g>
-
-  <!-- Soft highlight -->
-  <path d="M9.2 7.8c1.8-1 4.2-.7 5.6.2" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
 </svg>
