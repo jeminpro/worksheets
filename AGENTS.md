@@ -48,3 +48,4 @@ npm run watch:layout -- --workbook=multiplication
 - `.page-inner` stays a four-row grid: `20mm 12mm minmax(0, 1fr) 8mm`.
 - Do not shrink text to fix overflow. Problem digits stay `14pt`; question numbers stay `6.5pt`.
 - Viewer chrome and revealed answers must not print.
+- On screen, `.page-frame` may scale sheets to fit the viewport width; print and layout checks stay unscaled A4.

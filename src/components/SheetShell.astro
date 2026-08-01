@@ -6,8 +6,10 @@ interface Props {
 const { label } = Astro.props;
 ---
 
-<section class="page" aria-label={label}>
-  <div class="page-inner">
-    <slot />
-  </div>
-</section>
+<div class="page-frame">
+  <section class="page" aria-label={label}>
+    <div class="page-inner">
+      <slot />
+    </div>
+  </section>
+</div>

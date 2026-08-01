@@ -389,30 +389,48 @@ const { workbookId, workbookTitle } = Astro.props;
 
   @media (max-width: 560px) {
     .viewer-bar {
+      gap: 8px;
       align-items: stretch;
+      min-height: 0;
+      padding: 8px 12px;
     }
 
     .viewer-brand {
       width: 100%;
+      gap: 4px 8px;
+    }
+
+    .home-link {
+      padding: 8px 10px 8px 8px;
+      min-height: 40px;
     }
 
     .viewer-divider {
       display: none;
     }
 
+    .viewer-title {
+      font-size: 15px;
+    }
+
     .viewer-actions {
       width: 100%;
+      gap: 6px;
     }
 
     .viewer-note {
       max-width: 100%;
       flex: 1 1 100%;
+      min-height: 40px;
+      padding: 8px 12px;
     }
 
     .answers-button,
     .print-button {
       flex: 1;
       min-width: 0;
+      min-height: 40px;
+      padding: 8px 12px;
     }
   }
 

@@ -35,11 +35,20 @@ const { title, workbookId, expectedPages, workbookTitle } = Astro.props;
 
 <style is:global>
   .pages {
+    --page-gutter: 12px;
+    --page-fit: min(1, (100vw - var(--page-gutter) * 2) / 210mm);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10mm;
-    padding: 10mm 0;
+    gap: calc(10mm * var(--page-fit));
+    padding: calc(10mm * var(--page-fit)) 0;
+    overflow-x: clip;
+  }
+
+  .page-frame {
+    width: calc(210mm * var(--page-fit));
+    height: calc(297mm * var(--page-fit));
+    flex-shrink: 0;
   }
 
   .page {
@@ -49,11 +58,13 @@ const { title, workbookId, expectedPages, workbookTitle } = Astro.props;
     padding: 10mm 10mm 8mm;
     background: var(--paper);
     box-shadow: 0 3mm 10mm rgb(23 50 77 / 18%);
+    transform: scale(var(--page-fit));
+    transform-origin: top left;
     break-after: page;
     page-break-after: always;
   }
 
-  .page:last-child {
+  .page-frame:last-child .page {
     break-after: auto;
     page-break-after: auto;
   }
@@ -85,13 +96,22 @@ const { title, workbookId, expectedPages, workbookTitle } = Astro.props;
     }
 
     .pages {
+      --page-fit: 1;
       display: block;
       padding: 0;
+      gap: 0;
+      overflow: visible;
+    }
+
+    .page-frame {
+      width: auto;
+      height: auto;
     }
 
     .page {
       margin: 0;
       box-shadow: none;
+      transform: none;
     }
   }
 </style>
