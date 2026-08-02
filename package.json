@@ -16,5 +16,8 @@
     "astro": "^7.1.6",
     "playwright": "^1.62.0",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "firebase": "^12.17.0"
   }
 }

@@ -1,4 +1,5 @@
 ---
+import AuthControl from "./AuthControl.astro";
 import { withBase } from "../lib/base";
 
 interface Props {
@@ -18,21 +19,11 @@ const { workbookId, workbookTitle } = Astro.props;
     <span class="viewer-divider" aria-hidden="true"></span>
     <div class="viewer-heading">
       <p class="viewer-title">{workbookTitle}</p>
-      <button
-        class="print-date"
-        type="button"
-        data-print-date
-        data-workbook-id={workbookId}
-        hidden
-        aria-label="Remove printed date"
-        title="Remove printed date"
-      >
-        Printed <time></time>
-      </button>
     </div>
   </div>
 
   <div class="viewer-actions">
+    <AuthControl compact />
     <button
       class="viewer-note"
       type="button"
@@ -51,69 +42,30 @@ const { workbookId, workbookTitle } = Astro.props;
 </nav>
 
 <script>
-  import { confirmModal } from "../lib/confirm-modal";
-  import { bindNoteButton } from "../lib/note-modal";
-  import {
-    clearPrintDate,
-    formatPrintDate,
-    getPrintDate,
-    setPrintDate
-  } from "../lib/print-date";
+  import { bindNoteButton, updateNoteButton } from "../lib/note-modal";
+  import { startNotesSync, subscribeNotesChanges } from "../lib/notes-sync";
+  import { getWorkbookNote } from "../lib/workbook-notes";
 
   const answersButton = document.querySelector(".answers-button");
   const printButton = document.querySelector(".print-button");
   const pages = document.getElementById("pages");
-  const printDateEl = document.querySelector("[data-print-date]");
   const noteButton = document.querySelector(".viewer-note[data-workbook-note]");
 
-  function showPrintDate(iso: string) {
-    if (!(printDateEl instanceof HTMLElement)) return;
-    const timeEl = printDateEl.querySelector("time");
-    if (!(timeEl instanceof HTMLTimeElement)) return;
-    timeEl.dateTime = iso;
-    timeEl.textContent = formatPrintDate(iso);
-    printDateEl.hidden = false;
-  }
+  const workbookId =
+    noteButton instanceof HTMLElement ? noteButton.dataset.workbookId : undefined;
 
-  function hidePrintDate() {
-    if (!(printDateEl instanceof HTMLElement)) return;
-    printDateEl.hidden = true;
-    const timeEl = printDateEl.querySelector("time");
-    if (timeEl instanceof HTMLTimeElement) {
-      timeEl.removeAttribute("datetime");
-      timeEl.textContent = "";
-    }
-  }
-
-  const workbookId = printDateEl instanceof HTMLElement
-    ? printDateEl.dataset.workbookId
-    : undefined;
-  if (workbookId) {
-    const saved = getPrintDate(workbookId);
-    if (saved) showPrintDate(saved);
-  }
+  startNotesSync();
 
   if (noteButton instanceof HTMLElement && workbookId) {
     bindNoteButton(noteButton, {
       workbookId,
       workbookTitle: noteButton.dataset.workbookTitle
     });
-  }
 
-  printDateEl?.addEventListener("click", async () => {
-    if (!workbookId || !(printDateEl instanceof HTMLElement) || printDateEl.hidden) {
-      return;
-    }
-    const confirmed = await confirmModal({
-      title: "Remove printed date?",
-      message: "This clears the printed date for this workbook.",
-      confirmLabel: "Remove",
-      cancelLabel: "Cancel"
+    subscribeNotesChanges(() => {
+      updateNoteButton(noteButton, getWorkbookNote(workbookId));
     });
-    if (!confirmed) return;
-    clearPrintDate(workbookId);
-    hidePrintDate();
-  });
+  }
 
   answersButton?.addEventListener("click", () => {
     if (!(answersButton instanceof HTMLButtonElement) || !pages) return;
@@ -126,9 +78,6 @@ const { workbookId, workbookTitle } = Astro.props;
   });
 
   printButton?.addEventListener("click", () => {
-    if (workbookId) {
-      showPrintDate(setPrintDate(workbookId));
-    }
     window.print();
   });
 </script>
@@ -226,22 +175,6 @@ const { workbookId, workbookTitle } = Astro.props;
     letter-spacing: -0.02em;
   }
 
-  .print-date {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    color: var(--muted);
-    background: transparent;
-    font: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: 0.01em;
-    text-align: left;
-    cursor: pointer;
-    transition: color 0.15s ease;
-  }
-
   .viewer-note {
     display: inline-flex;
     gap: 8px;
@@ -289,25 +222,12 @@ const { workbookId, workbookTitle } = Astro.props;
     color: var(--blue-strong);
   }
 
-  .print-date:hover,
-  .print-date:focus-visible {
-    color: var(--ink);
-    text-decoration: underline;
-    outline: none;
-  }
-
   .viewer-note:hover,
   .viewer-note:focus-visible {
     outline: none;
     color: var(--ink);
     background: #e4ebf0;
     border-color: rgb(43 131 184 / 28%);
-  }
-
-  .print-date:focus-visible {
-    outline: 2px solid var(--blue-strong);
-    outline-offset: 2px;
-    border-radius: 2px;
   }
 
   .viewer-note:focus-visible {
@@ -439,7 +359,6 @@ const { workbookId, workbookTitle } = Astro.props;
     .home-chevron,
     .answers-button,
     .print-button,
-    .print-date,
     .viewer-note {
       transition: none;
     }

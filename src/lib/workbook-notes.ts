@@ -4,8 +4,15 @@ const STORAGE_KEY = "worksheets-notes";
 export const GENERAL_NOTE_ID = "general";
 
 export const NOTES_EXPORT_VERSION = 1 as const;
+export const NOTES_STORAGE_VERSION = 1 as const;
 
 export type WorkbookNotes = Record<string, string>;
+
+export type NotesEnvelope = {
+  version: typeof NOTES_STORAGE_VERSION;
+  updatedAt: string;
+  notes: WorkbookNotes;
+};
 
 export type NotesExportPayload = {
   version: typeof NOTES_EXPORT_VERSION;
@@ -25,20 +32,74 @@ function normalizeNotes(value: unknown): WorkbookNotes | null {
   return notes;
 }
 
-function persistNotes(notes: WorkbookNotes): void {
+function emptyEnvelope(updatedAt = new Date(0).toISOString()): NotesEnvelope {
+  return {
+    version: NOTES_STORAGE_VERSION,
+    updatedAt,
+    notes: {}
+  };
+}
+
+function parseEnvelope(raw: unknown): NotesEnvelope | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+
+  const record = raw as Record<string, unknown>;
+
+  // Versioned envelope
+  if ("notes" in record) {
+    const notes = normalizeNotes(record.notes);
+    if (!notes) return null;
+    const updatedAt =
+      typeof record.updatedAt === "string" && record.updatedAt
+        ? record.updatedAt
+        : new Date(0).toISOString();
+    return {
+      version: NOTES_STORAGE_VERSION,
+      updatedAt,
+      notes
+    };
+  }
+
+  // Legacy bare map
+  const notes = normalizeNotes(raw);
+  if (!notes) return null;
+  return {
+    version: NOTES_STORAGE_VERSION,
+    updatedAt: new Date(0).toISOString(),
+    notes
+  };
+}
+
+function persistEnvelope(envelope: NotesEnvelope): void {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+}
+
+export function getNotesEnvelope(): NotesEnvelope {
+  if (typeof localStorage === "undefined") return emptyEnvelope();
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return emptyEnvelope();
+    return parseEnvelope(JSON.parse(raw)) ?? emptyEnvelope();
+  } catch {
+    return emptyEnvelope();
+  }
+}
+
+/** Replace local envelope without bumping updatedAt (used when applying remote). */
+export function writeNotesEnvelope(envelope: NotesEnvelope): NotesEnvelope {
+  const notes = normalizeNotes(envelope.notes) ?? {};
+  const next: NotesEnvelope = {
+    version: NOTES_STORAGE_VERSION,
+    updatedAt: envelope.updatedAt || new Date().toISOString(),
+    notes
+  };
+  persistEnvelope(next);
+  return next;
 }
 
 export function getWorkbookNotes(): WorkbookNotes {
-  if (typeof localStorage === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return normalizeNotes(JSON.parse(raw)) ?? {};
-  } catch {
-    return {};
-  }
+  return getNotesEnvelope().notes;
 }
 
 export function getWorkbookNote(workbookId: string): string | undefined {
@@ -47,28 +108,37 @@ export function getWorkbookNote(workbookId: string): string | undefined {
 
 export function setWorkbookNote(workbookId: string, note: string): string | undefined {
   const trimmed = note.trim();
-  const notes = getWorkbookNotes();
+  const envelope = getNotesEnvelope();
+  const notes = { ...envelope.notes };
 
   if (!trimmed) {
     if (!(workbookId in notes)) return undefined;
     delete notes[workbookId];
-    persistNotes(notes);
-    return undefined;
+  } else {
+    notes[workbookId] = trimmed;
   }
 
-  notes[workbookId] = trimmed;
-  persistNotes(notes);
-  return trimmed;
+  writeNotesEnvelope({
+    version: NOTES_STORAGE_VERSION,
+    updatedAt: new Date().toISOString(),
+    notes
+  });
+
+  return trimmed || undefined;
 }
 
 export function clearWorkbookNote(workbookId: string): void {
   setWorkbookNote(workbookId, "");
 }
 
-/** Replace all stored notes. Empty strings are dropped. */
+/** Replace all stored notes. Empty strings are dropped. Bumps updatedAt. */
 export function replaceWorkbookNotes(next: WorkbookNotes): WorkbookNotes {
   const notes = normalizeNotes(next) ?? {};
-  persistNotes(notes);
+  writeNotesEnvelope({
+    version: NOTES_STORAGE_VERSION,
+    updatedAt: new Date().toISOString(),
+    notes
+  });
   return notes;
 }
 
@@ -96,4 +166,20 @@ export function parseNotesImport(raw: unknown): WorkbookNotes | null {
   }
 
   return normalizeNotes(raw);
+}
+
+/** Union note keys; conflicting text prefers the side with newer updatedAt. */
+export function mergeNotes(
+  local: NotesEnvelope,
+  cloud: NotesEnvelope
+): NotesEnvelope {
+  const localWins = local.updatedAt >= cloud.updatedAt;
+  const preferred = localWins ? local.notes : cloud.notes;
+  const other = localWins ? cloud.notes : local.notes;
+
+  return {
+    version: NOTES_STORAGE_VERSION,
+    updatedAt: localWins ? local.updatedAt : cloud.updatedAt,
+    notes: { ...other, ...preferred }
+  };
 }

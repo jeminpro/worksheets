@@ -1,3 +1,4 @@
+import { queueNotesPush } from "./notes-sync";
 import {
   getWorkbookNote,
   setWorkbookNote
@@ -261,7 +262,11 @@ export function openNoteModal(options: NoteModalOptions): Promise<string | undef
     let saveTimer: ReturnType<typeof setTimeout> | undefined;
     let settled = false;
 
-    const persist = (): string | undefined => setWorkbookNote(workbookId, textarea.value);
+    const persist = (): string | undefined => {
+      const result = setWorkbookNote(workbookId, textarea.value);
+      queueNotesPush();
+      return result;
+    };
 
     const finish = () => {
       if (settled) return;
