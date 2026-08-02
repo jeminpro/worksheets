@@ -23,7 +23,6 @@ const { workbookId, workbookTitle } = Astro.props;
   </div>
 
   <div class="viewer-actions">
-    <AuthControl compact />
     <button
       class="viewer-note"
       type="button"
@@ -38,6 +37,7 @@ const { workbookId, workbookTitle } = Astro.props;
     </button>
     <button class="answers-button" type="button" aria-pressed="false">Answers</button>
     <button class="print-button" type="button">Print</button>
+    <AuthControl compact />
   </div>
 </nav>
 

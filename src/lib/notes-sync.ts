@@ -17,6 +17,7 @@ import {
   NOTES_STORAGE_VERSION,
   getNotesEnvelope,
   mergeNotes,
+  replaceWorkbookNotes,
   writeNotesEnvelope,
   type NotesEnvelope,
   type WorkbookNotes
@@ -28,12 +29,20 @@ export type SyncState = {
   status: SyncStatus;
   user: User | null;
   error: string | null;
+  /** False until Firebase finishes the first auth state check. */
+  authReady: boolean;
 };
 
 type SyncListener = (state: SyncState) => void;
 type NotesChangeListener = (notes: WorkbookNotes) => void;
 
 const PUSH_DEBOUNCE_MS = 400;
+const AUTH_HINT_KEY = "worksheets-auth-hint";
+
+export type AuthHint = {
+  photoURL: string | null;
+  label: string;
+};
 
 let started = false;
 let snapshotUnsub: FirestoreUnsubscribe | undefined;
@@ -42,6 +51,7 @@ let applyingRemote = false;
 let currentUser: User | null = null;
 let status: SyncStatus = "local-only";
 let lastError: string | null = null;
+let authReady = false;
 let mergeInFlight: Promise<void> | null = null;
 
 const stateListeners = new Set<SyncListener>();
@@ -51,10 +61,12 @@ function setState(next: Partial<SyncState>): void {
   if (next.status !== undefined) status = next.status;
   if (next.user !== undefined) currentUser = next.user;
   if (next.error !== undefined) lastError = next.error;
+  if (next.authReady !== undefined) authReady = next.authReady;
   const snapshot: SyncState = {
     status,
     user: currentUser,
-    error: lastError
+    error: lastError,
+    authReady
   };
   for (const listener of stateListeners) listener(snapshot);
 }
@@ -200,17 +212,18 @@ export function startNotesSync(): void {
   started = true;
 
   if (!isFirebaseConfigured()) {
-    setState({ status: "local-only", user: null, error: null });
+    setState({ status: "local-only", user: null, error: null, authReady: true });
     return;
   }
 
   const auth = getFirebaseAuth();
   if (!auth) {
-    setState({ status: "local-only", user: null, error: null });
+    setState({ status: "local-only", user: null, error: null, authReady: true });
     return;
   }
 
-  setState({ status: "signed-out", user: null, error: null });
+  // Stay pending until the first onAuthStateChanged so UI doesn't flash signed-out.
+  setState({ authReady: false, error: null });
 
   onAuthStateChanged(auth, (user) => {
     stopSnapshot();
@@ -221,16 +234,53 @@ export function startNotesSync(): void {
 
     if (!user) {
       currentUser = null;
-      setState({ status: "signed-out", user: null, error: null });
+      clearAuthHint();
+      setState({ status: "signed-out", user: null, error: null, authReady: true });
       return;
     }
 
     currentUser = user;
+    saveAuthHint(user);
+    setState({ user, authReady: true, error: null });
     mergeInFlight = mergeOnSignIn(user).finally(() => {
       mergeInFlight = null;
       if (currentUser?.uid === user.uid) startSnapshot(user.uid);
     });
   });
+}
+
+export function readAuthHint(): AuthHint | null {
+  if (typeof sessionStorage === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(AUTH_HINT_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    const record = parsed as Record<string, unknown>;
+    const label = typeof record.label === "string" ? record.label : "";
+    if (!label) return null;
+    return {
+      label,
+      photoURL: typeof record.photoURL === "string" ? record.photoURL : null
+    };
+  } catch {
+    return null;
+  }
+}
+
+function saveAuthHint(user: User): void {
+  if (typeof sessionStorage === "undefined") return;
+  const label = user.displayName || user.email || "Account";
+  const hint: AuthHint = {
+    label,
+    photoURL: user.photoURL
+  };
+  sessionStorage.setItem(AUTH_HINT_KEY, JSON.stringify(hint));
+}
+
+function clearAuthHint(): void {
+  if (typeof sessionStorage === "undefined") return;
+  sessionStorage.removeItem(AUTH_HINT_KEY);
 }
 
 /** Call after any local notes mutation so signed-in users push to Firestore. */
@@ -270,10 +320,18 @@ export async function signOutUser(): Promise<void> {
     pushTimer = undefined;
   }
   await signOut(auth);
+
+  // Drop local cache so notes aren't left on a shared device.
+  // Cloud copy is unchanged; signing back in restores via merge/pull.
+  clearAuthHint();
+  applyingRemote = true;
+  replaceWorkbookNotes({});
+  applyingRemote = false;
+  notifyNotesChanged();
 }
 
 export function getSyncState(): SyncState {
-  return { status, user: currentUser, error: lastError };
+  return { status, user: currentUser, error: lastError, authReady };
 }
 
 export function subscribeSyncState(listener: SyncListener): () => void {

@@ -20,10 +20,41 @@ const { showStatus = false, compact = false } = Astro.props;
       <span class="auth-status" data-auth-status role="status" aria-live="polite" hidden></span>
     ) : null
   }
-  <span class="auth-user" data-auth-user hidden></span>
-  <button class="auth-button" type="button" data-auth-button>
+
+  <button class="auth-signin" type="button" data-auth-signin hidden>
     Sign in with Google
   </button>
+
+  <div class="auth-menu" data-auth-menu hidden>
+    <button
+      class="auth-menu-trigger"
+      type="button"
+      data-auth-menu-trigger
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Account menu"
+    >
+      <img
+        class="auth-avatar"
+        data-auth-avatar
+        alt=""
+        width="28"
+        height="28"
+        referrerpolicy="no-referrer"
+        hidden
+      />
+      <span class="auth-avatar-fallback" data-auth-avatar-fallback aria-hidden="true" hidden
+        >?</span
+      >
+      <span class="auth-user" data-auth-user hidden></span>
+    </button>
+    <div class="auth-menu-panel" data-auth-menu-panel role="menu" hidden>
+      <p class="auth-menu-meta" data-auth-menu-email hidden></p>
+      <button class="auth-menu-item" type="button" role="menuitem" data-auth-signout>
+        Sign out
+      </button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -33,6 +64,7 @@ const { showStatus = false, compact = false } = Astro.props;
 
 <style>
   .auth-control {
+    position: relative;
     display: inline-flex;
     flex-wrap: wrap;
     gap: 8px 10px;
@@ -41,22 +73,6 @@ const { showStatus = false, compact = false } = Astro.props;
   }
 
   .auth-control[hidden] {
-    display: none;
-  }
-
-  .auth-user {
-    max-width: min(12rem, 40vw);
-    overflow: hidden;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: 0.01em;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .auth-user[hidden] {
     display: none;
   }
 
@@ -72,35 +88,155 @@ const { showStatus = false, compact = false } = Astro.props;
     display: none;
   }
 
-  .auth-button {
+  .auth-signin,
+  .auth-menu-trigger,
+  .auth-menu-item {
+    font: 700 13px/1 "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+
+  .auth-signin {
     min-width: 0;
     padding: 9px 14px;
     border: 1px solid rgb(43 131 184 / 22%);
     border-radius: 999px;
     color: var(--ink);
     background: var(--paper);
-    font: 700 13px/1 "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
-    letter-spacing: 0.01em;
-    cursor: pointer;
     transition:
       background 0.15s ease,
       border-color 0.15s ease,
       color 0.15s ease;
   }
 
-  .auth-button:hover,
-  .auth-button:focus-visible {
+  .auth-signin:hover,
+  .auth-signin:focus-visible,
+  .auth-menu-trigger:hover,
+  .auth-menu-trigger:focus-visible {
     border-color: var(--blue-strong);
     background: var(--blue);
     outline: none;
   }
 
-  .auth-button:focus-visible {
+  .auth-signin:focus-visible,
+  .auth-menu-trigger:focus-visible,
+  .auth-menu-item:focus-visible {
     outline: 2px solid var(--blue-strong);
     outline-offset: 2px;
   }
 
-  .auth-control-compact .auth-button {
+  .auth-menu {
+    position: relative;
+  }
+
+  .auth-menu[hidden],
+  .auth-signin[hidden] {
+    display: none;
+  }
+
+  .auth-menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 2px;
+    border: 1px solid rgb(43 131 184 / 22%);
+    border-radius: 999px;
+    color: var(--ink);
+    background: var(--paper);
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .auth-avatar,
+  .auth-avatar-fallback {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+  }
+
+  .auth-avatar {
+    object-fit: cover;
+    background: rgb(43 131 184 / 12%);
+  }
+
+  .auth-avatar[hidden],
+  .auth-avatar-fallback[hidden] {
+    display: none;
+  }
+
+  .auth-avatar-fallback {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(145deg, #3a96c9 0%, var(--blue-strong) 100%);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .auth-user[hidden] {
+    display: none;
+  }
+
+  .auth-menu-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 40;
+    min-width: 11rem;
+    padding: 6px;
+    border: 1px solid rgb(43 131 184 / 18%);
+    border-radius: 12px;
+    background: var(--paper);
+    box-shadow: 0 12px 28px rgb(23 50 77 / 14%);
+  }
+
+  .auth-menu-panel[hidden] {
+    display: none;
+  }
+
+  .auth-menu-meta {
+    margin: 0;
+    padding: 8px 10px 6px;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .auth-menu-meta[hidden] {
+    display: none;
+  }
+
+  .auth-menu-item {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 10px 10px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--ink);
+    background: transparent;
+    text-align: left;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+
+  .auth-menu-item:hover,
+  .auth-menu-item:focus-visible {
+    background: rgb(43 131 184 / 10%);
+    outline: none;
+  }
+
+  .auth-control-compact .auth-signin {
     padding: 8px 12px;
     background: rgb(237 242 245 / 90%);
     border-color: rgb(23 50 77 / 10%);
@@ -108,20 +244,35 @@ const { showStatus = false, compact = false } = Astro.props;
     font-weight: 600;
   }
 
-  .auth-control-compact .auth-button:hover,
-  .auth-control-compact .auth-button:focus-visible {
+  .auth-control-compact .auth-signin:hover,
+  .auth-control-compact .auth-signin:focus-visible {
     color: var(--ink);
     background: #e4ebf0;
     border-color: rgb(43 131 184 / 28%);
   }
 
-  .auth-control-compact .auth-user {
-    max-width: min(9rem, 28vw);
-    font-size: 12px;
+  .auth-control-compact .auth-menu-trigger {
+    padding: 2px;
+    background: rgb(237 242 245 / 90%);
+    border-color: rgb(23 50 77 / 10%);
+  }
+
+  .auth-control-compact .auth-menu-trigger:hover,
+  .auth-control-compact .auth-menu-trigger:focus-visible {
+    background: #e4ebf0;
+    border-color: rgb(43 131 184 / 28%);
+  }
+
+  .auth-control-compact .auth-avatar,
+  .auth-control-compact .auth-avatar-fallback {
+    width: 26px;
+    height: 26px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .auth-button {
+    .auth-signin,
+    .auth-menu-trigger,
+    .auth-menu-item {
       transition: none;
     }
   }
