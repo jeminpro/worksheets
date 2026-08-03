@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import MentalMathSheet from "../../../workbooks/mental-math/MentalMathSheet.astro";
+import { sheets } from "../../../workbooks/mental-math/data";
+---
+
+<WorkbookLayout
+  title="Mental Maths Worksheets"
+  workbookId="mental-math"
+  expectedPages={sheets.length}
+  workbookTitle="Mental Maths"
+>
+  {sheets.map((sheet) => <MentalMathSheet sheet={sheet} />)}
+</WorkbookLayout>

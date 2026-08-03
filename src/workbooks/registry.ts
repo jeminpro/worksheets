@@ -3,6 +3,8 @@ import { withBase } from "../lib/base";
 import { sheets as additionSheets } from "./addition/data";
 import { sheets as quickAdditionSheets } from "./quick-addition/data";
 import { sheets as subtractionSheets } from "./subtraction/data";
+import { sheets as quickSubtractionSheets } from "./quick-subtraction/data";
+import { sheets as mentalMathSheets } from "./mental-math/data";
 import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
 import { sheets as bidmasSheets } from "./bidmas/data";
@@ -40,6 +42,26 @@ export const workbooks = [
     pageCount: subtractionSheets.length,
     status: "ready",
     icon: "−"
+  },
+  {
+    id: "quick-subtraction",
+    title: "Quick Subtraction",
+    description:
+      "Subtract 1–9 from 1–19 — simple, medium and hard mixed on every page.",
+    href: withBase("topic/quick-subtraction/"),
+    pageCount: quickSubtractionSheets.length,
+    status: "ready",
+    icon: "−−"
+  },
+  {
+    id: "mental-math",
+    title: "Mental Maths",
+    description:
+      "Partitioning, compensation, bridging and difference — then four mixed practice pages.",
+    href: withBase("topic/mental-math/"),
+    pageCount: mentalMathSheets.length,
+    status: "ready",
+    icon: "∑"
   },
   {
     id: "positive-negative",

@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import QuickSubtractionSheet from "../../../workbooks/quick-subtraction/QuickSubtractionSheet.astro";
+import { sheets } from "../../../workbooks/quick-subtraction/data";
+---
+
+<WorkbookLayout
+  title="Quick Subtraction Worksheets"
+  workbookId="quick-subtraction"
+  expectedPages={sheets.length}
+  workbookTitle="Quick Subtraction"
+>
+  {sheets.map((sheet) => <QuickSubtractionSheet sheet={sheet} />)}
+</WorkbookLayout>
