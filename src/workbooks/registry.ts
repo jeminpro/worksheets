@@ -1,4 +1,4 @@
-import type { WorkbookMeta } from "./types";
+import type { WorkbookGroupMeta, WorkbookMeta } from "./types";
 import { withBase } from "../lib/base";
 import { sheets as additionSheets } from "./addition/data";
 import { sheets as quickAdditionSheets } from "./quick-addition/data";
@@ -14,6 +14,29 @@ import { sheets as algebraSolvingEquationsSheets } from "./algebra-solving-equat
 import { sheets as formingExpressionsSheets } from "./forming-expressions/data";
 import { sheets as simplifyCalculationsSheets } from "./simplify-calculations/data";
 
+export const workbookGroups = [
+  {
+    id: "written-methods",
+    title: "Written methods",
+    description: "Column addition, subtraction, multiplication and division."
+  },
+  {
+    id: "quick-practice",
+    title: "Quick practice",
+    description: "Timed drills and mental strategies for speed and fluency."
+  },
+  {
+    id: "number-skills",
+    title: "Number skills",
+    description: "Integers, order of operations, and simplifying calculations."
+  },
+  {
+    id: "algebra",
+    title: "Algebra",
+    description: "Substitute, solve, and form expressions from word problems."
+  }
+] as const satisfies readonly WorkbookGroupMeta[];
+
 export const workbooks = [
   {
     id: "addition",
@@ -22,7 +45,8 @@ export const workbooks = [
     href: withBase("topic/addition/"),
     pageCount: additionSheets.length,
     status: "ready",
-    icon: "+"
+    icon: "+",
+    group: "written-methods"
   },
   {
     id: "quick-addition",
@@ -32,7 +56,8 @@ export const workbooks = [
     href: withBase("topic/quick-addition/"),
     pageCount: quickAdditionSheets.length,
     status: "ready",
-    icon: "++"
+    icon: "++",
+    group: "quick-practice"
   },
   {
     id: "subtraction",
@@ -41,7 +66,8 @@ export const workbooks = [
     href: withBase("topic/subtraction/"),
     pageCount: subtractionSheets.length,
     status: "ready",
-    icon: "−"
+    icon: "−",
+    group: "written-methods"
   },
   {
     id: "quick-subtraction",
@@ -51,7 +77,8 @@ export const workbooks = [
     href: withBase("topic/quick-subtraction/"),
     pageCount: quickSubtractionSheets.length,
     status: "ready",
-    icon: "−−"
+    icon: "−−",
+    group: "quick-practice"
   },
   {
     id: "mental-math",
@@ -61,7 +88,8 @@ export const workbooks = [
     href: withBase("topic/mental-math/"),
     pageCount: mentalMathSheets.length,
     status: "ready",
-    icon: "∑"
+    icon: "∑",
+    group: "quick-practice"
   },
   {
     id: "positive-negative",
@@ -70,7 +98,8 @@ export const workbooks = [
     href: withBase("topic/positive-negative/"),
     pageCount: positiveNegativeSheets.length,
     status: "ready",
-    icon: "±"
+    icon: "±",
+    group: "number-skills"
   },
   {
     id: "multiplication",
@@ -79,7 +108,8 @@ export const workbooks = [
     href: withBase("topic/multiplication/"),
     pageCount: multiplicationSheets.length,
     status: "ready",
-    icon: "×"
+    icon: "×",
+    group: "written-methods"
   },
   {
     id: "division",
@@ -88,7 +118,8 @@ export const workbooks = [
     href: withBase("topic/division/"),
     pageCount: divisionSheets.length,
     status: "ready",
-    icon: "÷"
+    icon: "÷",
+    group: "written-methods"
   },
   {
     id: "simplify-calculations",
@@ -97,7 +128,8 @@ export const workbooks = [
     href: withBase("topic/simplify-calculations/"),
     pageCount: simplifyCalculationsSheets.length,
     status: "ready",
-    icon: "∕"
+    icon: "∕",
+    group: "number-skills"
   },
   {
     id: "bidmas",
@@ -106,7 +138,8 @@ export const workbooks = [
     href: withBase("topic/bidmas/"),
     pageCount: bidmasSheets.length,
     status: "ready",
-    icon: "()"
+    icon: "()",
+    group: "number-skills"
   },
   {
     id: "algebra-substitution",
@@ -115,7 +148,8 @@ export const workbooks = [
     href: withBase("topic/algebra-substitution/"),
     pageCount: algebraSubstitutionSheets.length,
     status: "ready",
-    icon: "x"
+    icon: "x",
+    group: "algebra"
   },
   {
     id: "algebra-solving-equations",
@@ -124,7 +158,8 @@ export const workbooks = [
     href: withBase("topic/algebra-solving-equations/"),
     pageCount: algebraSolvingEquationsSheets.length,
     status: "ready",
-    icon: "="
+    icon: "=",
+    group: "algebra"
   },
   {
     id: "forming-expressions",
@@ -133,9 +168,17 @@ export const workbooks = [
     href: withBase("topic/forming-expressions/"),
     pageCount: formingExpressionsSheets.length,
     status: "ready",
-    icon: "xy"
+    icon: "xy",
+    group: "algebra"
   }
 ] as const satisfies readonly WorkbookMeta[];
+
+export const groupedWorkbooks = workbookGroups
+  .map((group) => ({
+    ...group,
+    workbooks: workbooks.filter((workbook) => workbook.group === group.id)
+  }))
+  .filter((group) => group.workbooks.length > 0);
 
 export function getWorkbook(id: string): WorkbookMeta | undefined {
   return workbooks.find((workbook) => workbook.id === id);
