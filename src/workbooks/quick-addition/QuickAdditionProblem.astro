@@ -1,0 +1,92 @@
+---
+import type { AddendPair } from "./types";
+
+interface Props {
+  pair: AddendPair;
+  index: number;
+}
+
+const { pair, index } = Astro.props;
+const [left, right] = pair;
+const answer = left + right;
+---
+
+<article
+  class="problem"
+  aria-label={`Question ${index + 1}: ${left} plus ${right}`}
+>
+  <span class="problem-number">{index + 1}</span>
+
+  <div class="expression">
+    <span>{left}</span>
+    <span class="plus" aria-hidden="true">+</span>
+    <span>{right}</span>
+    <span class="equals" aria-hidden="true">=</span>
+    <span class="answer-box">
+      <span class="answer">{answer}</span>
+    </span>
+  </div>
+</article>
+
+<style>
+  .problem {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 0;
+    padding: 4mm 2mm 2mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 1.4mm;
+    left: 1.6mm;
+    color: var(--blue-strong);
+    font-size: 6.5pt;
+    font-weight: 800;
+  }
+
+  .expression {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1.4mm;
+    align-items: baseline;
+    justify-content: center;
+    max-width: 100%;
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .plus {
+    color: var(--peach-strong);
+  }
+
+  .equals {
+    color: var(--muted);
+  }
+
+  .answer-box {
+    display: inline-flex;
+    min-width: 9mm;
+    min-height: 1.1em;
+    justify-content: center;
+    border-bottom: 0.45mm solid var(--ink);
+  }
+
+  .answer {
+    color: var(--blue-strong);
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+</style>

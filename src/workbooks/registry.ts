@@ -1,6 +1,7 @@
 import type { WorkbookMeta } from "./types";
 import { withBase } from "../lib/base";
 import { sheets as additionSheets } from "./addition/data";
+import { sheets as quickAdditionSheets } from "./quick-addition/data";
 import { sheets as subtractionSheets } from "./subtraction/data";
 import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
@@ -20,6 +21,16 @@ export const workbooks = [
     pageCount: additionSheets.length,
     status: "ready",
     icon: "+"
+  },
+  {
+    id: "quick-addition",
+    title: "Quick Addition",
+    description:
+      "Single-digit timed drills — simple, medium and hard mixed on every page.",
+    href: withBase("topic/quick-addition/"),
+    pageCount: quickAdditionSheets.length,
+    status: "ready",
+    icon: "++"
   },
   {
     id: "subtraction",

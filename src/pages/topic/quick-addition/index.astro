@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import QuickAdditionSheet from "../../../workbooks/quick-addition/QuickAdditionSheet.astro";
+import { sheets } from "../../../workbooks/quick-addition/data";
+---
+
+<WorkbookLayout
+  title="Quick Addition Worksheets"
+  workbookId="quick-addition"
+  expectedPages={sheets.length}
+  workbookTitle="Quick Addition"
+>
+  {sheets.map((sheet) => <QuickAdditionSheet sheet={sheet} />)}
+</WorkbookLayout>
