@@ -96,7 +96,7 @@ export const workbooks = [
   {
     id: "forming-expressions",
     title: "Forming Expressions",
-    description: "Translate word problems into algebraic expressions, from one-step to multi-variable.",
+    description: "Translate word problems into algebraic expressions, from one-step to multi-variable, with extra medium practice.",
     href: withBase("topic/forming-expressions/"),
     pageCount: formingExpressionsSheets.length,
     status: "ready",

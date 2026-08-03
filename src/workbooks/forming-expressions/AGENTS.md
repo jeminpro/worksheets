@@ -1,10 +1,10 @@
 # Forming expressions workbook
 
-Six A4 word-problem sheets for translating situations into algebraic expressions. Pages 1–2 are easy, pages 3–4 are medium, and pages 5–6 are hard.
+Twelve A4 word-problem sheets for translating situations into algebraic expressions. Pages 1–2 are easy, pages 3–10 are medium, and pages 11–12 are hard.
 
 ## Files
 
-- `data.ts` — prompts and expression trees for all 36 problems.
+- `data.ts` — prompts and expression trees for all 72 problems.
 - `types.ts` — recursive expression and sheet types.
 - `expression.ts` — expression constructors plus visual and spoken formatting.
 - `FormingExpressionsSheet.astro` — page header and six-row layout.
@@ -13,8 +13,8 @@ Six A4 word-problem sheets for translating situations into algebraic expressions
 
 ## Constraints
 
-- Keep six pages with six full-width problems on each page.
-- Keep two pages at each difficulty: easy, medium and hard.
+- Keep twelve pages with six full-width problems on each page.
+- Keep pages 1–2 easy, 3–10 medium, and 11–12 hard.
 - Each problem must state the meaning of every variable it uses.
 - Store answers as expression trees and derive displayed and spoken expressions from them.
 - Use conventional algebraic notation: omit multiplication signs before variables and brackets.
