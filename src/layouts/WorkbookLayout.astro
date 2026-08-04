@@ -34,6 +34,18 @@ const { title, workbookId, expectedPages, workbookTitle } = Astro.props;
 </SiteLayout>
 
 <style is:global>
+  /* Screen-only atmosphere matching the home page; print resets to plain white. */
+  body {
+    background:
+      radial-gradient(ellipse 70% 40% at 18% 0%, rgb(43 131 184 / 14%), transparent 70%),
+      radial-gradient(ellipse 55% 32% at 88% 0%, rgb(224 122 63 / 9%), transparent 65%),
+      linear-gradient(rgb(43 131 184 / 5%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(43 131 184 / 5%) 1px, transparent 1px),
+      linear-gradient(180deg, var(--blue-wash) 0%, var(--viewer) 60%, var(--viewer-deep) 100%);
+    background-attachment: fixed;
+    background-size: auto, auto, 28px 28px, 28px 28px, auto;
+  }
+
   .pages {
     --page-gutter: 12px;
     --page-fit: min(1, (100vw - var(--page-gutter) * 2) / 210mm);
@@ -57,7 +69,9 @@ const { title, workbookId, expectedPages, workbookTitle } = Astro.props;
     overflow: hidden;
     padding: 10mm 10mm 8mm;
     background: var(--paper);
-    box-shadow: 0 3mm 10mm rgb(23 50 77 / 18%);
+    /* Outline instead of border so the 210mm x 297mm box is untouched. */
+    outline: 1px solid rgb(23 50 77 / 10%);
+    box-shadow: 0 3mm 10mm rgb(23 50 77 / 14%);
     transform: scale(var(--page-fit));
     transform-origin: top left;
     break-after: page;
@@ -110,6 +124,7 @@ const { title, workbookId, expectedPages, workbookTitle } = Astro.props;
 
     .page {
       margin: 0;
+      outline: none;
       box-shadow: none;
       transform: none;
     }

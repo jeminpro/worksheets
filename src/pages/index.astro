@@ -33,9 +33,6 @@ const notesHref = withBase("notes/");
           <AuthControl />
         </div>
         <h1 class="brand">Worksheets</h1>
-        <p class="lead">
-          Pick a topic, open the workbook, then print the pages you need.
-        </p>
       </header>
 
       <section class="catalog" aria-label="Available workbooks">
@@ -53,13 +50,16 @@ const notesHref = withBase("notes/");
         <div class="catalog-groups">
           {
             groupedWorkbooks.map((group) => (
-              <section class="topic-group" aria-labelledby={`group-${group.id}`}>
+              <section
+                class="topic-group"
+                aria-labelledby={`group-${group.id}`}
+                style={`--accent: var(--accent-${group.id}); --accent-bright: var(--accent-${group.id}-bright);`}
+              >
                 <div class="group-head">
                   <h3 class="group-title" id={`group-${group.id}`}>
                     <span>{group.title}</span>
                     <span class="catalog-count">{group.workbooks.length}</span>
                   </h3>
-                  <p class="group-desc">{group.description}</p>
                 </div>
 
                 <ul class="catalog-list">
@@ -137,11 +137,14 @@ const notesHref = withBase("notes/");
 
 <style>
   .home {
+    --accent: var(--blue-strong);
+    --accent-bright: var(--blue-bright);
+
     position: relative;
     isolation: isolate;
     min-height: 100vh;
     overflow: hidden;
-    background: linear-gradient(180deg, #e8f4fb 0%, var(--viewer) 55%, #e4ebf0 100%);
+    background: linear-gradient(180deg, var(--blue-wash) 0%, var(--viewer) 55%, var(--viewer-deep) 100%);
     font-family: "Source Sans 3", "Trebuchet MS", "Segoe UI", sans-serif;
   }
 
@@ -200,16 +203,6 @@ const notesHref = withBase("notes/");
     letter-spacing: -0.03em;
   }
 
-  .lead {
-    margin: 0;
-    max-width: none;
-    color: var(--muted);
-    font-size: clamp(16px, 2.4vw, 18px);
-    font-weight: 400;
-    line-height: 1.55;
-    white-space: nowrap;
-  }
-
   .catalog-head {
     display: flex;
     flex-wrap: wrap;
@@ -238,8 +231,8 @@ const notesHref = withBase("notes/");
     padding: 2px 8px;
     place-items: center;
     border-radius: 999px;
-    color: var(--blue-strong);
-    background: rgb(43 131 184 / 12%);
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.02em;
@@ -305,14 +298,6 @@ const notesHref = withBase("notes/");
     text-transform: uppercase;
   }
 
-  .group-desc {
-    margin: 0;
-    color: var(--muted);
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.45;
-  }
-
   .catalog-list {
     display: grid;
     gap: 10px;
@@ -352,11 +337,11 @@ const notesHref = withBase("notes/");
 
   .card:has(.card-main:hover),
   .card:has(.card-main:focus-visible) {
-    border-color: var(--blue-strong);
+    border-color: var(--accent);
     background: var(--paper);
     box-shadow:
       0 1px 0 rgb(255 255 255 / 90%) inset,
-      0 14px 32px rgb(43 131 184 / 14%);
+      0 14px 32px color-mix(in srgb, var(--accent) 14%, transparent);
   }
 
   .card-main {
@@ -380,12 +365,12 @@ const notesHref = withBase("notes/");
     place-items: center;
     border-radius: 12px;
     color: #fff;
-    background: linear-gradient(145deg, #3a96c9 0%, var(--blue-strong) 100%);
+    background: linear-gradient(145deg, var(--accent-bright) 0%, var(--accent) 100%);
     font-family: Fraunces, Georgia, serif;
     font-size: 22px;
     font-weight: 650;
     line-height: 1;
-    box-shadow: 0 6px 14px rgb(43 131 184 / 28%);
+    box-shadow: 0 6px 14px color-mix(in srgb, var(--accent) 28%, transparent);
     pointer-events: none;
   }
 
@@ -406,13 +391,15 @@ const notesHref = withBase("notes/");
   }
 
   .card-title-row strong {
+    display: -webkit-box;
     min-width: 0;
     overflow: hidden;
     font-size: 16px;
     font-weight: 700;
     letter-spacing: -0.01em;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .card-meta {
@@ -479,7 +466,7 @@ const notesHref = withBase("notes/");
   .card-note:focus-visible {
     outline: none;
     color: var(--ink);
-    background: #e4ebf0;
+    background: var(--viewer-deep);
     border-color: rgb(43 131 184 / 28%);
   }
 
@@ -491,7 +478,7 @@ const notesHref = withBase("notes/");
   .card-arrow {
     grid-column: 4;
     grid-row: 1;
-    color: var(--blue-strong);
+    color: var(--accent);
     font-size: 18px;
     font-weight: 700;
     line-height: 1;
@@ -540,10 +527,6 @@ const notesHref = withBase("notes/");
   @media (max-width: 560px) {
     .home-inner {
       padding: clamp(28px, 6vh, 56px) 16px 48px;
-    }
-
-    .lead {
-      white-space: normal;
     }
 
     .topic-group + .topic-group {
