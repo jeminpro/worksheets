@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import QuickMultiplicationSheet from "../../../workbooks/quick-multiplication/QuickMultiplicationSheet.astro";
+import { sheets } from "../../../workbooks/quick-multiplication/data";
+---
+
+<WorkbookLayout
+  title="Quick Multiplication Worksheets"
+  workbookId="quick-multiplication"
+  expectedPages={sheets.length}
+  workbookTitle="Quick Multiplication"
+>
+  {sheets.map((sheet) => <QuickMultiplicationSheet sheet={sheet} />)}
+</WorkbookLayout>

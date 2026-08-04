@@ -4,6 +4,7 @@ import { sheets as additionSheets } from "./addition/data";
 import { sheets as quickAdditionSheets } from "./quick-addition/data";
 import { sheets as subtractionSheets } from "./subtraction/data";
 import { sheets as quickSubtractionSheets } from "./quick-subtraction/data";
+import { sheets as quickMultiplicationSheets } from "./quick-multiplication/data";
 import { sheets as mentalMathSheets } from "./mental-math/data";
 import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
@@ -78,6 +79,17 @@ export const workbooks = [
     pageCount: quickSubtractionSheets.length,
     status: "ready",
     icon: "−−",
+    group: "quick-practice"
+  },
+  {
+    id: "quick-multiplication",
+    title: "Quick Multiplication",
+    description:
+      "1–12 times tables — simple, medium and hard mixed on every page.",
+    href: withBase("topic/quick-multiplication/"),
+    pageCount: quickMultiplicationSheets.length,
+    status: "ready",
+    icon: "××",
     group: "quick-practice"
   },
   {
