@@ -18,9 +18,11 @@ const answer = dividend / divisor;
   <span class="problem-number">{index + 1}</span>
 
   <div class="expression">
-    <span>{dividend}</span>
-    <span class="divide" aria-hidden="true">÷</span>
-    <span>{divisor}</span>
+    <div class="fraction">
+      <span class="numerator">{dividend}</span>
+      <span class="bar" aria-hidden="true"></span>
+      <span class="denominator">{divisor}</span>
+    </div>
     <span class="equals" aria-hidden="true">=</span>
     <span class="answer-box">
       <span class="answer">{answer}</span>
@@ -53,30 +55,51 @@ const answer = dividend / divisor;
   .expression {
     display: flex;
     flex-wrap: nowrap;
-    gap: 1.4mm;
-    align-items: baseline;
+    gap: 2mm;
+    align-items: center;
     justify-content: center;
     max-width: 100%;
     color: #152b3d;
     font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
     font-size: 14pt;
     font-weight: 800;
-    line-height: 1.15;
-    white-space: nowrap;
+    line-height: 1;
   }
 
-  .divide {
-    color: var(--peach-strong);
+  .fraction {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-shrink: 0;
+    min-width: 8mm;
+  }
+
+  .numerator,
+  .denominator {
+    display: block;
+    padding: 0 1.2mm;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .bar {
+    display: block;
+    width: 100%;
+    min-width: 100%;
+    border-top: 0.45mm solid currentColor;
+    margin: 0.4mm 0;
   }
 
   .equals {
     color: var(--muted);
+    flex-shrink: 0;
   }
 
   .answer-box {
     display: inline-flex;
     min-width: 11mm;
     min-height: 1.1em;
+    flex-shrink: 0;
     justify-content: center;
     border-bottom: 0.45mm solid var(--ink);
   }
