@@ -6,7 +6,7 @@ export const sheets = [
     page: 1,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [3, 1], [4, 1], [3, 6], [4, 3], [4, 2],
       [7, 1], [5, 6], [3, 8], [1, 8], [3, 7],
@@ -22,7 +22,7 @@ export const sheets = [
     page: 2,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [7, 9], [2, 6], [8, 1], [3, 6], [7, 7],
       [9, 7], [5, 7], [9, 2], [5, 3], [8, 4],
@@ -38,7 +38,7 @@ export const sheets = [
     page: 3,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [7, 5], [7, 4], [5, 7], [8, 8], [9, 8],
       [2, 7], [7, 7], [4, 1], [5, 4], [6, 1],
@@ -54,7 +54,7 @@ export const sheets = [
     page: 4,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [4, 6], [9, 1], [5, 6], [3, 5], [6, 8],
       [4, 5], [8, 6], [2, 5], [8, 7], [5, 9],
@@ -70,7 +70,7 @@ export const sheets = [
     page: 5,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [2, 5], [1, 1], [5, 4], [9, 6], [8, 6],
       [9, 9], [5, 2], [2, 6], [5, 1], [6, 4],
@@ -86,7 +86,7 @@ export const sheets = [
     page: 6,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [7, 7], [8, 8], [8, 9], [4, 4], [2, 2],
       [5, 3], [5, 4], [3, 4], [7, 5], [9, 4],
@@ -102,7 +102,7 @@ export const sheets = [
     page: 7,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [7, 1], [8, 1], [5, 9], [6, 2], [7, 6],
       [7, 5], [7, 9], [8, 7], [6, 6], [4, 9],
@@ -118,7 +118,7 @@ export const sheets = [
     page: 8,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [6, 1], [3, 5], [9, 2], [1, 7], [5, 5],
       [6, 2], [1, 4], [9, 1], [4, 4], [6, 8],
@@ -134,7 +134,7 @@ export const sheets = [
     page: 9,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [7, 7], [6, 9], [4, 2], [8, 8], [2, 5],
       [5, 2], [6, 3], [3, 5], [2, 3], [4, 4],
@@ -150,7 +150,7 @@ export const sheets = [
     page: 10,
     title: "Quick Addition",
     label: "Single-digit quick addition",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [4, 6], [9, 4], [3, 9], [5, 4], [2, 6],
       [9, 5], [9, 9], [1, 2], [8, 7], [8, 2],

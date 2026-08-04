@@ -6,7 +6,7 @@ export const sheets = [
     page: 1,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [4, 2], [4, 9], [2, 6], [5, 5], [10, 1],
       [2, 7], [7, 1], [7, 12], [9, 3], [9, 6],
@@ -22,7 +22,7 @@ export const sheets = [
     page: 2,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [12, 11], [10, 12], [2, 1], [1, 12], [2, 10],
       [9, 7], [3, 8], [5, 4], [5, 7], [12, 3],
@@ -38,7 +38,7 @@ export const sheets = [
     page: 3,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [3, 2], [12, 10], [11, 4], [6, 3], [6, 2],
       [12, 9], [9, 9], [11, 12], [1, 4], [7, 12],
@@ -54,7 +54,7 @@ export const sheets = [
     page: 4,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [8, 11], [7, 2], [9, 9], [1, 12], [12, 11],
       [2, 2], [3, 5], [4, 9], [11, 2], [9, 6],
@@ -70,7 +70,7 @@ export const sheets = [
     page: 5,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [3, 8], [2, 1], [9, 7], [10, 7], [2, 3],
       [7, 1], [11, 4], [12, 3], [10, 4], [2, 12],
@@ -86,7 +86,7 @@ export const sheets = [
     page: 6,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [1, 4], [10, 4], [9, 10], [11, 5], [10, 8],
       [11, 7], [2, 3], [3, 1], [7, 9], [10, 12],
@@ -102,7 +102,7 @@ export const sheets = [
     page: 7,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [3, 4], [7, 6], [9, 11], [6, 9], [7, 2],
       [1, 12], [5, 5], [4, 12], [7, 9], [10, 5],
@@ -118,7 +118,7 @@ export const sheets = [
     page: 8,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [6, 7], [10, 12], [3, 2], [4, 8], [7, 1],
       [8, 12], [5, 2], [9, 9], [1, 6], [8, 7],
@@ -134,7 +134,7 @@ export const sheets = [
     page: 9,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [2, 9], [7, 1], [12, 1], [9, 7], [7, 10],
       [6, 6], [9, 8], [5, 4], [10, 8], [5, 10],
@@ -150,7 +150,7 @@ export const sheets = [
     page: 10,
     title: "Quick Multiplication",
     label: "Times tables 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [4, 7], [4, 1], [2, 2], [11, 6], [7, 9],
       [4, 8], [2, 9], [3, 10], [1, 6], [6, 3],

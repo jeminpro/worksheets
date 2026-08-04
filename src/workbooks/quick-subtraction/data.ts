@@ -6,7 +6,7 @@ export const sheets = [
     page: 1,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [7, 6], [4, 1], [4, 2], [10, 5], [13, 4],
       [14, 2], [10, 9], [11, 4], [9, 7], [11, 3],
@@ -22,7 +22,7 @@ export const sheets = [
     page: 2,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [10, 3], [11, 5], [12, 4], [14, 3], [8, 3],
       [14, 8], [10, 9], [8, 4], [11, 2], [14, 7],
@@ -38,7 +38,7 @@ export const sheets = [
     page: 3,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [11, 7], [13, 2], [12, 1], [11, 4], [11, 1],
       [9, 3], [6, 1], [10, 1], [11, 3], [9, 8],
@@ -54,7 +54,7 @@ export const sheets = [
     page: 4,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [8, 2], [9, 1], [8, 1], [18, 9], [15, 4],
       [18, 1], [18, 6], [19, 9], [7, 7], [19, 6],
@@ -70,7 +70,7 @@ export const sheets = [
     page: 5,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [11, 9], [11, 8], [12, 5], [14, 1], [14, 4],
       [10, 8], [12, 1], [12, 4], [18, 6], [15, 6],
@@ -86,7 +86,7 @@ export const sheets = [
     page: 6,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [14, 8], [8, 3], [14, 4], [10, 6], [16, 6],
       [15, 4], [9, 6], [8, 8], [18, 9], [9, 5],
@@ -102,7 +102,7 @@ export const sheets = [
     page: 7,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [14, 8], [18, 6], [12, 9], [14, 9], [16, 8],
       [2, 1], [15, 2], [4, 3], [9, 3], [7, 1],
@@ -118,7 +118,7 @@ export const sheets = [
     page: 8,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [9, 1], [6, 2], [8, 4], [13, 4], [14, 8],
       [3, 2], [13, 6], [8, 6], [6, 3], [19, 2],
@@ -134,7 +134,7 @@ export const sheets = [
     page: 9,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [7, 1], [17, 6], [15, 1], [18, 5], [11, 7],
       [8, 1], [14, 2], [5, 3], [11, 5], [13, 9],
@@ -150,7 +150,7 @@ export const sheets = [
     page: 10,
     title: "Quick Subtraction",
     label: "Quick subtraction",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [12, 5], [12, 8], [19, 1], [10, 4], [19, 3],
       [19, 2], [16, 5], [15, 1], [6, 1], [6, 6],

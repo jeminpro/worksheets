@@ -6,7 +6,7 @@ export const sheets = [
     page: 1,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [110, 10], [10, 5], [99, 9], [3, 1], [30, 3],
       [40, 10], [6, 1], [49, 7], [8, 8], [90, 10],
@@ -22,7 +22,7 @@ export const sheets = [
     page: 2,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [4, 1], [36, 4], [10, 10], [100, 10], [60, 6],
       [36, 12], [55, 11], [12, 1], [7, 7], [30, 3],
@@ -38,7 +38,7 @@ export const sheets = [
     page: 3,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [70, 7], [12, 1], [30, 3], [90, 9], [80, 10],
       [9, 3], [7, 7], [16, 2], [10, 10], [12, 4],
@@ -54,7 +54,7 @@ export const sheets = [
     page: 4,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [20, 10], [8, 1], [55, 11], [8, 2], [99, 9],
       [60, 10], [10, 5], [27, 3], [81, 9], [56, 8],
@@ -70,7 +70,7 @@ export const sheets = [
     page: 5,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [70, 7], [5, 1], [30, 3], [8, 2], [8, 4],
       [24, 2], [63, 9], [55, 11], [8, 1], [99, 11],
@@ -86,7 +86,7 @@ export const sheets = [
     page: 6,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [88, 11], [10, 1], [99, 9], [72, 6], [20, 5],
       [3, 1], [55, 5], [44, 11], [36, 4], [5, 1],
@@ -102,7 +102,7 @@ export const sheets = [
     page: 7,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [24, 2], [6, 2], [4, 2], [49, 7], [110, 10],
       [8, 2], [36, 3], [63, 9], [9, 1], [70, 10],
@@ -118,7 +118,7 @@ export const sheets = [
     page: 8,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [99, 9], [11, 11], [120, 12], [44, 11], [20, 5],
       [10, 10], [72, 8], [77, 11], [8, 1], [45, 9],
@@ -134,7 +134,7 @@ export const sheets = [
     page: 9,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [10, 5], [72, 6], [4, 1], [4, 2], [63, 9],
       [55, 11], [88, 8], [9, 9], [7, 7], [6, 6],
@@ -150,7 +150,7 @@ export const sheets = [
     page: 10,
     title: "Quick Division",
     label: "Times-table division 1–12",
-    timing: { average: "4 min", good: "3 min", excellent: "2 min" },
+    timing: { average: "4 min", good: "3 min", excellent: "2 min", genius: "1 min" },
     problems: [
       [24, 3], [20, 2], [110, 10], [77, 11], [60, 12],
       [8, 2], [12, 3], [16, 8], [30, 3], [88, 8],

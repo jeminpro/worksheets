@@ -13,7 +13,7 @@ const { sheet } = Astro.props;
 const questionCount = sheet.problems.length;
 const columns = 5;
 const rows = Math.ceil(questionCount / columns);
-const { average, good, excellent } = sheet.timing;
+const { average, good, excellent, genius } = sheet.timing;
 ---
 
 <SheetShell label={`${sheet.label} worksheet, page ${sheet.page}`}>
@@ -22,11 +22,13 @@ const { average, good, excellent } = sheet.timing;
     <div class="heading">
       <h1>{sheet.title}</h1>
       <p class="timing">
-        <span>Average {average}</span>
+        <span>Average &lt; {average}</span>
         <span aria-hidden="true">·</span>
-        <span>Good {good}</span>
+        <span>Good &lt; {good}</span>
         <span aria-hidden="true">·</span>
-        <span>Excellent {excellent}</span>
+        <span>Excellent &lt; {excellent}</span>
+        <span aria-hidden="true">·</span>
+        <span>Genius &lt; {genius}</span>
       </p>
     </div>
     <PageNumber page={sheet.page} />

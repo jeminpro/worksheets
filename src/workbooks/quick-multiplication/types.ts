@@ -4,6 +4,7 @@ export interface QuickMultiplicationTiming {
   average: string;
   good: string;
   excellent: string;
+  genius: string;
 }
 
 export interface QuickMultiplicationSheet {

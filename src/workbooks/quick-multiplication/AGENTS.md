@@ -1,6 +1,6 @@
 # Quick multiplication workbook
 
-10 A4 pages of 1–12 times-table drills. Each page mixes simple (product ≤ 20), medium (21–60) and hard (61–144) — 14 / 13 / 13 of 40 questions in a 5×8 grid. Horizontal `a × b =` layout for timed mental practice. Subheading shows Average / Good / Excellent timing targets.
+10 A4 pages of 1–12 times-table drills. Each page mixes simple (product ≤ 20), medium (21–60) and hard (61–144) — 14 / 13 / 13 of 40 questions in a 5×8 grid. Horizontal `a × b =` layout for timed mental practice. Subheading shows Average / Good / Excellent / Genius timing targets (finish in less than the shown time).
 
 ## Files
 
@@ -15,7 +15,7 @@
 - Keep 10 pages, each with 40 problems in a 5×8 grid.
 - Both factors are 1–12 (full times-table range).
 - Mix ~14 simple, ~13 medium, ~13 hard on every page.
-- Timing targets stay on the sheet subheading (Average / Good / Excellent).
+- Timing targets stay on the sheet subheading (Average / Good / Excellent / Genius), each prefixed with `<` (less than).
 - Digits stay 14pt; question numbers stay 6.5pt.
 - Use a typographic multiply (`×`) in displayed expressions.
 - Derive each answer from the pair rather than storing it separately.
@@ -28,7 +28,7 @@
   page: number;
   title: string;
   label: string;
-  timing: { average: string; good: string; excellent: string };
+  timing: { average: string; good: string; excellent: string; genius: string };
   problems: readonly [number, number][]; // 40 for 5×8
 }
 ```

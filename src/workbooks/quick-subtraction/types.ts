@@ -4,6 +4,7 @@ export interface QuickSubtractionTiming {
   average: string;
   good: string;
   excellent: string;
+  genius: string;
 }
 
 export interface QuickSubtractionSheet {
