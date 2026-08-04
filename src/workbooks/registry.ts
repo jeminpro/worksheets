@@ -5,6 +5,7 @@ import { sheets as quickAdditionSheets } from "./quick-addition/data";
 import { sheets as subtractionSheets } from "./subtraction/data";
 import { sheets as quickSubtractionSheets } from "./quick-subtraction/data";
 import { sheets as quickMultiplicationSheets } from "./quick-multiplication/data";
+import { sheets as quickDivisionSheets } from "./quick-division/data";
 import { sheets as mentalMathSheets } from "./mental-math/data";
 import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
@@ -90,6 +91,17 @@ export const workbooks = [
     pageCount: quickMultiplicationSheets.length,
     status: "ready",
     icon: "××",
+    group: "quick-practice"
+  },
+  {
+    id: "quick-division",
+    title: "Quick Division",
+    description:
+      "1–12 times-table division — simple, medium and hard mixed on every page.",
+    href: withBase("topic/quick-division/"),
+    pageCount: quickDivisionSheets.length,
+    status: "ready",
+    icon: "÷÷",
     group: "quick-practice"
   },
   {

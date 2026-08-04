@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import QuickDivisionSheet from "../../../workbooks/quick-division/QuickDivisionSheet.astro";
+import { sheets } from "../../../workbooks/quick-division/data";
+---
+
+<WorkbookLayout
+  title="Quick Division Worksheets"
+  workbookId="quick-division"
+  expectedPages={sheets.length}
+  workbookTitle="Quick Division"
+>
+  {sheets.map((sheet) => <QuickDivisionSheet sheet={sheet} />)}
+</WorkbookLayout>
