@@ -8,13 +8,21 @@ export type BasicsTopic =
   | "negative-numbers"
   | "bidmas";
 
-export type BasicsDisplay = "prompt" | "expression";
+/**
+ * How a question card is laid out:
+ * - `values` — instruction above one or more given numbers, answer on a line.
+ * - `compare` — two given numbers with the answer box between them.
+ * - `expression` — a calculation followed by `=` and the answer box.
+ * - `text` — instruction only, answer on a line.
+ */
+export type BasicsFormat = "values" | "compare" | "expression" | "text";
 
 export interface BasicsProblem {
   difficulty: BasicsDifficulty;
-  prompt: string;
+  prompt?: string;
+  given?: string | readonly string[];
+  format?: BasicsFormat;
   answer: string;
-  display?: BasicsDisplay;
 }
 
 export interface BasicsSheet {

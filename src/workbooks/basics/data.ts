@@ -1,6 +1,10 @@
 import type { BasicsSheet } from "./types";
 
-/** 11+ number-skills assessment: six topics, five easy / medium / hard each. */
+/**
+ * 11+ number-skills assessment: six topics, five easy / medium / hard each.
+ * Within each band the last two problems sit in wide cards, so the longest
+ * prompts and calculations belong in positions 4 and 5.
+ */
 export const sheets = [
   {
     page: 1,
@@ -8,29 +12,64 @@ export const sheets = [
     label: "Basics place value",
     topic: "place-value",
     instruction:
-      "Find the value of a digit, write expanded numbers, or name a place.",
+      "Find digit values, identify places, multiply or divide by 10/100, and partition numbers.",
     problems: [
-      { difficulty: "easy", prompt: "Value of 6 in 64?", answer: "60" },
-      { difficulty: "easy", prompt: "Value of 4 in 4,128?", answer: "4,000" },
-      { difficulty: "easy", prompt: "Tens digit of 5,382?", answer: "8" },
       {
         difficulty: "easy",
-        prompt: "3,000 + 200 + 50 + 7 =",
-        answer: "3,257",
-        display: "expression"
-      },
-      { difficulty: "easy", prompt: "Value of 9 in 905?", answer: "900" },
-      { difficulty: "medium", prompt: "Value of 7 in 75,403?", answer: "70,000" },
-      {
-        difficulty: "medium",
-        prompt: "Thousands digit of 286,419?",
-        answer: "6"
+        prompt: "Value of the digit 6 in",
+        given: "640",
+        answer: "600"
       },
       {
+        difficulty: "easy",
+        prompt: "Value of the digit 4 in",
+        given: "4,128",
+        answer: "4,000"
+      },
+      {
+        difficulty: "easy",
+        prompt: "Which digit is in the tens place?",
+        given: "5,382",
+        answer: "8"
+      },
+      {
+        difficulty: "easy",
+        format: "expression",
+        prompt: "Write as a single number",
+        given: "3,000 + 200 + 50 + 7",
+        answer: "3,257"
+      },
+      {
+        difficulty: "easy",
+        format: "expression",
+        prompt: "Multiply by 10",
+        given: "45 × 10",
+        answer: "450"
+      },
+      {
         difficulty: "medium",
-        prompt: "40,000 + 3,000 + 80 + 2 =",
-        answer: "43,082",
-        display: "expression"
+        prompt: "Value of the digit 7 in",
+        given: "75,403",
+        answer: "70,000"
+      },
+      {
+        difficulty: "medium",
+        prompt: "Which digit is in the tenths place?",
+        given: "48.35",
+        answer: "3"
+      },
+      {
+        difficulty: "medium",
+        prompt: "Value of the digit 9 in",
+        given: "6.92",
+        answer: "0.9"
+      },
+      {
+        difficulty: "medium",
+        format: "expression",
+        prompt: "Multiply by 100",
+        given: "3.4 × 100",
+        answer: "340"
       },
       {
         difficulty: "medium",
@@ -38,25 +77,23 @@ export const sheets = [
         answer: "100"
       },
       {
-        difficulty: "medium",
-        prompt: "Expand 60,205.",
-        answer: "60,000 + 200 + 5"
-      },
-      {
         difficulty: "hard",
-        prompt: "Value of 8 in 8,406,219?",
+        prompt: "Value of the digit 8 in",
+        given: "8,406,219",
         answer: "8,000,000"
       },
       {
         difficulty: "hard",
-        prompt: "Hundred thousands digit of 3,752,681?",
-        answer: "7"
+        format: "expression",
+        prompt: "Divide by 100",
+        given: "420 ÷ 100",
+        answer: "4.2"
       },
       {
         difficulty: "hard",
-        prompt: "2,000,000 + 50,000 + 400 + 9 =",
-        answer: "2,050,409",
-        display: "expression"
+        prompt: "Which digit is in the hundred thousands place?",
+        given: "3,752,681",
+        answer: "7"
       },
       {
         difficulty: "hard",
@@ -65,8 +102,10 @@ export const sheets = [
       },
       {
         difficulty: "hard",
-        prompt: "4 millions, 7 ten thousands, 2 hundreds, 5 ones.",
-        answer: "4,070,205"
+        format: "expression",
+        prompt: "Write as a single number",
+        given: "2,000,000 + 50,000 + 400 + 9",
+        answer: "2,050,409"
       }
     ]
   },
@@ -76,70 +115,100 @@ export const sheets = [
     label: "Basics order and compare",
     topic: "order-compare",
     instruction:
-      "Compare with < or >, pick the larger or smaller number, or order smallest first.",
+      "Choose the number described, compare with < and >, or order numbers from smallest to largest.",
     problems: [
       {
         difficulty: "easy",
-        prompt: "Which is greater: 3,472 or 3,427?",
+        prompt: "Which is greater?",
+        given: ["3,472", "3,427"],
         answer: "3,472"
       },
       {
         difficulty: "easy",
-        prompt: "Which is smaller: 809 or 890?",
+        prompt: "Which is smaller?",
+        given: ["809", "890"],
         answer: "809"
       },
-      { difficulty: "easy", prompt: "2,605  ___  2,650", answer: "<" },
       {
         difficulty: "easy",
-        prompt: "Smallest first: 45, 54, 40",
-        answer: "40, 45, 54"
+        format: "compare",
+        prompt: "Write < or > in the box",
+        given: ["2,605", "2,650"],
+        answer: "<"
       },
       {
         difficulty: "easy",
-        prompt: "Largest: 1,208  1,280  1,028",
+        prompt: "Which is largest?",
+        given: ["1,208", "1,280", "1,028"],
         answer: "1,280"
       },
       {
+        difficulty: "easy",
+        prompt: "Order smallest to largest",
+        given: ["450", "405", "455"],
+        answer: "405, 450, 455"
+      },
+      {
         difficulty: "medium",
-        prompt: "Which is greater: 47,308 or 47,380?",
+        prompt: "Which is greater?",
+        given: ["47,308", "47,380"],
         answer: "47,380"
       },
-      { difficulty: "medium", prompt: "105,092  ___  105,029", answer: ">" },
       {
         difficulty: "medium",
-        prompt: "Smallest first: 6,214  6,241  6,124",
-        answer: "6,124  6,214  6,241"
-      },
-      {
-        difficulty: "medium",
-        prompt: "Closer to 8,000: 7,862 or 8,149?",
+        prompt: "Which is closer to 8,000?",
+        given: ["7,862", "8,149"],
         answer: "7,862"
       },
       {
         difficulty: "medium",
-        prompt: "Smallest: 90,405  90,450  90,045",
+        format: "compare",
+        prompt: "Write < or > in the box",
+        given: ["105,092", "105,029"],
+        answer: ">"
+      },
+      {
+        difficulty: "medium",
+        prompt: "Which is smallest?",
+        given: ["90,405", "90,450", "90,045"],
         answer: "90,045"
       },
       {
+        difficulty: "medium",
+        prompt: "Order smallest to largest",
+        given: ["6,214", "6,241", "6,124"],
+        answer: "6,124, 6,214, 6,241"
+      },
+      {
         difficulty: "hard",
-        prompt: "Which is greater: 3,080,419 or 3,008,941?",
+        prompt: "Which is greater?",
+        given: ["3,080,419", "3,008,941"],
         answer: "3,080,419"
       },
-      { difficulty: "hard", prompt: "2,506,070  ___  2,560,007", answer: "<" },
       {
         difficulty: "hard",
-        prompt: "Smallest first: 415,207  451,027  405,721",
-        answer: "405,721  415,207  451,027"
-      },
-      {
-        difficulty: "hard",
-        prompt: "Closer to 1,000,000: 987,650 or 1,014,200?",
+        prompt: "Which is closer to 1,000,000?",
+        given: ["987,650", "1,014,200"],
         answer: "987,650"
       },
       {
         difficulty: "hard",
-        prompt: "Largest: 2,099,999  2,109,000  2,090,999",
-        answer: "2,109,000"
+        format: "compare",
+        prompt: "Write < or > in the box",
+        given: ["2,506,070", "2,560,007"],
+        answer: "<"
+      },
+      {
+        difficulty: "hard",
+        prompt: "Which is smaller?",
+        given: ["2,099,999", "2,090,999"],
+        answer: "2,090,999"
+      },
+      {
+        difficulty: "hard",
+        prompt: "Order smallest to largest",
+        given: ["415,207", "451,027", "405,721"],
+        answer: "405,721, 415,207, 451,027"
       }
     ]
   },
@@ -148,43 +217,102 @@ export const sheets = [
     title: "Basics: Roman Numerals",
     label: "Basics Roman numerals",
     topic: "roman-numerals",
-    instruction: "Convert between Roman numerals and ordinary numbers.",
+    instruction:
+      "Convert between Roman numerals and ordinary numbers, or work out Roman calculations.",
     problems: [
-      { difficulty: "easy", prompt: "Write V as a number.", answer: "5" },
-      { difficulty: "easy", prompt: "Write X as a number.", answer: "10" },
-      { difficulty: "easy", prompt: "Write 3 in Roman numerals.", answer: "III" },
-      { difficulty: "easy", prompt: "Write IV as a number.", answer: "4" },
       {
         difficulty: "easy",
-        prompt: "Write 12 in Roman numerals.",
-        answer: "XII"
+        prompt: "Write as an ordinary number",
+        given: "VIII",
+        answer: "8"
       },
-      { difficulty: "medium", prompt: "Write XXIV as a number.", answer: "24" },
+      {
+        difficulty: "easy",
+        prompt: "Write as an ordinary number",
+        given: "XIV",
+        answer: "14"
+      },
+      {
+        difficulty: "easy",
+        prompt: "Write in Roman numerals",
+        given: "9",
+        answer: "IX"
+      },
+      {
+        difficulty: "easy",
+        prompt: "Write in Roman numerals",
+        given: "27",
+        answer: "XXVII"
+      },
+      {
+        difficulty: "easy",
+        format: "expression",
+        prompt: "Work out the sum",
+        given: "X + VII",
+        answer: "17"
+      },
       {
         difficulty: "medium",
-        prompt: "Write 49 in Roman numerals.",
+        prompt: "Write as an ordinary number",
+        given: "XLIV",
+        answer: "44"
+      },
+      {
+        difficulty: "medium",
+        prompt: "Write as an ordinary number",
+        given: "LXVIII",
+        answer: "68"
+      },
+      {
+        difficulty: "medium",
+        prompt: "Write in Roman numerals",
+        given: "49",
         answer: "XLIX"
       },
-      { difficulty: "medium", prompt: "Write XL as a number.", answer: "40" },
       {
         difficulty: "medium",
-        prompt: "Write 60 in Roman numerals.",
-        answer: "LX"
+        prompt: "Write in Roman numerals",
+        given: "94",
+        answer: "XCIV"
       },
-      { difficulty: "medium", prompt: "Write XC as a number.", answer: "90" },
-      { difficulty: "hard", prompt: "Write CD as a number.", answer: "400" },
+      {
+        difficulty: "medium",
+        format: "expression",
+        prompt: "Work out the calculation",
+        given: "L − XV",
+        answer: "35"
+      },
       {
         difficulty: "hard",
-        prompt: "Write 900 in Roman numerals.",
-        answer: "CM"
+        prompt: "Write as an ordinary number",
+        given: "CDXL",
+        answer: "440"
       },
-      { difficulty: "hard", prompt: "Write DCCXLIX as a number.", answer: "749" },
       {
         difficulty: "hard",
-        prompt: "Write 444 in Roman numerals.",
-        answer: "CDXLIV"
+        prompt: "Write as an ordinary number",
+        given: "DCCXLIX",
+        answer: "749"
       },
-      { difficulty: "hard", prompt: "Write CMXCIX as a number.", answer: "999" }
+      {
+        difficulty: "hard",
+        prompt: "Write in Roman numerals",
+        given: "990",
+        answer: "CMXC"
+      },
+      {
+        difficulty: "hard",
+        prompt: "Write as an ordinary year",
+        given: "MCMXCIV",
+        answer: "1994"
+      },
+      {
+        difficulty: "hard",
+        format: "expression",
+        prompt: "Work out the product",
+        given: "IV × IX",
+        answer: "36"
+      }
     ]
   },
   {
@@ -193,69 +321,94 @@ export const sheets = [
     label: "Basics rounding numbers",
     topic: "rounding",
     instruction:
-      "Round each number to the place shown. Halfway values round up.",
+      "Round whole numbers and decimals, or find the smallest / largest possible number.",
     problems: [
-      { difficulty: "easy", prompt: "Round 47 to the nearest 10.", answer: "50" },
-      { difficulty: "easy", prompt: "Round 32 to the nearest 10.", answer: "30" },
       {
         difficulty: "easy",
-        prompt: "Round 251 to the nearest 100.",
-        answer: "300"
+        prompt: "Round to the nearest 10",
+        given: "47",
+        answer: "50"
       },
       {
         difficulty: "easy",
-        prompt: "Round 849 to the nearest 100.",
-        answer: "800"
+        prompt: "Round to the nearest 10",
+        given: "65",
+        answer: "70"
       },
-      { difficulty: "easy", prompt: "Round 65 to the nearest 10.", answer: "70" },
+      {
+        difficulty: "easy",
+        prompt: "Round to the nearest 100",
+        given: "249",
+        answer: "200"
+      },
+      {
+        difficulty: "easy",
+        prompt: "Round to the nearest 100",
+        given: "850",
+        answer: "900"
+      },
+      {
+        difficulty: "easy",
+        prompt: "Round to the nearest whole number",
+        given: "7.6",
+        answer: "8"
+      },
       {
         difficulty: "medium",
-        prompt: "Round 3,472 to the nearest 100.",
+        prompt: "Round to the nearest 100",
+        given: "3,472",
         answer: "3,500"
       },
       {
         difficulty: "medium",
-        prompt: "Round 6,850 to the nearest 100.",
-        answer: "6,900"
+        prompt: "Round to the nearest 1,000",
+        given: "24,500",
+        answer: "25,000"
       },
       {
         difficulty: "medium",
-        prompt: "Round 24,361 to the nearest 1,000.",
-        answer: "24,000"
+        prompt: "Round to 1 decimal place",
+        given: "4.38",
+        answer: "4.4"
       },
       {
         difficulty: "medium",
-        prompt: "Round 17,500 to the nearest 1,000.",
-        answer: "18,000"
+        prompt: "Round to the nearest 10,000",
+        given: "68,419",
+        answer: "70,000"
       },
       {
         difficulty: "medium",
-        prompt: "Round 8,049 to the nearest 10.",
-        answer: "8,050"
+        prompt: "Smallest whole number that rounds to 80 (nearest 10)",
+        answer: "75"
       },
       {
         difficulty: "hard",
-        prompt: "Round 238,461 to the nearest 10,000.",
-        answer: "240,000"
-      },
-      {
-        difficulty: "hard",
-        prompt: "Round 1,450,000 to the nearest 100,000.",
-        answer: "1,500,000"
-      },
-      {
-        difficulty: "hard",
-        prompt: "Round 99,952 to the nearest 100.",
-        answer: "100,000"
-      },
-      {
-        difficulty: "hard",
-        prompt: "Round 3,996 to the nearest 10.",
+        prompt: "Round to the nearest 10",
+        given: "3,996",
         answer: "4,000"
       },
       {
         difficulty: "hard",
-        prompt: "Round 7,500,499 to the nearest 1,000.",
+        prompt: "Round to the nearest 100",
+        given: "99,952",
+        answer: "100,000"
+      },
+      {
+        difficulty: "hard",
+        prompt: "Round to the nearest 100,000",
+        given: "1,450,000",
+        answer: "1,500,000"
+      },
+      {
+        difficulty: "hard",
+        prompt: "Largest whole number that rounds to 500 (nearest 100)",
+        answer: "549"
+      },
+      {
+        difficulty: "hard",
+        prompt: "Round to the nearest 1,000",
+        given: "7,500,499",
         answer: "7,500,000"
       }
     ]
@@ -266,87 +419,98 @@ export const sheets = [
     label: "Basics negative numbers",
     topic: "negative-numbers",
     instruction:
-      "Add and subtract integers, compare signed numbers, and find temperature changes.",
+      "Add and subtract integers, compare temperatures, and find differences or sequence terms.",
     problems: [
       {
         difficulty: "easy",
-        prompt: "−3 + 8",
-        answer: "5",
-        display: "expression"
+        format: "expression",
+        given: "−3 + 8",
+        answer: "5"
       },
       {
         difficulty: "easy",
-        prompt: "6 − 9",
-        answer: "−3",
-        display: "expression"
+        format: "expression",
+        given: "6 − 9",
+        answer: "−3"
       },
-      { difficulty: "easy", prompt: "Which is smaller: −2 or 1?", answer: "−2" },
       {
         difficulty: "easy",
-        prompt: "Which is colder: −4°C or 2°C?",
+        format: "expression",
+        given: "−7 + 7",
+        answer: "0"
+      },
+      {
+        difficulty: "easy",
+        prompt: "Which temperature is colder?",
+        given: ["−4°C", "2°C"],
         answer: "−4°C"
       },
       {
         difficulty: "easy",
-        prompt: "−7 + 7",
-        answer: "0",
-        display: "expression"
+        format: "expression",
+        prompt: "Temperature rises by 6°C from −2°C",
+        given: "−2 + 6",
+        answer: "4°C"
       },
       {
         difficulty: "medium",
-        prompt: "−8 + 15",
-        answer: "7",
-        display: "expression"
+        format: "expression",
+        given: "−8 + 15",
+        answer: "7"
       },
       {
         difficulty: "medium",
-        prompt: "4 − 12",
-        answer: "−8",
-        display: "expression"
+        format: "expression",
+        given: "4 − 12",
+        answer: "−8"
       },
       {
         difficulty: "medium",
-        prompt: "−6 − 5",
-        answer: "−11",
-        display: "expression"
+        format: "expression",
+        given: "−6 − 5",
+        answer: "−11"
       },
       {
         difficulty: "medium",
-        prompt: "How much warmer is 3°C than −5°C?",
+        prompt: "What is the difference between",
+        given: ["−5°C", "3°C"],
         answer: "8°C"
       },
       {
         difficulty: "medium",
-        prompt: "Which is greater: −19 or −21?",
+        prompt: "Which number is greater?",
+        given: ["−19", "−21"],
         answer: "−19"
       },
       {
         difficulty: "hard",
-        prompt: "−14 + (−9)",
-        answer: "−23",
-        display: "expression"
+        format: "expression",
+        given: "−14 + (−9)",
+        answer: "−23"
       },
       {
         difficulty: "hard",
-        prompt: "8 − (−6)",
-        answer: "14",
-        display: "expression"
+        format: "expression",
+        given: "8 − (−6)",
+        answer: "14"
       },
       {
         difficulty: "hard",
-        prompt: "−25 − (−18)",
-        answer: "−7",
-        display: "expression"
+        format: "expression",
+        given: "−25 − (−18)",
+        answer: "−7"
       },
       {
         difficulty: "hard",
-        prompt: "Temperature falls from 4°C to −11°C. By how much?",
-        answer: "15°C"
-      },
-      {
-        difficulty: "hard",
-        prompt: "Difference between −7 and 9?",
+        prompt: "What is the difference between",
+        given: ["−7", "9"],
         answer: "16"
+      },
+      {
+        difficulty: "hard",
+        prompt: "Find the next number in the sequence",
+        given: ["8", "3", "−2", "−7"],
+        answer: "−12"
       }
     ]
   },
@@ -360,93 +524,93 @@ export const sheets = [
     problems: [
       {
         difficulty: "easy",
-        prompt: "8 + 3 × 4",
-        answer: "20",
-        display: "expression"
+        format: "expression",
+        given: "8 + 3 × 4",
+        answer: "20"
       },
       {
         difficulty: "easy",
-        prompt: "30 − 18 ÷ 3",
-        answer: "24",
-        display: "expression"
+        format: "expression",
+        given: "7 × 5 + 9",
+        answer: "44"
       },
       {
         difficulty: "easy",
-        prompt: "7 × 5 + 9",
-        answer: "44",
-        display: "expression"
+        format: "expression",
+        given: "50 − 7 × 6",
+        answer: "8"
       },
       {
         difficulty: "easy",
-        prompt: "42 ÷ 6 + 13",
-        answer: "20",
-        display: "expression"
+        format: "expression",
+        given: "30 − 18 ÷ 3",
+        answer: "24"
       },
       {
         difficulty: "easy",
-        prompt: "50 − 7 × 6",
-        answer: "8",
-        display: "expression"
+        format: "expression",
+        given: "42 ÷ 6 + 13",
+        answer: "20"
       },
       {
         difficulty: "medium",
-        prompt: "3 × (8 + 4)",
-        answer: "36",
-        display: "expression"
+        format: "expression",
+        given: "3 × (8 + 4)",
+        answer: "36"
       },
       {
         difficulty: "medium",
-        prompt: "36 ÷ (7 − 3)",
-        answer: "9",
-        display: "expression"
+        format: "expression",
+        given: "36 ÷ (7 − 3)",
+        answer: "9"
       },
       {
         difficulty: "medium",
-        prompt: "(24 + 12) ÷ 6",
-        answer: "6",
-        display: "expression"
+        format: "expression",
+        given: "(24 + 12) ÷ 6",
+        answer: "6"
       },
       {
         difficulty: "medium",
-        prompt: "5 + 6 × 3 − 4",
-        answer: "19",
-        display: "expression"
+        format: "expression",
+        given: "5 + 6 × 3 − 4",
+        answer: "19"
       },
       {
         difficulty: "medium",
-        prompt: "40 − 6 × (8 − 3)",
-        answer: "10",
-        display: "expression"
+        format: "expression",
+        given: "40 − 6 × (8 − 3)",
+        answer: "10"
       },
       {
         difficulty: "hard",
-        prompt: "3² × 5 − 7",
-        answer: "38",
-        display: "expression"
+        format: "expression",
+        given: "3² × 5 − 7",
+        answer: "38"
       },
       {
         difficulty: "hard",
-        prompt: "(12 + 4) ÷ 2²",
-        answer: "4",
-        display: "expression"
+        format: "expression",
+        given: "(12 + 4) ÷ 2²",
+        answer: "4"
       },
       {
         difficulty: "hard",
-        prompt: "18 ÷ 3 × 2 + 5",
-        answer: "17",
-        display: "expression"
+        format: "expression",
+        given: "2 × (4² − 7)",
+        answer: "18"
       },
       {
         difficulty: "hard",
-        prompt: "2 × (4² − 7)",
-        answer: "18",
-        display: "expression"
+        format: "expression",
+        given: "18 ÷ 3 × 2 + 5",
+        answer: "17"
       },
       {
         difficulty: "hard",
-        prompt: "48 ÷ (2 + 2²) + 3 × 5",
-        answer: "23",
-        display: "expression"
+        format: "expression",
+        given: "48 ÷ (2 + 2²) + 3 × 5",
+        answer: "23"
       }
     ]
   }

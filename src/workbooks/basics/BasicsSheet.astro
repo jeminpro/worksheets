@@ -42,13 +42,17 @@ const questionCount = sheet.problems.length;
         );
 
         return (
-          <div class="band">
-            <h2 class={`band-title ${band.key}`}>{band.title}</h2>
+          <div class={`band ${band.key}`}>
+            <h2 class="band-title">
+              <span class="band-name">{band.title}</span>
+              <span class="band-rule" aria-hidden="true" />
+            </h2>
             <div class="band-problems">
               {problems.map((problem, index) => (
                 <BasicsProblem
                   problem={problem}
                   index={startIndex + index}
+                  width={index < 3 ? "narrow" : "wide"}
                 />
               ))}
             </div>
@@ -110,52 +114,63 @@ const questionCount = sheet.problems.length;
   .bands {
     display: grid;
     grid-template-rows: repeat(3, minmax(0, 1fr));
-    gap: 2.5mm;
+    gap: 3mm;
     height: 100%;
     min-height: 0;
   }
 
   .band {
+    --band: var(--blue-strong);
+
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    gap: 1.4mm;
+    gap: 1.6mm;
     min-height: 0;
   }
 
+  .band.easy {
+    --band: #2f9d8a;
+  }
+
+  .band.medium {
+    --band: #e07a3f;
+  }
+
+  .band.hard {
+    --band: #c45c6a;
+  }
+
   .band-title {
+    display: flex;
+    gap: 2mm;
+    align-items: center;
     margin: 0;
-    font-size: 8pt;
+  }
+
+  .band-name {
+    padding: 0.9mm 2.6mm;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--band);
+    font-size: 7pt;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     line-height: 1;
     text-transform: uppercase;
   }
 
-  .band-title.easy {
-    color: #2f9d8a;
-  }
-
-  .band-title.medium {
-    color: var(--peach-strong);
-  }
-
-  .band-title.hard {
-    color: #c45c6a;
+  .band-rule {
+    flex: 1;
+    height: 0.3mm;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--band) 35%, transparent);
   }
 
   .band-problems {
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 2mm;
+    gap: 2.2mm;
     min-height: 0;
-  }
-
-  .band-problems :global(.problem:nth-child(-n + 3)) {
-    grid-column: span 2;
-  }
-
-  .band-problems :global(.problem:nth-child(n + 4)) {
-    grid-column: span 3;
   }
 </style>

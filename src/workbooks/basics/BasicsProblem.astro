@@ -1,82 +1,168 @@
 ---
 import type { BasicsProblem } from "./types";
-import { formatAccessiblePrompt, getDisplay } from "./expression";
+import { formatAccessibleQuestion, getFormat, getGiven } from "./expression";
 
 interface Props {
   problem: BasicsProblem;
   index: number;
+  width: "narrow" | "wide";
 }
 
-const { problem, index } = Astro.props;
-const display = getDisplay(problem);
-const accessiblePrompt = formatAccessiblePrompt(problem);
+const { problem, index, width } = Astro.props;
+const format = getFormat(problem);
+const given = getGiven(problem);
+const question = formatAccessibleQuestion(problem);
 ---
 
 <article
-  class:list={["problem", display]}
-  aria-label={`Question ${index + 1}: ${accessiblePrompt}`}
+  class:list={["problem", `format-${format}`, problem.difficulty, width]}
+  aria-label={`Question ${index + 1}: ${question}`}
 >
-  <span class="problem-number">{index + 1}</span>
-  <p class="prompt">{problem.prompt}</p>
-  <div class="response">
-    {display === "expression" ? <span class="equals" aria-hidden="true">=</span> : null}
-    <span class="answer-box">
-      <span class="answer">{problem.answer}</span>
-    </span>
+  <div class="head">
+    <span class="problem-number">{index + 1}</span>
+    {problem.prompt ? <p class="prompt">{problem.prompt}</p> : null}
   </div>
+
+  {
+    format === "expression" ? (
+      <div class="calculation">
+        <span class="given">{given.join(" ")}</span>
+        <span class="equals" aria-hidden="true">
+          =
+        </span>
+        <span class="answer-slot">
+          <span class="answer">{problem.answer}</span>
+        </span>
+      </div>
+    ) : format === "compare" ? (
+      <div class="calculation">
+        <span class="given value">{given[0]}</span>
+        <span class="answer-slot sign">
+          <span class="answer">{problem.answer}</span>
+        </span>
+        <span class="given value">{given[1]}</span>
+      </div>
+    ) : (
+      <Fragment>
+        {given.length > 0 ? (
+          <div class="values">
+            {given.map((value) => (
+              <span class="given value">{value}</span>
+            ))}
+          </div>
+        ) : null}
+        <div class="answer-line">
+          <span class="answer">{problem.answer}</span>
+        </div>
+      </Fragment>
+    )
+  }
+
   <div class="working" aria-hidden="true"></div>
 </article>
 
 <style>
   .problem {
-    position: relative;
-    display: grid;
-    grid-template-rows: auto auto minmax(0, 1fr);
-    gap: 1.6mm;
+    --band: var(--blue-strong);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.8mm;
     min-width: 0;
     min-height: 0;
-    padding: 5mm 2.4mm 2mm;
+    padding: 2.6mm 2.6mm 2mm;
     border: 0.35mm solid #c7d7e1;
     border-radius: 3mm;
     background: #fff;
   }
 
+  .problem.easy {
+    --band: #2f9d8a;
+  }
+
+  .problem.medium {
+    --band: #e07a3f;
+  }
+
+  .problem.hard {
+    --band: #c45c6a;
+  }
+
+  .narrow {
+    grid-column: span 2;
+  }
+
+  .wide {
+    grid-column: span 3;
+  }
+
+  .head {
+    display: flex;
+    gap: 1.8mm;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
   .problem-number {
-    position: absolute;
-    top: 1.5mm;
-    left: 1.6mm;
-    color: var(--blue-strong);
+    display: grid;
+    width: 4.4mm;
+    height: 4.4mm;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--band);
     font-size: 6.5pt;
     font-weight: 800;
+    line-height: 1;
   }
 
   .prompt {
     margin: 0;
     min-width: 0;
-    color: #152b3d;
-    font-size: 9pt;
+    color: var(--muted);
+    font-size: 8.5pt;
     font-weight: 700;
-    line-height: 1.25;
-    overflow-wrap: anywhere;
+    line-height: 1.2;
   }
 
-  .expression .prompt {
+  .format-text .prompt {
+    color: #152b3d;
+    font-size: 9pt;
+  }
+
+  .values,
+  .calculation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2mm 2.4mm;
+    align-items: baseline;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .given {
+    color: #152b3d;
     font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
     font-size: 14pt;
     font-weight: 800;
     line-height: 1.15;
-    text-align: center;
   }
 
-  .response {
-    display: flex;
-    gap: 1.5mm;
-    align-items: baseline;
-    min-width: 0;
+  /* Chips keep a list of numbers readable as separate values. */
+  .value {
+    padding: 0.4mm 1.8mm;
+    border-radius: 1.8mm;
+    background: var(--blue);
   }
 
-  .expression .response {
-    justify-content: center;
+  /* Comparisons read as one line, so they get tighter spacing than value lists. */
+  .format-compare .calculation {
+    gap: 1mm 1.6mm;
+  }
+
+  .format-compare .value {
+    padding: 0.4mm 1mm;
   }
 
   .equals {
@@ -86,18 +172,28 @@ const accessiblePrompt = formatAccessiblePrompt(problem);
     font-weight: 800;
   }
 
-  .answer-box {
+  .answer-slot {
     display: inline-flex;
-    min-width: 16mm;
+    min-width: 12mm;
     min-height: 1.2em;
-    flex: 1;
     justify-content: center;
     border-bottom: 0.45mm solid var(--ink);
   }
 
-  .expression .answer-box {
-    flex: 0 1 auto;
-    min-width: 12mm;
+  .answer-slot.sign {
+    min-width: 8mm;
+    padding: 0 1mm;
+    border: 0.35mm dashed var(--rule);
+    border-radius: 1.5mm;
+  }
+
+  .answer-line {
+    display: flex;
+    min-height: 6mm;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 1mm;
+    border-bottom: 0.45mm solid var(--ink);
   }
 
   .answer {
@@ -106,6 +202,8 @@ const accessiblePrompt = formatAccessiblePrompt(problem);
     font-size: 14pt;
     font-weight: 800;
     line-height: 1.1;
+    text-align: center;
+    overflow-wrap: anywhere;
     visibility: hidden;
   }
 
@@ -114,6 +212,7 @@ const accessiblePrompt = formatAccessiblePrompt(problem);
   }
 
   .working {
+    flex: 1;
     min-height: 0;
   }
 </style>
