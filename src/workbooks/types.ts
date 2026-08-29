@@ -4,7 +4,8 @@ export type WorkbookGroupId =
   | "written-methods"
   | "quick-practice"
   | "number-skills"
-  | "algebra";
+  | "algebra"
+  | "assessment";
 
 export interface WorkbookGroupMeta {
   id: WorkbookGroupId;

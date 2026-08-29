@@ -30,7 +30,7 @@ npm run watch:layout -- --workbook=multiplication
 
 1. Copy `src/workbooks/division/` to `src/workbooks/<id>/` and rename the local components/types.
 2. Add `src/pages/topic/<id>/index.astro` that imports only that workbook’s data/components.
-3. Register metadata in `src/workbooks/registry.ts`, including a `group` (`written-methods` | `quick-practice` | `number-skills` | `algebra`).
+3. Register metadata in `src/workbooks/registry.ts`, including a `group` (`written-methods` | `quick-practice` | `number-skills` | `algebra` | `assessment`).
 4. Write `src/workbooks/<id>/AGENTS.md`.
 5. Run `npm run check` and `npm run check:layout -- --workbook=<id>`.
 

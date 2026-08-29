@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import BasicsSheet from "../../../workbooks/basics/BasicsSheet.astro";
+import { sheets } from "../../../workbooks/basics/data";
+---
+
+<WorkbookLayout
+  title="Basics Worksheets"
+  workbookId="basics"
+  expectedPages={sheets.length}
+  workbookTitle="Basics"
+>
+  {sheets.map((sheet) => <BasicsSheet sheet={sheet} />)}
+</WorkbookLayout>

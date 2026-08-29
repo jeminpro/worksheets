@@ -15,6 +15,7 @@ import { sheets as algebraSubstitutionSheets } from "./algebra-substitution/data
 import { sheets as algebraSolvingEquationsSheets } from "./algebra-solving-equations/data";
 import { sheets as formingExpressionsSheets } from "./forming-expressions/data";
 import { sheets as simplifyCalculationsSheets } from "./simplify-calculations/data";
+import { sheets as basicsSheets } from "./basics/data";
 
 export const workbookGroups = [
   {
@@ -36,6 +37,11 @@ export const workbookGroups = [
     id: "algebra",
     title: "Algebra",
     description: "Substitute, solve, and form expressions from word problems."
+  },
+  {
+    id: "assessment",
+    title: "Assessment",
+    description: "11 plus mixed checks across the core number topics."
   }
 ] as const satisfies readonly WorkbookGroupMeta[];
 
@@ -194,6 +200,17 @@ export const workbooks = [
     status: "ready",
     icon: "xy",
     group: "algebra"
+  },
+  {
+    id: "basics",
+    title: "Basics",
+    description:
+      "Place value, ordering, Roman numerals, rounding, negatives and BIDMAS — easy, medium and hard.",
+    href: withBase("topic/basics/"),
+    pageCount: basicsSheets.length,
+    status: "ready",
+    icon: "11+",
+    group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];
 
