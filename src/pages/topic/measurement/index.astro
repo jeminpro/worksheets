@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import MeasurementSheet from "../../../workbooks/measurement/MeasurementSheet.astro";
+import { sheets } from "../../../workbooks/measurement/data";
+---
+
+<WorkbookLayout
+  title="Measurement Worksheets"
+  workbookId="measurement"
+  expectedPages={sheets.length}
+  workbookTitle="Measurement"
+>
+  {sheets.map((sheet) => <MeasurementSheet sheet={sheet} />)}
+</WorkbookLayout>

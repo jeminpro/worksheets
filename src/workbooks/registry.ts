@@ -19,6 +19,7 @@ import { sheets as basicsSheets } from "./basics/data";
 import { sheets as operationsSheets } from "./operations/data";
 import { sheets as fractionsSheets } from "./fractions/data";
 import { sheets as decimalsSheets } from "./decimals/data";
+import { sheets as measurementSheets } from "./measurement/data";
 
 export const workbookGroups = [
   {
@@ -246,6 +247,17 @@ export const workbooks = [
     pageCount: decimalsSheets.length,
     status: "ready",
     icon: ".0",
+    group: "assessment"
+  },
+  {
+    id: "measurement",
+    title: "Measurement",
+    description:
+      "Length, perimeter, money, time, metric & imperial conversions, area and volume with diagrams.",
+    href: withBase("topic/measurement/"),
+    pageCount: measurementSheets.length,
+    status: "ready",
+    icon: "📏",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];

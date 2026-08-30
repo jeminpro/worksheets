@@ -1,0 +1,253 @@
+---
+import type { MeasurementDiagram } from "./types";
+
+interface Props {
+  diagram: MeasurementDiagram;
+}
+
+const { diagram } = Astro.props;
+---
+
+{
+  diagram.kind === "rectangle" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 68" class="diagram-svg" aria-hidden="true">
+        <rect x="25" y="14" width="90" height="42" rx="2" class="shape-fill" />
+        <text x="70" y="9" class="label text-top">{diagram.widthLabel}</text>
+        <text x="120" y="38" class="label text-side">{diagram.heightLabel}</text>
+      </svg>
+    </div>
+  ) : diagram.kind === "triangle" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 70" class="diagram-svg" aria-hidden="true">
+        <polygon points="25,58 115,58 70,14" class="shape-fill" />
+        {diagram.heightLabel ? (
+          <line x1="70" y1="14" x2="70" y2="58" class="dashed-line" />
+        ) : null}
+        <text x="70" y="67" class="label text-bottom">{diagram.baseLabel}</text>
+        {diagram.heightLabel ? (
+          <text x="74" y="38" class="label text-inside">{diagram.heightLabel}</text>
+        ) : null}
+        {diagram.sideALabel ? (
+          <text x="40" y="32" class="label text-left">{diagram.sideALabel}</text>
+        ) : null}
+        {diagram.sideBLabel ? (
+          <text x="100" y="32" class="label text-right">{diagram.sideBLabel}</text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "compound-l" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 78" class="diagram-svg" aria-hidden="true">
+        <polygon points="30,10 75,10 75,38 115,38 115,68 30,68" class="shape-fill" />
+        <text x="52" y="7" class="label text-top">{diagram.top}</text>
+        <text x="22" y="42" class="label text-left">{diagram.left}</text>
+        <text x="72" y="76" class="label text-bottom">{diagram.bottom}</text>
+        <text x="122" y="55" class="label text-right">{diagram.right}</text>
+        {diagram.cutH ? (
+          <text x="80" y="26" class="label text-cut">{diagram.cutH}</text>
+        ) : null}
+        {diagram.cutW ? (
+          <text x="96" y="34" class="label text-cut">{diagram.cutW}</text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "cuboid" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 150 78" class="diagram-svg" aria-hidden="true">
+        {/* Front Face */}
+        <polygon points="25,30 95,30 95,68 25,68" class="shape-fill" />
+        {/* Top Face */}
+        <polygon points="25,30 55,10 125,10 95,30" class="shape-top" />
+        {/* Side Face */}
+        <polygon points="95,30 125,10 125,48 95,68" class="shape-side" />
+        {/* Labels */}
+        <text x="60" y="76" class="label text-bottom">{diagram.lengthLabel}</text>
+        <text x="18" y="52" class="label text-left">{diagram.heightLabel}</text>
+        <text x="115" y="62" class="label text-right">{diagram.widthLabel}</text>
+      </svg>
+    </div>
+  ) : diagram.kind === "cube" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 130 76" class="diagram-svg" aria-hidden="true">
+        <polygon points="25,30 75,30 75,68 25,68" class="shape-fill" />
+        <polygon points="25,30 50,12 100,12 75,30" class="shape-top" />
+        <polygon points="75,30 100,12 100,50 75,68" class="shape-side" />
+        <text x="50" y="76" class="label text-bottom">{diagram.edgeLabel}</text>
+      </svg>
+    </div>
+  ) : diagram.kind === "clock" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 80 80" class="diagram-svg clock-svg" aria-hidden="true">
+        <circle cx="40" cy="40" r="34" class="clock-face" />
+        {/* Clock hour marks */}
+        <line x1="40" y1="9" x2="40" y2="14" class="clock-tick" />
+        <line x1="71" y1="40" x2="66" y2="40" class="clock-tick" />
+        <line x1="40" y1="71" x2="40" y2="66" class="clock-tick" />
+        <line x1="9" y1="40" x2="14" y2="40" class="clock-tick" />
+        {/* Numbers 12, 3, 6, 9 */}
+        <text x="40" y="18" class="clock-num">12</text>
+        <text x="63" y="43" class="clock-num">3</text>
+        <text x="40" y="67" class="clock-num">6</text>
+        <text x="17" y="43" class="clock-num">9</text>
+        {/* Hour hand */}
+        <line
+          x1="40"
+          y1="40"
+          x2={40 + 17 * Math.sin(((diagram.hours % 12) + diagram.minutes / 60) * (Math.PI / 6))}
+          y2={40 - 17 * Math.cos(((diagram.hours % 12) + diagram.minutes / 60) * (Math.PI / 6))}
+          class="hour-hand"
+        />
+        {/* Minute hand */}
+        <line
+          x1="40"
+          y1="40"
+          x2={40 + 26 * Math.sin(diagram.minutes * (Math.PI / 30))}
+          y2={40 - 26 * Math.cos(diagram.minutes * (Math.PI / 30))}
+          class="minute-hand"
+        />
+        <circle cx="40" cy="40" r="2.2" class="clock-center" />
+      </svg>
+    </div>
+  ) : diagram.kind === "parallelogram" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 70" class="diagram-svg" aria-hidden="true">
+        <polygon points="35,14 125,14 105,58 15,58" class="shape-fill" />
+        <line x1="35" y1="14" x2="35" y2="58" class="dashed-line" />
+        <text x="60" y="66" class="label text-bottom">{diagram.baseLabel}</text>
+        <text x="39" y="38" class="label text-inside">{diagram.heightLabel}</text>
+      </svg>
+    </div>
+  ) : diagram.kind === "trapezium" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 70" class="diagram-svg" aria-hidden="true">
+        <polygon points="45,14 95,14 125,58 15,58" class="shape-fill" />
+        <line x1="45" y1="14" x2="45" y2="58" class="dashed-line" />
+        <text x="70" y="9" class="label text-top">{diagram.topLabel}</text>
+        <text x="70" y="67" class="label text-bottom">{diagram.bottomLabel}</text>
+        <text x="49" y="38" class="label text-inside">{diagram.heightLabel}</text>
+      </svg>
+    </div>
+  ) : null
+}
+
+<style>
+  .diagram-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.2mm 0;
+    max-height: 18mm;
+  }
+
+  .diagram-svg {
+    height: 17mm;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .clock-svg {
+    height: 18mm;
+  }
+
+  .shape-fill {
+    fill: #f0f7fa;
+    stroke: #2b5b7a;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+
+  .shape-top {
+    fill: #e1eff5;
+    stroke: #2b5b7a;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+
+  .shape-side {
+    fill: #d3e7ef;
+    stroke: #2b5b7a;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+
+  .dashed-line {
+    stroke: #c45c6a;
+    stroke-width: 1.1;
+    stroke-dasharray: 2.5 2;
+  }
+
+  .label {
+    fill: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .text-top {
+    dominant-baseline: auto;
+  }
+
+  .text-bottom {
+    dominant-baseline: hanging;
+  }
+
+  .text-left {
+    text-anchor: end;
+  }
+
+  .text-right {
+    text-anchor: start;
+  }
+
+  .text-inside {
+    fill: #c45c6a;
+    text-anchor: start;
+    font-size: 7pt;
+  }
+
+  .text-cut {
+    fill: #e07a3f;
+    font-size: 7pt;
+  }
+
+  /* Clock styling */
+  .clock-face {
+    fill: #f9fbfc;
+    stroke: #2b5b7a;
+    stroke-width: 2;
+  }
+
+  .clock-tick {
+    stroke: #2b5b7a;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .clock-num {
+    fill: #5b7588;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 6pt;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .hour-hand {
+    stroke: #152b3d;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+
+  .minute-hand {
+    stroke: #2f9d8a;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .clock-center {
+    fill: #152b3d;
+  }
+</style>
