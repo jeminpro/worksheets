@@ -1,0 +1,263 @@
+---
+import type { AlgebraDiagram } from "./types";
+
+interface Props {
+  diagram: AlgebraDiagram;
+}
+
+const { diagram } = Astro.props;
+---
+
+{
+  diagram.kind === "matchstick-sequence" ? (
+    <div class="diagram-wrapper">
+      <div class="patterns-container">
+        {diagram.patterns.map((p) => (
+          <div class="pattern-item">
+            <svg viewBox={`0 0 ${p.count * 16 + 4} 24`} class="pattern-svg" aria-hidden="true">
+              {Array.from({ length: p.count }).map((_, i) => (
+                <rect
+                  x={2 + i * 16}
+                  y={4}
+                  width={16}
+                  height={16}
+                  class="pattern-box"
+                />
+              ))}
+            </svg>
+            <span class="pattern-label">{p.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : diagram.kind === "function-machine" ? (
+    <div class="diagram-wrapper">
+      <div class="machine-container">
+        <span class="machine-node input-node">{diagram.input}</span>
+        {diagram.ops.map((op) => (
+          <Fragment>
+            <span class="machine-arrow">→</span>
+            <span class="machine-box">{op}</span>
+          </Fragment>
+        ))}
+        {diagram.output !== undefined ? (
+          <Fragment>
+            <span class="machine-arrow">→</span>
+            <span class="machine-node output-node">{diagram.output}</span>
+          </Fragment>
+        ) : null}
+      </div>
+    </div>
+  ) : diagram.kind === "balance-scale" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 120 60" class="diagram-svg balance-svg" aria-hidden="true">
+        {/* Base and Fulcrum */}
+        <polygon points="60,32 54,52 66,52" class="fulcrum" />
+        <line x1="45" y1="52" x2="75" y2="52" class="balance-base" />
+        {/* Beam */}
+        <line x1="16" y1="32" x2="104" y2="32" class="balance-beam" />
+        {/* Left Pan Strings & Pan */}
+        <line x1="16" y1="32" x2="28" y2="44" class="pan-string" />
+        <line x1="40" y1="32" x2="28" y2="44" class="pan-string" />
+        <path d="M 14,44 L 42,44 A 14,8 0 0,1 14,44 Z" class="pan" />
+        {/* Right Pan Strings & Pan */}
+        <line x1="80" y1="32" x2="92" y2="44" class="pan-string" />
+        <line x1="104" y1="32" x2="92" y2="44" class="pan-string" />
+        <path d="M 78,44 L 106,44 A 14,8 0 0,1 78,44 Z" class="pan" />
+        {/* Content Labels */}
+        <text x="28" y="24" class="pan-text">{diagram.left}</text>
+        <text x="92" y="24" class="pan-text">{diagram.right}</text>
+      </svg>
+    </div>
+  ) : diagram.kind === "algebra-shape" ? (
+    <div class="diagram-wrapper">
+      {diagram.shape === "rectangle" ? (
+        <svg viewBox="0 0 130 80" class="diagram-svg" aria-hidden="true">
+          <rect x="25" y="28" width="80" height="38" rx="2" class="shape-fill" />
+          <text x="65" y="18" class="label text-top">{diagram.side1}</text>
+          <text x="110" y="48" class="label text-side">{diagram.side2}</text>
+        </svg>
+      ) : (
+        <svg viewBox="0 0 130 80" class="diagram-svg" aria-hidden="true">
+          <polygon points="25,68 105,68 65,24" class="shape-fill" />
+          <text x="65" y="76" class="label text-bottom">{diagram.side1}</text>
+          <text x="38" y="44" class="label text-left">{diagram.side2}</text>
+          {diagram.side3 ? (
+            <text x="92" y="44" class="label text-right">{diagram.side3}</text>
+          ) : null}
+        </svg>
+      )}
+    </div>
+  ) : null
+}
+
+<style>
+  .diagram-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    max-height: 15.5mm;
+    max-width: 100%;
+  }
+
+  .diagram-svg {
+    height: 15mm;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .balance-svg {
+    height: 15.5mm;
+  }
+
+  /* Matchstick Patterns */
+  .patterns-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 2.5mm;
+  }
+
+  .pattern-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5mm;
+  }
+
+  .pattern-svg {
+    height: 10mm;
+  }
+
+  .pattern-box {
+    fill: #f0f7fa;
+    stroke: #2b5b7a;
+    stroke-width: 1.8;
+  }
+
+  .pattern-label {
+    color: #5b7588;
+    font-size: 5.5pt;
+    font-weight: 700;
+  }
+
+  /* Function Machine */
+  .machine-container {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+  }
+
+  .machine-node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 5mm;
+    height: 5.5mm;
+    padding: 0 1.5mm;
+    border-radius: 1.2mm;
+    font-size: 7.5pt;
+    font-weight: 800;
+  }
+
+  .input-node {
+    background: #e1eff5;
+    color: #152b3d;
+    border: 0.3mm solid #94a3b8;
+  }
+
+  .output-node {
+    background: #d4ece7;
+    color: #1b6357;
+    border: 0.3mm solid #2f9d8a;
+  }
+
+  .machine-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4mm 1.8mm;
+    border: 0.35mm solid #0284c7;
+    border-radius: 1.4mm;
+    background: #38bdf8;
+    color: #fff;
+    font-size: 7.5pt;
+    font-weight: 800;
+  }
+
+  .machine-arrow {
+    color: #94a3b8;
+    font-size: 8pt;
+    font-weight: 800;
+  }
+
+  /* Balance Scale */
+  .fulcrum {
+    fill: #5b7588;
+  }
+
+  .balance-base {
+    stroke: #5b7588;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .balance-beam {
+    stroke: #152b3d;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+
+  .pan-string {
+    stroke: #94a3b8;
+    stroke-width: 0.8;
+  }
+
+  .pan {
+    fill: #e1eff5;
+    stroke: #2b5b7a;
+    stroke-width: 1.2;
+  }
+
+  .pan-text {
+    fill: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 7pt;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+
+  /* Shape styles */
+  .shape-fill {
+    fill: #f0f7fa;
+    stroke: #2b5b7a;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+
+  .label {
+    fill: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 7pt;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .text-top {
+    dominant-baseline: auto;
+  }
+
+  .text-bottom {
+    dominant-baseline: hanging;
+  }
+
+  .text-left {
+    text-anchor: end;
+  }
+
+  .text-right {
+    text-anchor: start;
+  }
+</style>

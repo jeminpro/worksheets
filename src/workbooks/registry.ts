@@ -21,6 +21,7 @@ import { sheets as fractionsSheets } from "./fractions/data";
 import { sheets as decimalsSheets } from "./decimals/data";
 import { sheets as measurementSheets } from "./measurement/data";
 import { sheets as dataSheets } from "./data/data";
+import { sheets as algebraSheets } from "./algebra/data";
 
 export const workbookGroups = [
   {
@@ -270,6 +271,17 @@ export const workbooks = [
     pageCount: dataSheets.length,
     status: "ready",
     icon: "📊",
+    group: "assessment"
+  },
+  {
+    id: "algebra",
+    title: "Algebra",
+    description:
+      "Simple sequences, substitution, solving equations and forming expressions.",
+    href: withBase("topic/algebra/"),
+    pageCount: algebraSheets.length,
+    status: "ready",
+    icon: "𝑥",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];

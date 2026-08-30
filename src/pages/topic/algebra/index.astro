@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import AlgebraSheet from "../../../workbooks/algebra/AlgebraSheet.astro";
+import { sheets } from "../../../workbooks/algebra/data";
+---
+
+<WorkbookLayout
+  title="Algebra Worksheets"
+  workbookId="algebra"
+  expectedPages={sheets.length}
+  workbookTitle="Algebra"
+>
+  {sheets.map((sheet) => <AlgebraSheet sheet={sheet} />)}
+</WorkbookLayout>
