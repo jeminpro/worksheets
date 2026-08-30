@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import OperationsSheet from "../../../workbooks/operations/OperationsSheet.astro";
+import { sheets } from "../../../workbooks/operations/data";
+---
+
+<WorkbookLayout
+  title="Operations Worksheets"
+  workbookId="operations"
+  expectedPages={sheets.length}
+  workbookTitle="Operations"
+>
+  {sheets.map((sheet) => <OperationsSheet sheet={sheet} />)}
+</WorkbookLayout>

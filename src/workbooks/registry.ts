@@ -16,6 +16,7 @@ import { sheets as algebraSolvingEquationsSheets } from "./algebra-solving-equat
 import { sheets as formingExpressionsSheets } from "./forming-expressions/data";
 import { sheets as simplifyCalculationsSheets } from "./simplify-calculations/data";
 import { sheets as basicsSheets } from "./basics/data";
+import { sheets as operationsSheets } from "./operations/data";
 
 export const workbookGroups = [
   {
@@ -210,6 +211,17 @@ export const workbooks = [
     pageCount: basicsSheets.length,
     status: "ready",
     icon: "11+",
+    group: "assessment"
+  },
+  {
+    id: "operations",
+    title: "Operations",
+    description:
+      "Written & mental arithmetic, squares, cubes, multiples, factors, primes, estimating and word problems.",
+    href: withBase("topic/operations/"),
+    pageCount: operationsSheets.length,
+    status: "ready",
+    icon: "+−×",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];
