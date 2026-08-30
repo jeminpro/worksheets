@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import GeometrySheet from "../../../workbooks/geometry/GeometrySheet.astro";
+import { sheets } from "../../../workbooks/geometry/data";
+---
+
+<WorkbookLayout
+  title="Geometry Worksheets"
+  workbookId="geometry"
+  expectedPages={sheets.length}
+  workbookTitle="Geometry"
+>
+  {sheets.map((sheet) => <GeometrySheet sheet={sheet} />)}
+</WorkbookLayout>

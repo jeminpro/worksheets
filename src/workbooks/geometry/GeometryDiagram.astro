@@ -1,0 +1,964 @@
+---
+import type { GeometryDiagram } from "./types";
+
+interface Props {
+  diagram: GeometryDiagram;
+}
+
+const { diagram } = Astro.props;
+
+function polar(cx: number, cy: number, r: number, deg: number) {
+  const rad = (deg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
+}
+
+function regularPolygonPoints(n: number, cx: number, cy: number, r: number): string {
+  return Array.from({ length: n }, (_, i) => {
+    const p = polar(cx, cy, r, 90 - (i * 360) / n);
+    return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+  }).join(" ");
+}
+
+function arcPath(cx: number, cy: number, r: number, startDeg: number, endDeg: number): string {
+  const start = polar(cx, cy, r, startDeg);
+  const end = polar(cx, cy, r, endDeg);
+  const delta = ((endDeg - startDeg) % 360 + 360) % 360;
+  const large = delta > 180 ? 1 : 0;
+  return `M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${r} ${r} 0 ${large} 0 ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
+}
+
+function midpoint(
+  a: readonly [number, number],
+  b: readonly [number, number]
+): [number, number] {
+  return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+}
+
+function triangleCorners(
+  variant: "equilateral" | "isosceles" | "scalene" | "right" | "obtuse"
+): { C: [number, number]; A: [number, number]; B: [number, number] } {
+  switch (variant) {
+    case "isosceles":
+      return { C: [70, 10], A: [28, 78], B: [112, 78] };
+    case "scalene":
+      return { C: [88, 12], A: [18, 78], B: [122, 78] };
+    case "right":
+      return { C: [24, 18], A: [24, 78], B: [120, 78] };
+    case "obtuse":
+      return { C: [16, 42], A: [48, 78], B: [124, 78] };
+    default:
+      return { C: [70, 14], A: [22, 78], B: [118, 78] };
+  }
+}
+
+type GridModel = {
+  lines: { x1: number; y1: number; x2: number; y2: number; axis: boolean }[];
+  ticks: { x: number; y: number; label: string; axis: "x" | "y" }[];
+  origin: { x: number; y: number };
+  points: { x: number; y: number; label: string }[];
+  shapes: { d: string; dashed: boolean; label?: string; lx: number; ly: number }[];
+  centre?: { x: number; y: number };
+  mirror?: { x1: number; y1: number; x2: number; y2: number };
+  arrow?: { x1: number; y1: number; x2: number; y2: number };
+};
+
+let grid: GridModel | null = null;
+
+if (diagram.kind === "grid") {
+  const xMin = diagram.xMin ?? 0;
+  const xMax = diagram.xMax ?? 6;
+  const yMin = diagram.yMin ?? 0;
+  const yMax = diagram.yMax ?? 6;
+  const padL = 16;
+  const padR = 8;
+  const padT = 8;
+  const padB = 14;
+  const plotW = 120 - padL - padR;
+  const plotH = 110 - padT - padB;
+  const gx = (x: number) => padL + ((x - xMin) / Math.max(1, xMax - xMin)) * plotW;
+  const gy = (y: number) => padT + plotH - ((y - yMin) / Math.max(1, yMax - yMin)) * plotH;
+
+  const lines: GridModel["lines"] = [];
+  const ticks: GridModel["ticks"] = [];
+
+  for (let x = xMin; x <= xMax; x++) {
+    const X = gx(x);
+    lines.push({ x1: X, y1: gy(yMin), x2: X, y2: gy(yMax), axis: x === 0 });
+    ticks.push({ x: X, y: gy(yMin) + 8, label: String(x), axis: "x" });
+  }
+  for (let y = yMin; y <= yMax; y++) {
+    const Y = gy(y);
+    lines.push({ x1: gx(xMin), y1: Y, x2: gx(xMax), y2: Y, axis: y === 0 });
+    if (y !== 0 || xMin >= 0) {
+      ticks.push({ x: gx(xMin) - 6, y: Y + 1, label: String(y), axis: "y" });
+    }
+  }
+
+  const shapes = (diagram.shapes ?? []).map((shape) => {
+    const pts = shape.points.map(([x, y]) => `${gx(x).toFixed(1)},${gy(y).toFixed(1)}`);
+    const last = shape.points[shape.points.length - 1];
+    return {
+      d: pts.join(" "),
+      dashed: Boolean(shape.dashed),
+      label: shape.label,
+      lx: last ? gx(last[0]) + 4 : 0,
+      ly: last ? gy(last[1]) - 4 : 0
+    };
+  });
+
+  grid = {
+    lines,
+    ticks,
+    origin: { x: gx(0), y: gy(0) },
+    points: (diagram.points ?? []).map((p) => ({
+      x: gx(p.x),
+      y: gy(p.y),
+      label: p.label
+    })),
+    shapes,
+    centre: diagram.centre
+      ? { x: gx(diagram.centre.x), y: gy(diagram.centre.y) }
+      : undefined,
+    mirror:
+      diagram.mirror === "x"
+        ? { x1: gx(xMin), y1: gy(0), x2: gx(xMax), y2: gy(0) }
+        : diagram.mirror === "y"
+          ? { x1: gx(0), y1: gy(yMin), x2: gx(0), y2: gy(yMax) }
+          : undefined,
+    arrow: diagram.arrow
+      ? {
+          x1: gx(diagram.arrow.from[0]),
+          y1: gy(diagram.arrow.from[1]),
+          x2: gx(diagram.arrow.to[0]),
+          y2: gy(diagram.arrow.to[1])
+        }
+      : undefined
+  };
+}
+
+let aroundSectors: {
+  r1x: number;
+  r1y: number;
+  r2x: number;
+  r2y: number;
+  arc: string;
+  lx: number;
+  ly: number;
+  label: string;
+}[] = [];
+
+if (diagram.kind === "around-point") {
+  const cx = 70;
+  const cy = 44;
+  const rayR = 36;
+  const known = diagram.sectors.reduce((sum, s) => sum + (s.deg ?? 0), 0);
+  const missing = diagram.sectors.filter((s) => s.deg === undefined).length;
+  const leftover = Math.max(0, 360 - known);
+  const fallback = missing > 0 ? leftover / missing : 0;
+  let cursor = 90;
+  aroundSectors = diagram.sectors.map((sector) => {
+    const deg = sector.deg ?? fallback;
+    const start = cursor;
+    const end = cursor - deg;
+    const mid = (start + end) / 2;
+    const a = polar(cx, cy, rayR, start);
+    const b = polar(cx, cy, rayR, end);
+    const lab = polar(cx, cy, 18, mid);
+    cursor = end;
+    return {
+      r1x: a.x,
+      r1y: a.y,
+      r2x: b.x,
+      r2y: b.y,
+      arc: arcPath(cx, cy, 12, end, start),
+      lx: lab.x,
+      ly: lab.y,
+      label: sector.label
+    };
+  });
+}
+
+const named =
+  diagram.kind === "named-angle"
+    ? {
+        vertex: { x: 28, y: 70 },
+        base: { x: 118, y: 70 },
+        ray: polar(28, 70, 90, diagram.opening),
+        arc: arcPath(28, 70, diagram.opening > 180 ? 22 : 16, 0, diagram.opening),
+        lab: polar(28, 70, diagram.opening > 180 ? 30 : 26, diagram.opening / 2)
+      }
+    : null;
+
+const straight =
+  diagram.kind === "straight-line"
+    ? (() => {
+        const split = diagram.split ?? 40;
+        const vertex = { x: 70, y: 50 };
+        const ray = polar(vertex.x, vertex.y, 48, split);
+        const leftLab = polar(vertex.x, vertex.y, 28, (180 + split) / 2);
+        const rightLab = polar(vertex.x, vertex.y, 26, split / 2);
+        return { vertex, ray, leftLab, rightLab, split };
+      })()
+    : null;
+
+const cross =
+  diagram.kind === "vertically-opposite"
+    ? (() => {
+        const cx = 70;
+        const cy = 44;
+        const tilt = 32;
+        const a = polar(cx, cy, 48, tilt);
+        const b = polar(cx, cy, 48, tilt + 180);
+        const c = polar(cx, cy, 48, 0);
+        const d = polar(cx, cy, 48, 180);
+        return {
+          a,
+          b,
+          c,
+          d,
+          labA: polar(cx, cy, 22, tilt / 2),
+          labOpp: polar(cx, cy, 22, tilt / 2 + 180),
+          labAdj: polar(cx, cy, 22, (tilt + 180) / 2)
+        };
+      })()
+    : null;
+
+const parallel =
+  diagram.kind === "parallel-lines"
+    ? (() => {
+        const positions = {
+          corresponding: { x: 78, y: 80 },
+          alternate: { x: 96, y: 58 },
+          "co-interior": { x: 58, y: 58 }
+        } as const;
+        return {
+          unknownAt: positions[diagram.relation],
+          givenAt: { x: 58, y: 42 }
+        };
+      })()
+    : null;
+
+const triangle =
+  diagram.kind === "triangle"
+    ? (() => {
+        const { A, B, C } = triangleCorners(diagram.variant);
+        const midCA = midpoint(C, A);
+        const midCB = midpoint(C, B);
+        const midAB = midpoint(A, B);
+        const poly = `${C[0]},${C[1]} ${A[0]},${A[1]} ${B[0]},${B[1]}`;
+        const ext = diagram.exterior
+          ? {
+              x2: B[0] + 28,
+              y2: B[1],
+              lab: { x: B[0] + 10, y: B[1] - 10 }
+            }
+          : null;
+        return { A, B, C, midCA, midCB, midAB, poly, ext };
+      })()
+    : null;
+
+const polygonPts =
+  diagram.kind === "polygon" ? regularPolygonPoints(diagram.sides, 70, 44, 34) : "";
+
+const compassDirs = [
+  { label: "N", x: 70, y: 12 },
+  { label: "NE", x: 104, y: 22 },
+  { label: "E", x: 118, y: 48 },
+  { label: "SE", x: 104, y: 74 },
+  { label: "S", x: 70, y: 84 },
+  { label: "SW", x: 36, y: 74 },
+  { label: "W", x: 22, y: 48 },
+  { label: "NW", x: 36, y: 22 }
+];
+---
+
+{
+  diagram.kind === "triangle" && triangle ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        <polygon points={triangle.poly} class="shape-fill" />
+        {diagram.rightMark ? (
+          <polyline
+            points={`${triangle.A[0]},${triangle.A[1] - 10} ${triangle.A[0] + 10},${triangle.A[1] - 10} ${triangle.A[0] + 10},${triangle.A[1]}`}
+            class="right-mark"
+          />
+        ) : null}
+        {diagram.heightLabel ? (
+          <Fragment>
+            <line
+              x1={triangle.C[0]}
+              y1={triangle.C[1]}
+              x2={triangle.C[0]}
+              y2={triangle.A[1]}
+              class="dashed-line"
+            />
+            <text x={triangle.C[0] + 6} y={(triangle.C[1] + triangle.A[1]) / 2} class="label accent">
+              {diagram.heightLabel}
+            </text>
+          </Fragment>
+        ) : null}
+        {diagram.marks?.includes("a") ? (
+          <line
+            x1={triangle.midCA[0] - 3}
+            y1={triangle.midCA[1] - 4}
+            x2={triangle.midCA[0] + 3}
+            y2={triangle.midCA[1] + 4}
+            class="tick"
+          />
+        ) : null}
+        {diagram.marks?.includes("b") ? (
+          <line
+            x1={triangle.midCB[0] - 3}
+            y1={triangle.midCB[1] - 4}
+            x2={triangle.midCB[0] + 3}
+            y2={triangle.midCB[1] + 4}
+            class="tick"
+          />
+        ) : null}
+        {diagram.marks?.includes("c") ? (
+          <line
+            x1={triangle.midAB[0]}
+            y1={triangle.midAB[1] - 5}
+            x2={triangle.midAB[0]}
+            y2={triangle.midAB[1] + 5}
+            class="tick"
+          />
+        ) : null}
+        {diagram.sideA ? (
+          <text x={triangle.midCA[0] - 8} y={triangle.midCA[1]} class="label text-left">
+            {diagram.sideA}
+          </text>
+        ) : null}
+        {diagram.sideB ? (
+          <text x={triangle.midCB[0] + 8} y={triangle.midCB[1]} class="label text-right">
+            {diagram.sideB}
+          </text>
+        ) : null}
+        {diagram.sideC ? (
+          <text x={triangle.midAB[0]} y={triangle.midAB[1] + 10} class="label text-bottom">
+            {diagram.sideC}
+          </text>
+        ) : null}
+        {diagram.angleA ? (
+          <text x={triangle.A[0] + 10} y={triangle.A[1] - 8} class="label accent">
+            {diagram.angleA}
+          </text>
+        ) : null}
+        {diagram.angleB ? (
+          <text x={triangle.B[0] - 10} y={triangle.B[1] - 8} class="label accent">
+            {diagram.angleB}
+          </text>
+        ) : null}
+        {diagram.angleC ? (
+          <text x={triangle.C[0]} y={triangle.C[1] + 14} class="label accent">
+            {diagram.angleC}
+          </text>
+        ) : null}
+        {triangle.ext && diagram.exterior ? (
+          <Fragment>
+            <line
+              x1={triangle.B[0]}
+              y1={triangle.B[1]}
+              x2={triangle.ext.x2}
+              y2={triangle.ext.y2}
+              class="shape-stroke"
+            />
+            <text x={triangle.ext.lab.x} y={triangle.ext.lab.y} class="label accent">
+              {diagram.exterior}
+            </text>
+          </Fragment>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "quad" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        {diagram.variant === "square" ? (
+          <rect x="42" y="22" width="56" height="56" class="shape-fill" />
+        ) : null}
+        {diagram.variant === "rectangle" ? (
+          <rect x="28" y="28" width="84" height="44" class="shape-fill" />
+        ) : null}
+        {diagram.variant === "rhombus" ? (
+          <polygon points="70,14 118,46 70,78 22,46" class="shape-fill" />
+        ) : null}
+        {diagram.variant === "parallelogram" ? (
+          <polygon points="38,24 122,24 102,72 18,72" class="shape-fill" />
+        ) : null}
+        {diagram.variant === "trapezium" ? (
+          <polygon points="46,26 98,26 122,72 18,72" class="shape-fill" />
+        ) : null}
+        {diagram.variant === "kite" ? (
+          <polygon points="70,10 112,40 70,82 28,40" class="shape-fill" />
+        ) : null}
+        {diagram.top ? (
+          <text x="70" y="16" class="label text-top">
+            {diagram.top}
+          </text>
+        ) : null}
+        {diagram.bottom ? (
+          <text x="70" y="84" class="label text-bottom">
+            {diagram.bottom}
+          </text>
+        ) : null}
+        {diagram.left ? (
+          <text x="14" y="50" class="label text-left">
+            {diagram.left}
+          </text>
+        ) : null}
+        {diagram.right ? (
+          <text x="126" y="50" class="label text-right">
+            {diagram.right}
+          </text>
+        ) : null}
+        {diagram.angleA ? (
+          <text x="30" y="70" class="label accent">
+            {diagram.angleA}
+          </text>
+        ) : null}
+        {diagram.angleB ? (
+          <text x="110" y="70" class="label accent">
+            {diagram.angleB}
+          </text>
+        ) : null}
+        {diagram.angleC ? (
+          <text x="110" y="32" class="label accent">
+            {diagram.angleC}
+          </text>
+        ) : null}
+        {diagram.angleD ? (
+          <text x="30" y="32" class="label accent">
+            {diagram.angleD}
+          </text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "polygon" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        <polygon points={polygonPts} class="shape-fill" />
+        {diagram.sideLabel ? (
+          <text x="70" y="86" class="label text-bottom">
+            {diagram.sideLabel}
+          </text>
+        ) : null}
+        {diagram.angleLabel ? (
+          <text x="70" y="48" class="label accent">
+            {diagram.angleLabel}
+          </text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "circle" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        <circle cx="70" cy="44" r="32" class="shape-fill" />
+        {diagram.showRadius || diagram.radius ? (
+          <line x1="70" y1="44" x2="102" y2="44" class="radius-line" />
+        ) : null}
+        {diagram.showDiameter || diagram.diameter ? (
+          <line x1="38" y1="44" x2="102" y2="44" class="radius-line" />
+        ) : null}
+        <circle cx="70" cy="44" r="2" class="centre-dot" />
+        {diagram.centre ? (
+          <text x="64" y="40" class="label text-left">
+            {diagram.centre}
+          </text>
+        ) : null}
+        {diagram.radius ? (
+          <text x="88" y="40" class="label accent">
+            {diagram.radius}
+          </text>
+        ) : null}
+        {diagram.diameter ? (
+          <text x="70" y="38" class="label accent">
+            {diagram.diameter}
+          </text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "named-angle" && named ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        <line x1={named.vertex.x} y1={named.vertex.y} x2={named.base.x} y2={named.base.y} class="shape-stroke" />
+        <line x1={named.vertex.x} y1={named.vertex.y} x2={named.ray.x} y2={named.ray.y} class="shape-stroke" />
+        <path d={named.arc} class="angle-arc" />
+        {diagram.opening === 90 ? (
+          <polyline points="28,60 40,60 40,70" class="right-mark" />
+        ) : null}
+        {diagram.label ? (
+          <text x={named.lab.x} y={named.lab.y} class="label accent">
+            {diagram.label}
+          </text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "straight-line" && straight ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        <line x1="12" y1="50" x2="128" y2="50" class="shape-stroke" />
+        <line
+          x1={straight.vertex.x}
+          y1={straight.vertex.y}
+          x2={straight.ray.x}
+          y2={straight.ray.y}
+          class="shape-stroke"
+        />
+        <text x={straight.leftLab.x} y={straight.leftLab.y} class="label accent">
+          {diagram.left}
+        </text>
+        <text x={straight.rightLab.x} y={straight.rightLab.y} class="label accent">
+          {diagram.right}
+        </text>
+      </svg>
+    </div>
+  ) : diagram.kind === "around-point" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        {aroundSectors.map((sector) => (
+          <Fragment>
+            <line x1="70" y1="44" x2={sector.r1x} y2={sector.r1y} class="shape-stroke" />
+            <line x1="70" y1="44" x2={sector.r2x} y2={sector.r2y} class="shape-stroke" />
+            <text x={sector.lx} y={sector.ly} class="label accent">
+              {sector.label}
+            </text>
+          </Fragment>
+        ))}
+        <circle cx="70" cy="44" r="2.2" class="centre-dot" />
+      </svg>
+    </div>
+  ) : diagram.kind === "vertically-opposite" && cross ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        <line x1={cross.a.x} y1={cross.a.y} x2={cross.b.x} y2={cross.b.y} class="shape-stroke" />
+        <line x1={cross.c.x} y1={cross.c.y} x2={cross.d.x} y2={cross.d.y} class="shape-stroke" />
+        <text x={cross.labA.x} y={cross.labA.y} class="label accent">
+          {diagram.a}
+        </text>
+        {diagram.opposite ? (
+          <text x={cross.labOpp.x} y={cross.labOpp.y} class="label accent">
+            {diagram.opposite}
+          </text>
+        ) : null}
+        {diagram.adjacent ? (
+          <text x={cross.labAdj.x} y={cross.labAdj.y} class="label accent">
+            {diagram.adjacent}
+          </text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "parallel-lines" && parallel ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 150 96" class="diagram-svg" aria-hidden="true">
+        <line x1="12" y1="28" x2="138" y2="28" class="shape-stroke" />
+        <line x1="12" y1="72" x2="138" y2="72" class="shape-stroke" />
+        <line x1="48" y1="8" x2="108" y2="90" class="shape-stroke" />
+        <polygon points="18,24 26,28 18,32" class="parallel-arrow" />
+        <polygon points="18,68 26,72 18,76" class="parallel-arrow" />
+        <text x={parallel.givenAt.x} y={parallel.givenAt.y} class="label accent">
+          {diagram.given}
+        </text>
+        <text x={parallel.unknownAt.x} y={parallel.unknownAt.y} class="label accent">
+          {diagram.unknown}
+        </text>
+      </svg>
+    </div>
+  ) : diagram.kind === "grid" && grid ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 120 110" class="diagram-svg grid-svg" aria-hidden="true">
+        {grid.lines.map((line) => (
+          <line
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
+            class={line.axis ? "grid-axis" : "grid-line"}
+          />
+        ))}
+        {grid.ticks.map((tick) => (
+          <text x={tick.x} y={tick.y} class={`grid-tick ${tick.axis}`}>
+            {tick.label}
+          </text>
+        ))}
+        {grid.mirror ? (
+          <line
+            x1={grid.mirror.x1}
+            y1={grid.mirror.y1}
+            x2={grid.mirror.x2}
+            y2={grid.mirror.y2}
+            class="mirror-line"
+          />
+        ) : null}
+        {grid.shapes.map((shape) => (
+          <Fragment>
+            <polygon points={shape.d} class={shape.dashed ? "shape-dashed" : "shape-fill"} />
+            {shape.label ? (
+              <text x={shape.lx} y={shape.ly} class="label accent">
+                {shape.label}
+              </text>
+            ) : null}
+          </Fragment>
+        ))}
+        {grid.arrow ? (
+          <line
+            x1={grid.arrow.x1}
+            y1={grid.arrow.y1}
+            x2={grid.arrow.x2}
+            y2={grid.arrow.y2}
+            class="transform-arrow"
+          />
+        ) : null}
+        {grid.centre ? <circle cx={grid.centre.x} cy={grid.centre.y} r="2.4" class="centre-dot" /> : null}
+        {grid.points.map((point) => (
+          <Fragment>
+            <circle cx={point.x} cy={point.y} r="2.4" class="plot-point" />
+            <text x={point.x + 5} y={point.y - 4} class="label">
+              {point.label}
+            </text>
+          </Fragment>
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "compass" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 96" class="diagram-svg" aria-hidden="true">
+        <circle cx="70" cy="48" r="30" class="compass-ring" />
+        <line x1="70" y1="20" x2="70" y2="76" class="compass-arm" />
+        <line x1="42" y1="48" x2="98" y2="48" class="compass-arm" />
+        <line x1="50" y1="28" x2="90" y2="68" class="compass-arm faint" />
+        <line x1="90" y1="28" x2="50" y2="68" class="compass-arm faint" />
+        <polygon points="70,22 74,48 70,44 66,48" class="compass-needle" />
+        {compassDirs.map((dir) => (
+          <text
+            x={dir.x}
+            y={dir.y}
+            class:list={["label", "compass-label", dir.label === diagram.highlight ? "hot" : null]}
+          >
+            {dir.label}
+          </text>
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "solid" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        {diagram.variant === "cube" ? (
+          <Fragment>
+            <polygon points="30,38 80,38 80,78 30,78" class="shape-fill" />
+            <polygon points="30,38 52,18 102,18 80,38" class="shape-top" />
+            <polygon points="80,38 102,18 102,58 80,78" class="shape-side" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "cuboid" ? (
+          <Fragment>
+            <polygon points="22,38 96,38 96,76 22,76" class="shape-fill" />
+            <polygon points="22,38 48,16 122,16 96,38" class="shape-top" />
+            <polygon points="96,38 122,16 122,54 96,76" class="shape-side" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "cylinder" ? (
+          <Fragment>
+            <ellipse cx="70" cy="62" rx="28" ry="10" class="shape-fill" />
+            <path d="M 42,22 L 42,62 A 28,10 0 0,0 98,62 L 98,22" class="shape-fill" />
+            <ellipse cx="70" cy="22" rx="28" ry="10" class="shape-top" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "cone" ? (
+          <Fragment>
+            <ellipse cx="70" cy="70" rx="30" ry="10" class="shape-fill" />
+            <polygon points="70,12 40,70 100,70" class="shape-fill" />
+            <ellipse cx="70" cy="70" rx="30" ry="10" class="shape-top" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "sphere" ? (
+          <Fragment>
+            <circle cx="70" cy="44" r="32" class="shape-fill" />
+            <ellipse cx="70" cy="44" rx="32" ry="12" class="equator" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "square-pyramid" ? (
+          <Fragment>
+            <polygon points="28,72 112,72 88,58 48,58" class="shape-fill" />
+            <polygon points="70,12 28,72 112,72" class="shape-fill" />
+            <line x1="70" y1="12" x2="88" y2="58" class="hidden-edge" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "triangular-prism" ? (
+          <Fragment>
+            <polygon points="28,70 70,70 50,28" class="shape-fill" />
+            <polygon points="70,70 118,58 98,18 50,28" class="shape-side" />
+            <polygon points="28,70 70,70 118,58 76,58" class="shape-top" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "tetrahedron" ? (
+          <Fragment>
+            <polygon points="28,74 118,74 70,16" class="shape-fill" />
+            <polygon points="28,74 70,50 70,16" class="shape-side" />
+            <line x1="70" y1="50" x2="118" y2="74" class="hidden-edge" />
+          </Fragment>
+        ) : null}
+        {diagram.edgeLabel ? (
+          <text x="70" y="86" class="label text-bottom">
+            {diagram.edgeLabel}
+          </text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "net" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 150 100" class="diagram-svg net-svg" aria-hidden="true">
+        {diagram.variant === "cube" ? (
+          <Fragment>
+            <rect x="58" y="8" width="22" height="22" class="net-face" />
+            <rect x="36" y="30" width="22" height="22" class="net-face" />
+            <rect x="58" y="30" width="22" height="22" class="net-face" />
+            <rect x="80" y="30" width="22" height="22" class="net-face" />
+            <rect x="58" y="52" width="22" height="22" class="net-face" />
+            <rect x="58" y="74" width="22" height="22" class="net-face" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "cube-invalid" ? (
+          <Fragment>
+            <rect x="8" y="38" width="22" height="22" class="net-face" />
+            <rect x="30" y="38" width="22" height="22" class="net-face" />
+            <rect x="52" y="38" width="22" height="22" class="net-face" />
+            <rect x="74" y="38" width="22" height="22" class="net-face" />
+            <rect x="96" y="38" width="22" height="22" class="net-face" />
+            <rect x="118" y="38" width="22" height="22" class="net-face" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "cuboid" ? (
+          <Fragment>
+            <rect x="52" y="10" width="36" height="20" class="net-face" />
+            <rect x="16" y="30" width="36" height="24" class="net-face" />
+            <rect x="52" y="30" width="36" height="24" class="net-face" />
+            <rect x="88" y="30" width="36" height="24" class="net-face" />
+            <rect x="52" y="54" width="36" height="20" class="net-face" />
+            <rect x="52" y="74" width="36" height="20" class="net-face" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "triangular-prism" ? (
+          <Fragment>
+            <polygon points="40,18 64,18 52,4" class="net-face" />
+            <rect x="16" y="18" width="24" height="40" class="net-face" />
+            <rect x="40" y="18" width="24" height="40" class="net-face" />
+            <rect x="64" y="18" width="24" height="40" class="net-face" />
+            <polygon points="88,18 112,18 100,4" class="net-face" />
+          </Fragment>
+        ) : null}
+        {diagram.variant === "square-pyramid" ? (
+          <Fragment>
+            <polygon points="64,8 86,30 64,30 42,30" class="net-face" />
+            <polygon points="8,30 42,30 42,64 8,52" class="net-face" />
+            <rect x="42" y="30" width="44" height="34" class="net-face" />
+            <polygon points="86,30 120,30 120,52 86,64" class="net-face" />
+            <polygon points="42,64 86,64 64,92" class="net-face" />
+          </Fragment>
+        ) : null}
+      </svg>
+    </div>
+  ) : null
+}
+
+<style>
+  .diagram-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    max-height: 28mm;
+    max-width: 100%;
+  }
+
+  .diagram-svg {
+    height: 24mm;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .grid-svg,
+  .net-svg {
+    height: 26mm;
+  }
+
+  .shape-fill {
+    fill: #f0f7fa;
+    stroke: #2b5b7a;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+
+  .shape-top {
+    fill: #e1eff5;
+    stroke: #2b5b7a;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+
+  .shape-side {
+    fill: #d3e7ef;
+    stroke: #2b5b7a;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+  }
+
+  .shape-body {
+    fill: #f0f7fa;
+    stroke: none;
+  }
+
+  .shape-stroke {
+    fill: none;
+    stroke: #2b5b7a;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .shape-dashed {
+    fill: #fff6ee;
+    stroke: #e07a3f;
+    stroke-width: 1.3;
+    stroke-dasharray: 3 2;
+    stroke-linejoin: round;
+  }
+
+  .dashed-line,
+  .hidden-edge,
+  .equator {
+    fill: none;
+    stroke: #c45c6a;
+    stroke-width: 1.1;
+    stroke-dasharray: 2.5 2;
+  }
+
+  .tick,
+  .right-mark {
+    fill: none;
+    stroke: #152b3d;
+    stroke-width: 1.4;
+    stroke-linecap: square;
+  }
+
+  .radius-line {
+    stroke: #c45c6a;
+    stroke-width: 1.4;
+  }
+
+  .centre-dot,
+  .plot-point {
+    fill: #c45c6a;
+  }
+
+  .angle-arc {
+    fill: none;
+    stroke: #e07a3f;
+    stroke-width: 1.3;
+  }
+
+  .parallel-arrow {
+    fill: #2b5b7a;
+  }
+
+  .grid-line {
+    stroke: #d7e4ec;
+    stroke-width: 0.6;
+  }
+
+  .grid-axis {
+    stroke: #2b5b7a;
+    stroke-width: 1.2;
+  }
+
+  .grid-tick {
+    fill: #5b7588;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 5.5pt;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+
+  .grid-tick.y {
+    text-anchor: end;
+  }
+
+  .mirror-line {
+    stroke: #2f9d8a;
+    stroke-width: 1.5;
+    stroke-dasharray: 3 2;
+  }
+
+  .transform-arrow {
+    stroke: #e07a3f;
+    stroke-width: 1.5;
+  }
+
+  .arrow-head {
+    fill: #e07a3f;
+  }
+
+  .compass-ring {
+    fill: #f7fbfc;
+    stroke: #2b5b7a;
+    stroke-width: 1.6;
+  }
+
+  .compass-arm {
+    stroke: #94a3b8;
+    stroke-width: 1;
+  }
+
+  .compass-arm.faint {
+    stroke-width: 0.7;
+    stroke-dasharray: 2 2;
+  }
+
+  .compass-needle {
+    fill: #c45c6a;
+  }
+
+  .compass-label {
+    font-size: 6pt;
+  }
+
+  .compass-label.hot {
+    fill: #c45c6a;
+    font-weight: 800;
+  }
+
+  .net-face {
+    fill: #f0f7fa;
+    stroke: #2b5b7a;
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+  }
+
+  .label {
+    fill: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 7pt;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .label.accent {
+    fill: #c45c6a;
+    font-size: 6.5pt;
+  }
+
+  .text-top {
+    dominant-baseline: auto;
+  }
+
+  .text-bottom {
+    dominant-baseline: hanging;
+  }
+
+  .text-left {
+    text-anchor: end;
+  }
+
+  .text-right {
+    text-anchor: start;
+  }
+</style>

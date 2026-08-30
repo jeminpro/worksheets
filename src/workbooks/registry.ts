@@ -22,6 +22,7 @@ import { sheets as decimalsSheets } from "./decimals/data";
 import { sheets as measurementSheets } from "./measurement/data";
 import { sheets as dataSheets } from "./data/data";
 import { sheets as algebraSheets } from "./algebra/data";
+import { sheets as geometrySheets } from "./geometry/data";
 
 export const workbookGroups = [
   {
@@ -47,7 +48,7 @@ export const workbookGroups = [
   {
     id: "assessment",
     title: "Assessment",
-    description: "11 plus mixed checks across the core number topics."
+    description: "11 plus mixed checks across number, algebra, data and geometry."
   }
 ] as const satisfies readonly WorkbookGroupMeta[];
 
@@ -282,6 +283,17 @@ export const workbooks = [
     pageCount: algebraSheets.length,
     status: "ready",
     icon: "𝑥",
+    group: "assessment"
+  },
+  {
+    id: "geometry",
+    title: "Geometry",
+    description:
+      "Triangles, quadrilaterals, polygons & circles, angles, position, transformations and 3D shapes.",
+    href: withBase("topic/geometry/"),
+    pageCount: geometrySheets.length,
+    status: "ready",
+    icon: "△",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];
