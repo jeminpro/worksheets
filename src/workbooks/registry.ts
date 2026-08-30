@@ -17,6 +17,7 @@ import { sheets as formingExpressionsSheets } from "./forming-expressions/data";
 import { sheets as simplifyCalculationsSheets } from "./simplify-calculations/data";
 import { sheets as basicsSheets } from "./basics/data";
 import { sheets as operationsSheets } from "./operations/data";
+import { sheets as fractionsSheets } from "./fractions/data";
 
 export const workbookGroups = [
   {
@@ -222,6 +223,17 @@ export const workbooks = [
     pageCount: operationsSheets.length,
     status: "ready",
     icon: "+−×",
+    group: "assessment"
+  },
+  {
+    id: "fractions",
+    title: "Fractions",
+    description:
+      "Calculating fractions, addition & subtraction, equivalent fractions, mixed numbers and ordering.",
+    href: withBase("topic/fractions/"),
+    pageCount: fractionsSheets.length,
+    status: "ready",
+    icon: "½",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];

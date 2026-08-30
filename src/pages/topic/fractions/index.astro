@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import FractionsSheet from "../../../workbooks/fractions/FractionsSheet.astro";
+import { sheets } from "../../../workbooks/fractions/data";
+---
+
+<WorkbookLayout
+  title="Fractions Worksheets"
+  workbookId="fractions"
+  expectedPages={sheets.length}
+  workbookTitle="Fractions"
+>
+  {sheets.map((sheet) => <FractionsSheet sheet={sheet} />)}
+</WorkbookLayout>
