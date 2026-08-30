@@ -11,69 +11,69 @@ const { diagram } = Astro.props;
 {
   diagram.kind === "rectangle" ? (
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 140 68" class="diagram-svg" aria-hidden="true">
-        <rect x="25" y="14" width="90" height="42" rx="2" class="shape-fill" />
-        <text x="70" y="9" class="label text-top">{diagram.widthLabel}</text>
-        <text x="120" y="38" class="label text-side">{diagram.heightLabel}</text>
+      <svg viewBox="0 0 140 82" class="diagram-svg" aria-hidden="true">
+        <rect x="25" y="30" width="90" height="38" rx="2" class="shape-fill" />
+        <text x="70" y="20" class="label text-top">{diagram.widthLabel}</text>
+        <text x="120" y="49" class="label text-side">{diagram.heightLabel}</text>
       </svg>
     </div>
   ) : diagram.kind === "triangle" ? (
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 140 70" class="diagram-svg" aria-hidden="true">
-        <polygon points="25,58 115,58 70,14" class="shape-fill" />
+      <svg viewBox="0 0 140 82" class="diagram-svg" aria-hidden="true">
+        <polygon points="25,70 115,70 70,26" class="shape-fill" />
         {diagram.heightLabel ? (
-          <line x1="70" y1="14" x2="70" y2="58" class="dashed-line" />
+          <line x1="70" y1="26" x2="70" y2="70" class="dashed-line" />
         ) : null}
-        <text x="70" y="67" class="label text-bottom">{diagram.baseLabel}</text>
+        <text x="70" y="78" class="label text-bottom">{diagram.baseLabel}</text>
         {diagram.heightLabel ? (
-          <text x="74" y="38" class="label text-inside">{diagram.heightLabel}</text>
+          <text x="74" y="48" class="label text-inside">{diagram.heightLabel}</text>
         ) : null}
         {diagram.sideALabel ? (
-          <text x="40" y="32" class="label text-left">{diagram.sideALabel}</text>
+          <text x="40" y="44" class="label text-left">{diagram.sideALabel}</text>
         ) : null}
         {diagram.sideBLabel ? (
-          <text x="100" y="32" class="label text-right">{diagram.sideBLabel}</text>
+          <text x="100" y="44" class="label text-right">{diagram.sideBLabel}</text>
         ) : null}
       </svg>
     </div>
   ) : diagram.kind === "compound-l" ? (
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 140 78" class="diagram-svg" aria-hidden="true">
-        <polygon points="30,10 75,10 75,38 115,38 115,68 30,68" class="shape-fill" />
-        <text x="52" y="7" class="label text-top">{diagram.top}</text>
-        <text x="22" y="42" class="label text-left">{diagram.left}</text>
-        <text x="72" y="76" class="label text-bottom">{diagram.bottom}</text>
-        <text x="122" y="55" class="label text-right">{diagram.right}</text>
+      <svg viewBox="0 0 140 88" class="diagram-svg" aria-hidden="true">
+        <polygon points="30,28 75,28 75,52 115,52 115,76 30,76" class="shape-fill" />
+        <text x="52" y="19" class="label text-top">{diagram.top}</text>
+        <text x="22" y="52" class="label text-left">{diagram.left}</text>
+        <text x="72" y="83" class="label text-bottom">{diagram.bottom}</text>
+        <text x="122" y="64" class="label text-right">{diagram.right}</text>
         {diagram.cutH ? (
-          <text x="80" y="26" class="label text-cut">{diagram.cutH}</text>
+          <text x="82" y="38" class="label text-cut">{diagram.cutH}</text>
         ) : null}
         {diagram.cutW ? (
-          <text x="96" y="34" class="label text-cut">{diagram.cutW}</text>
+          <text x="96" y="46" class="label text-cut">{diagram.cutW}</text>
         ) : null}
       </svg>
     </div>
   ) : diagram.kind === "cuboid" ? (
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 150 78" class="diagram-svg" aria-hidden="true">
+      <svg viewBox="0 0 150 84" class="diagram-svg" aria-hidden="true">
         {/* Front Face */}
-        <polygon points="25,30 95,30 95,68 25,68" class="shape-fill" />
+        <polygon points="25,36 95,36 95,74 25,74" class="shape-fill" />
         {/* Top Face */}
-        <polygon points="25,30 55,10 125,10 95,30" class="shape-top" />
+        <polygon points="25,36 55,16 125,16 95,36" class="shape-top" />
         {/* Side Face */}
-        <polygon points="95,30 125,10 125,48 95,68" class="shape-side" />
+        <polygon points="95,36 125,16 125,54 95,74" class="shape-side" />
         {/* Labels */}
-        <text x="60" y="76" class="label text-bottom">{diagram.lengthLabel}</text>
-        <text x="18" y="52" class="label text-left">{diagram.heightLabel}</text>
-        <text x="115" y="62" class="label text-right">{diagram.widthLabel}</text>
+        <text x="60" y="81" class="label text-bottom">{diagram.lengthLabel}</text>
+        <text x="18" y="56" class="label text-left">{diagram.heightLabel}</text>
+        <text x="115" y="66" class="label text-right">{diagram.widthLabel}</text>
       </svg>
     </div>
   ) : diagram.kind === "cube" ? (
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 130 76" class="diagram-svg" aria-hidden="true">
-        <polygon points="25,30 75,30 75,68 25,68" class="shape-fill" />
-        <polygon points="25,30 50,12 100,12 75,30" class="shape-top" />
-        <polygon points="75,30 100,12 100,50 75,68" class="shape-side" />
-        <text x="50" y="76" class="label text-bottom">{diagram.edgeLabel}</text>
+      <svg viewBox="0 0 130 82" class="diagram-svg" aria-hidden="true">
+        <polygon points="25,36 75,36 75,74 25,74" class="shape-fill" />
+        <polygon points="25,36 50,18 100,18 75,36" class="shape-top" />
+        <polygon points="75,36 100,18 100,56 75,74" class="shape-side" />
+        <text x="50" y="81" class="label text-bottom">{diagram.edgeLabel}</text>
       </svg>
     </div>
   ) : diagram.kind === "clock" ? (
@@ -111,21 +111,21 @@ const { diagram } = Astro.props;
     </div>
   ) : diagram.kind === "parallelogram" ? (
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 140 70" class="diagram-svg" aria-hidden="true">
-        <polygon points="35,14 125,14 105,58 15,58" class="shape-fill" />
-        <line x1="35" y1="14" x2="35" y2="58" class="dashed-line" />
-        <text x="60" y="66" class="label text-bottom">{diagram.baseLabel}</text>
-        <text x="39" y="38" class="label text-inside">{diagram.heightLabel}</text>
+      <svg viewBox="0 0 140 82" class="diagram-svg" aria-hidden="true">
+        <polygon points="35,28 125,28 105,70 15,70" class="shape-fill" />
+        <line x1="35" y1="28" x2="35" y2="70" class="dashed-line" />
+        <text x="60" y="78" class="label text-bottom">{diagram.baseLabel}</text>
+        <text x="39" y="50" class="label text-inside">{diagram.heightLabel}</text>
       </svg>
     </div>
   ) : diagram.kind === "trapezium" ? (
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 140 70" class="diagram-svg" aria-hidden="true">
-        <polygon points="45,14 95,14 125,58 15,58" class="shape-fill" />
-        <line x1="45" y1="14" x2="45" y2="58" class="dashed-line" />
-        <text x="70" y="9" class="label text-top">{diagram.topLabel}</text>
-        <text x="70" y="67" class="label text-bottom">{diagram.bottomLabel}</text>
-        <text x="49" y="38" class="label text-inside">{diagram.heightLabel}</text>
+      <svg viewBox="0 0 140 82" class="diagram-svg" aria-hidden="true">
+        <polygon points="45,30 95,30 125,70 15,70" class="shape-fill" />
+        <line x1="45" y1="30" x2="45" y2="70" class="dashed-line" />
+        <text x="70" y="20" class="label text-top">{diagram.topLabel}</text>
+        <text x="70" y="78" class="label text-bottom">{diagram.bottomLabel}</text>
+        <text x="49" y="51" class="label text-inside">{diagram.heightLabel}</text>
       </svg>
     </div>
   ) : null
@@ -134,20 +134,20 @@ const { diagram } = Astro.props;
 <style>
   .diagram-wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    margin: 0.2mm 0;
-    max-height: 18mm;
+    margin: 0;
+    max-height: 15.5mm;
   }
 
   .diagram-svg {
-    height: 17mm;
+    height: 15mm;
     max-width: 100%;
     overflow: visible;
   }
 
   .clock-svg {
-    height: 18mm;
+    height: 16mm;
   }
 
   .shape-fill {
@@ -180,7 +180,7 @@ const { diagram } = Astro.props;
   .label {
     fill: #152b3d;
     font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
-    font-size: 7.5pt;
+    font-size: 7pt;
     font-weight: 700;
     text-anchor: middle;
     dominant-baseline: middle;
@@ -205,12 +205,12 @@ const { diagram } = Astro.props;
   .text-inside {
     fill: #c45c6a;
     text-anchor: start;
-    font-size: 7pt;
+    font-size: 6.5pt;
   }
 
   .text-cut {
     fill: #e07a3f;
-    font-size: 7pt;
+    font-size: 6.5pt;
   }
 
   /* Clock styling */

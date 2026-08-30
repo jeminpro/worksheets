@@ -234,7 +234,7 @@ export const sheets = [
         difficulty: "easy",
         prompt: "What time is shown on the clock face?",
         diagram: { kind: "clock", hours: 3, minutes: 20 },
-        answer: "03:20 (or 20 past 3)"
+        answer: "03:20"
       },
       {
         difficulty: "easy",
@@ -263,7 +263,7 @@ export const sheets = [
         difficulty: "medium",
         prompt: "What time is shown on the clock face?",
         diagram: { kind: "clock", hours: 8, minutes: 45 },
-        answer: "08:45 (or quarter to 9)"
+        answer: "08:45"
       },
       {
         difficulty: "medium",

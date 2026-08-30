@@ -44,10 +44,59 @@ const answerSegments = parseMeasurementText(problem.answer);
     }
   </div>
 
-  {problem.diagram ? <MeasurementDiagram diagram={problem.diagram} /> : null}
-
   {
-    format === "expression" ? (
+    problem.diagram ? (
+      <div class="diagram-row">
+        <div class="diagram-pane">
+          <MeasurementDiagram diagram={problem.diagram} />
+        </div>
+        <div class="diagram-answer-pane">
+          {format === "expression" ? (
+            <div class="calculation">
+              <span class="given">{given.join(" ")}</span>
+              <span class="equals" aria-hidden="true">
+                =
+              </span>
+              <span class="answer-slot">
+                <span class="answer">
+                  {answerSegments.map((segment) =>
+                    segment.kind === "text" ? (
+                      segment.value
+                    ) : (
+                      <span class="mixed-fraction">
+                        {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+                        <span class="fraction" aria-hidden="true">
+                          <span class="numerator">{segment.numerator}</span>
+                          <span class="denominator">{segment.denominator}</span>
+                        </span>
+                      </span>
+                    )
+                  )}
+                </span>
+              </span>
+            </div>
+          ) : (
+            <div class="answer-line">
+              <span class="answer">
+                {answerSegments.map((segment) =>
+                  segment.kind === "text" ? (
+                    segment.value
+                  ) : (
+                    <span class="mixed-fraction">
+                      {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+                      <span class="fraction" aria-hidden="true">
+                        <span class="numerator">{segment.numerator}</span>
+                        <span class="denominator">{segment.denominator}</span>
+                      </span>
+                    </span>
+                  )
+                )}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    ) : format === "expression" ? (
       <div class="calculation">
         <span class="given">{given.join(" ")}</span>
         <span class="equals" aria-hidden="true">
@@ -180,6 +229,40 @@ const answerSegments = parseMeasurementText(problem.answer);
   .format-text .prompt {
     color: #152b3d;
     font-size: 8.8pt;
+  }
+
+  /* Side-by-side layout for cards with diagrams */
+  .diagram-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2mm;
+    flex: 1;
+    min-height: 0;
+    margin-top: 0.8mm;
+  }
+
+  .diagram-pane {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    max-width: 58%;
+  }
+
+  .diagram-answer-pane {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 0.5mm;
+  }
+
+  .diagram-answer-pane .answer-line {
+    width: 100%;
+    min-height: 5.5mm;
   }
 
   .values,
