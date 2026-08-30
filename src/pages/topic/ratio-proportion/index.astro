@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import RatioSheet from "../../../workbooks/ratio-proportion/RatioSheet.astro";
+import { sheets } from "../../../workbooks/ratio-proportion/data";
+---
+
+<WorkbookLayout
+  title="Ratio and Proportion Worksheets"
+  workbookId="ratio-proportion"
+  expectedPages={sheets.length}
+  workbookTitle="Ratio and Proportion"
+>
+  {sheets.map((sheet) => <RatioSheet sheet={sheet} />)}
+</WorkbookLayout>

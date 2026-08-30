@@ -1,0 +1,324 @@
+---
+import type { RatioDiagram } from "./types";
+
+interface Props {
+  diagram: RatioDiagram;
+}
+
+const { diagram } = Astro.props;
+
+const TAPE_COLORS = ["#c45c6a", "#3b82f6", "#2f9d8a", "#e07a3f"];
+const PIE_COLORS = ["#2f9d8a", "#e07a3f", "#3b82f6", "#c45c6a", "#8b5cf6"];
+
+const hundredCells =
+  diagram.kind === "hundred-square"
+    ? Array.from({ length: 100 }, (_, i) => ({
+        x: 8 + (i % 10) * 10,
+        y: 6 + Math.floor(i / 10) * 8,
+        shaded: i < diagram.shaded
+      }))
+    : [];
+
+const compareBars =
+  diagram.kind === "compare-bars"
+    ? diagram.bars.map((bar, i) => ({
+        ...bar,
+        y: 10 + i * 24,
+        width: Math.max(6, (bar.percent / 100) * 110),
+        color: TAPE_COLORS[i % TAPE_COLORS.length]
+      }))
+    : [];
+
+let pieSlices: { path: string; color: string; lx: number; ly: number; label: string }[] = [];
+
+if (diagram.kind === "pie") {
+  const cx = 42;
+  const cy = 44;
+  const r = 30;
+  let cursor = 0;
+  pieSlices = diagram.slices.map((slice, i) => {
+    const start = (cursor / 100) * 2 * Math.PI - Math.PI / 2;
+    cursor += slice.percent;
+    const end = (cursor / 100) * 2 * Math.PI - Math.PI / 2;
+    const x1 = cx + r * Math.cos(start);
+    const y1 = cy + r * Math.sin(start);
+    const x2 = cx + r * Math.cos(end);
+    const y2 = cy + r * Math.sin(end);
+    const large = slice.percent > 50 ? 1 : 0;
+    const mid = (start + end) / 2;
+    return {
+      path: `M ${cx} ${cy} L ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(1)} ${y2.toFixed(1)} Z`,
+      color: PIE_COLORS[i % PIE_COLORS.length],
+      lx: cx + (r + 16) * Math.cos(mid),
+      ly: cy + (r + 16) * Math.sin(mid),
+      label: slice.label
+    };
+  });
+}
+
+const tapeCells =
+  diagram.kind === "tape"
+    ? diagram.parts.flatMap((part, partIndex) =>
+        Array.from({ length: part.count }, (_, i) => ({
+          label: part.label,
+          color: TAPE_COLORS[partIndex % TAPE_COLORS.length],
+          index: diagram.parts.slice(0, partIndex).reduce((sum, p) => sum + p.count, 0) + i
+        }))
+      )
+    : [];
+
+const tapeTotal = tapeCells.length;
+const tapeSize = tapeTotal > 0 ? Math.min(18, 120 / tapeTotal) : 18;
+
+const counterDots =
+  diagram.kind === "counters"
+    ? diagram.groups.map((group, gi) => ({
+        label: group.label,
+        color: TAPE_COLORS[gi % TAPE_COLORS.length],
+        dots: Array.from({ length: group.count }, (_, i) => i)
+      }))
+    : [];
+
+const lineMin = diagram.kind === "number-line" ? (diagram.min ?? 0) : 0;
+const lineMax = diagram.kind === "number-line" ? (diagram.max ?? 100) : 100;
+const lineSpan = Math.max(1, lineMax - lineMin);
+---
+
+{
+  diagram.kind === "hundred-square" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 116 92" class="diagram-svg" aria-hidden="true">
+        {hundredCells.map((cell) => (
+          <rect
+            x={cell.x}
+            y={cell.y}
+            width="9.2"
+            height="7.2"
+            class={cell.shaded ? "cell-on" : "cell-off"}
+          />
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "percent-bar" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 56" class="diagram-svg" aria-hidden="true">
+        <rect x="10" y="18" width="120" height="16" rx="2" class="bar-track" />
+        <rect
+          x="10"
+          y="18"
+          width={Math.max(2, (diagram.percent / 100) * 120)}
+          height="16"
+          rx="2"
+          class="bar-fill"
+        />
+        {diagram.label ? (
+          <text x={10 + Math.max(8, (diagram.percent / 100) * 60)} y="28" class="label bar-label">
+            {diagram.label}
+          </text>
+        ) : null}
+        <text x="10" y="46" class="label muted">
+          0%
+        </text>
+        <text x="130" y="46" class="label muted">
+          {diagram.totalLabel ?? "100%"}
+        </text>
+      </svg>
+    </div>
+  ) : diagram.kind === "compare-bars" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox={`0 0 140 ${compareBars.length * 24 + 8}`} class="diagram-svg" aria-hidden="true">
+        {compareBars.map((bar) => (
+          <Fragment>
+            <text x="8" y={bar.y + 10} class="label text-left">
+              {bar.label}
+            </text>
+            <rect x="22" y={bar.y} width="110" height="16" rx="2" class="bar-track" />
+            <rect x="22" y={bar.y} width={bar.width} height="16" rx="2" fill={bar.color} />
+          </Fragment>
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "pie" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 90" class="diagram-svg" aria-hidden="true">
+        {pieSlices.map((slice) => (
+          <Fragment>
+            <path d={slice.path} fill={slice.color} class="pie-slice" />
+            <text x={slice.lx} y={slice.ly} class="label">
+              {slice.label}
+            </text>
+          </Fragment>
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "tape" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 56" class="diagram-svg" aria-hidden="true">
+        {tapeCells.map((cell, i) => (
+          <rect
+            x={10 + i * tapeSize}
+            y="14"
+            width={tapeSize - 1.2}
+            height="18"
+            rx="1.4"
+            fill={cell.color}
+            class="tape-cell"
+          />
+        ))}
+        {diagram.parts.map((part, pi) => {
+          const start = diagram.parts.slice(0, pi).reduce((sum, p) => sum + p.count, 0);
+          const mid = start + part.count / 2;
+          return (
+            <text x={10 + mid * tapeSize} y="44" class="label">
+              {part.label}
+            </text>
+          );
+        })}
+        {diagram.unitLabel ? (
+          <text x="130" y="26" class="label muted text-right">
+            {diagram.unitLabel}
+          </text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "counters" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox={`0 0 140 ${counterDots.length * 22 + 10}`} class="diagram-svg" aria-hidden="true">
+        {counterDots.map((group, gi) => (
+          <Fragment>
+            <text x="8" y={16 + gi * 22} class="label text-left">
+              {group.label}
+            </text>
+            {group.dots.map((i) => (
+              <circle cx={28 + i * 12} cy={14 + gi * 22} r="5" fill={group.color} class="counter" />
+            ))}
+          </Fragment>
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "number-line" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 140 56" class="diagram-svg" aria-hidden="true">
+        <line x1="12" y1="28" x2="128" y2="28" class="axis" />
+        <polygon points="128,28 122,24 122,32" class="axis-head" />
+        <text x="12" y="46" class="label muted">
+          {lineMin}
+          {lineMax === 100 ? "%" : ""}
+        </text>
+        <text x="128" y="46" class="label muted">
+          {lineMax}
+          {lineMax === 100 ? "%" : ""}
+        </text>
+        {diagram.marks.map((mark, i) => {
+          const x = 12 + ((mark.value - lineMin) / lineSpan) * 116;
+          const above = i % 2 === 0;
+          return (
+            <Fragment>
+              <line x1={x} y1="22" x2={x} y2="34" class="tick" />
+              <text x={x} y={above ? 14 : 48} class="label accent">
+                {mark.label}
+              </text>
+            </Fragment>
+          );
+        })}
+      </svg>
+    </div>
+  ) : null
+}
+
+<style>
+  .diagram-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    max-height: 28mm;
+    max-width: 100%;
+  }
+
+  .diagram-svg {
+    height: 24mm;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .cell-on {
+    fill: #2f9d8a;
+    stroke: #1b6357;
+    stroke-width: 0.4;
+  }
+
+  .cell-off {
+    fill: #f0f7fa;
+    stroke: #94a3b8;
+    stroke-width: 0.4;
+  }
+
+  .bar-track {
+    fill: #e1eff5;
+    stroke: #2b5b7a;
+    stroke-width: 1;
+  }
+
+  .bar-fill {
+    fill: #2f9d8a;
+  }
+
+  .bar-label {
+    fill: #fff;
+    font-size: 6.5pt;
+  }
+
+  .pie-slice {
+    stroke: #fff;
+    stroke-width: 1;
+  }
+
+  .tape-cell,
+  .counter {
+    stroke: #152b3d;
+    stroke-width: 0.5;
+  }
+
+  .axis {
+    stroke: #2b5b7a;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .axis-head {
+    fill: #2b5b7a;
+  }
+
+  .tick {
+    stroke: #c45c6a;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .label {
+    fill: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .label.accent {
+    fill: #c45c6a;
+  }
+
+  .label.muted {
+    fill: #5b7588;
+    font-size: 6pt;
+  }
+
+  .text-left {
+    text-anchor: start;
+  }
+
+  .text-right {
+    text-anchor: end;
+  }
+</style>

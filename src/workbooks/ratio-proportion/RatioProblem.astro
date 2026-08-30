@@ -1,0 +1,393 @@
+---
+import type { RatioProblem } from "./types";
+import { formatAccessibleQuestion, getFormat, getGiven, parseRatioText } from "./expression";
+import RatioDiagram from "./RatioDiagram.astro";
+
+interface Props {
+  problem: RatioProblem;
+  index: number;
+  width: "narrow" | "wide";
+}
+
+const { problem, index, width } = Astro.props;
+const format = getFormat(problem);
+const given = getGiven(problem);
+const question = formatAccessibleQuestion(problem);
+const promptSegments = problem.prompt ? parseRatioText(problem.prompt) : [];
+const answerSegments = parseRatioText(problem.answer);
+---
+
+<article
+  class:list={["problem", `format-${format}`, problem.difficulty, width, problem.diagram ? "with-diagram" : null]}
+  aria-label={`Question ${index + 1}: ${question}`}
+>
+  <div class="head">
+    <span class="problem-number">{index + 1}</span>
+    {
+      problem.prompt ? (
+        <p class="prompt">
+          {promptSegments.map((segment) =>
+            segment.kind === "text" ? (
+              segment.value
+            ) : (
+              <span class="mixed-fraction">
+                {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+                <span class="fraction" aria-hidden="true">
+                  <span class="numerator">{segment.numerator}</span>
+                  <span class="denominator">{segment.denominator}</span>
+                </span>
+              </span>
+            )
+          )}
+        </p>
+      ) : null
+    }
+  </div>
+
+  {
+    problem.diagram ? (
+      <div class="diagram-row">
+        <div class="diagram-pane">
+          <RatioDiagram diagram={problem.diagram} />
+        </div>
+        <div class="diagram-answer-pane">
+          {format === "expression" ? (
+            <div class="calculation">
+              <span class="given">{given.join(" ")}</span>
+              <span class="equals" aria-hidden="true">
+                =
+              </span>
+              <span class="answer-slot">
+                <span class="answer">
+                  {answerSegments.map((segment) =>
+                    segment.kind === "text" ? (
+                      segment.value
+                    ) : (
+                      <span class="mixed-fraction">
+                        {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+                        <span class="fraction" aria-hidden="true">
+                          <span class="numerator">{segment.numerator}</span>
+                          <span class="denominator">{segment.denominator}</span>
+                        </span>
+                      </span>
+                    )
+                  )}
+                </span>
+              </span>
+            </div>
+          ) : (
+            <div class="answer-line">
+              <span class="answer">
+                {answerSegments.map((segment) =>
+                  segment.kind === "text" ? (
+                    segment.value
+                  ) : (
+                    <span class="mixed-fraction">
+                      {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+                      <span class="fraction" aria-hidden="true">
+                        <span class="numerator">{segment.numerator}</span>
+                        <span class="denominator">{segment.denominator}</span>
+                      </span>
+                    </span>
+                  )
+                )}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    ) : format === "expression" ? (
+      <div class="calculation">
+        <span class="given">{given.join(" ")}</span>
+        <span class="equals" aria-hidden="true">
+          =
+        </span>
+        <span class="answer-slot">
+          <span class="answer">
+            {answerSegments.map((segment) =>
+              segment.kind === "text" ? (
+                segment.value
+              ) : (
+                <span class="mixed-fraction">
+                  {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+                  <span class="fraction" aria-hidden="true">
+                    <span class="numerator">{segment.numerator}</span>
+                    <span class="denominator">{segment.denominator}</span>
+                  </span>
+                </span>
+              )
+            )}
+          </span>
+        </span>
+      </div>
+    ) : format === "compare" ? (
+      <div class="calculation">
+        <span class="given value">{given[0]}</span>
+        <span class="answer-slot sign">
+          <span class="answer">{problem.answer}</span>
+        </span>
+        <span class="given value">{given[1]}</span>
+      </div>
+    ) : (
+      <Fragment>
+        {given.length > 0 ? (
+          <div class="values">
+            {given.map((value) => (
+              <span class="given value">{value}</span>
+            ))}
+          </div>
+        ) : null}
+        <div class="answer-line">
+          <span class="answer">
+            {answerSegments.map((segment) =>
+              segment.kind === "text" ? (
+                segment.value
+              ) : (
+                <span class="mixed-fraction">
+                  {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+                  <span class="fraction" aria-hidden="true">
+                    <span class="numerator">{segment.numerator}</span>
+                    <span class="denominator">{segment.denominator}</span>
+                  </span>
+                </span>
+              )
+            )}
+          </span>
+        </div>
+      </Fragment>
+    )
+  }
+
+  <div class="working" aria-hidden="true"></div>
+</article>
+
+<style>
+  .problem {
+    --band: var(--blue-strong);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.6mm;
+    min-width: 0;
+    min-height: 0;
+    padding: 2.4mm 2.6mm 1.8mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem.easy {
+    --band: #2f9d8a;
+  }
+
+  .problem.medium {
+    --band: #e07a3f;
+  }
+
+  .problem.hard {
+    --band: #c45c6a;
+  }
+
+  .narrow {
+    grid-column: span 2;
+  }
+
+  .wide {
+    grid-column: span 3;
+  }
+
+  .head {
+    display: flex;
+    gap: 1.8mm;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .problem-number {
+    display: grid;
+    width: 4.8mm;
+    height: 4.8mm;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--band);
+    font-size: 6.5pt;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .prompt {
+    margin: 0;
+    min-width: 0;
+    color: var(--muted);
+    font-size: 8.5pt;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .format-text .prompt {
+    color: #152b3d;
+    font-size: 8.8pt;
+  }
+
+  .diagram-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2mm;
+    flex: 1;
+    min-height: 0;
+    margin-top: 0.6mm;
+  }
+
+  .diagram-pane {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    max-width: 62%;
+  }
+
+  .diagram-answer-pane {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 0.5mm;
+  }
+
+  .diagram-answer-pane .answer-line {
+    width: 100%;
+    min-height: 5.5mm;
+  }
+
+  .values,
+  .calculation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2mm 2.4mm;
+    align-items: baseline;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .given {
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .value {
+    padding: 0.4mm 1.8mm;
+    border-radius: 1.8mm;
+    background: var(--blue);
+  }
+
+  .format-compare .calculation {
+    gap: 1mm 1.6mm;
+  }
+
+  .format-compare .value {
+    padding: 0.4mm 1mm;
+  }
+
+  .equals {
+    color: var(--muted);
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+  }
+
+  .answer-slot {
+    display: inline-flex;
+    min-width: 12mm;
+    min-height: 1.2em;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 0.45mm solid var(--ink);
+  }
+
+  .answer-slot.sign {
+    min-width: 8mm;
+    padding: 0 1mm;
+    border: 0.35mm dashed var(--rule);
+    border-radius: 1.5mm;
+  }
+
+  .answer-line {
+    display: flex;
+    min-height: 5.8mm;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 1mm;
+    border-bottom: 0.45mm solid var(--ink);
+  }
+
+  .answer {
+    color: var(--blue-strong);
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.1;
+    text-align: center;
+    overflow-wrap: anywhere;
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .working {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .mixed-fraction {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.12em;
+    vertical-align: middle;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .whole {
+    font-size: 1em;
+    font-weight: inherit;
+    line-height: 1;
+  }
+
+  .fraction {
+    display: inline-grid;
+    grid-template-rows: auto auto;
+    align-items: center;
+    justify-items: center;
+    min-width: 0.8em;
+    vertical-align: middle;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .numerator {
+    display: block;
+    padding: 0 0.15em 0.06em;
+    border-bottom: 0.06em solid currentColor;
+    font-size: 0.82em;
+    font-weight: inherit;
+    line-height: 1;
+  }
+
+  .denominator {
+    display: block;
+    padding: 0.06em 0.15em 0;
+    font-size: 0.82em;
+    font-weight: inherit;
+    line-height: 1;
+  }
+</style>

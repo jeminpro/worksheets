@@ -23,6 +23,7 @@ import { sheets as measurementSheets } from "./measurement/data";
 import { sheets as dataSheets } from "./data/data";
 import { sheets as algebraSheets } from "./algebra/data";
 import { sheets as geometrySheets } from "./geometry/data";
+import { sheets as ratioProportionSheets } from "./ratio-proportion/data";
 
 export const workbookGroups = [
   {
@@ -48,7 +49,7 @@ export const workbookGroups = [
   {
     id: "assessment",
     title: "Assessment",
-    description: "11 plus mixed checks across number, algebra, data and geometry."
+    description: "11 plus mixed checks across number, algebra, data, geometry and ratio."
   }
 ] as const satisfies readonly WorkbookGroupMeta[];
 
@@ -294,6 +295,17 @@ export const workbooks = [
     pageCount: geometrySheets.length,
     status: "ready",
     icon: "△",
+    group: "assessment"
+  },
+  {
+    id: "ratio-proportion",
+    title: "Ratio and Proportion",
+    description:
+      "Order and compare percentages, calculate percentages, and work with ratios and relative quantities.",
+    href: withBase("topic/ratio-proportion/"),
+    pageCount: ratioProportionSheets.length,
+    status: "ready",
+    icon: "%",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];
