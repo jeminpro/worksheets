@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import DecimalsSheet from "../../../workbooks/decimals/DecimalsSheet.astro";
+import { sheets } from "../../../workbooks/decimals/data";
+---
+
+<WorkbookLayout
+  title="Decimals Worksheets"
+  workbookId="decimals"
+  expectedPages={sheets.length}
+  workbookTitle="Decimals"
+>
+  {sheets.map((sheet) => <DecimalsSheet sheet={sheet} />)}
+</WorkbookLayout>

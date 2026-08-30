@@ -18,6 +18,7 @@ import { sheets as simplifyCalculationsSheets } from "./simplify-calculations/da
 import { sheets as basicsSheets } from "./basics/data";
 import { sheets as operationsSheets } from "./operations/data";
 import { sheets as fractionsSheets } from "./fractions/data";
+import { sheets as decimalsSheets } from "./decimals/data";
 
 export const workbookGroups = [
   {
@@ -234,6 +235,17 @@ export const workbooks = [
     pageCount: fractionsSheets.length,
     status: "ready",
     icon: "½",
+    group: "assessment"
+  },
+  {
+    id: "decimals",
+    title: "Decimals",
+    description:
+      "Decimal place value, arithmetic, multiplying, dividing, fraction conversions and ordering.",
+    href: withBase("topic/decimals/"),
+    pageCount: decimalsSheets.length,
+    status: "ready",
+    icon: ".0",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];

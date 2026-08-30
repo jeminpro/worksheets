@@ -1,0 +1,71 @@
+---
+import { parseDecimalText } from "./expression";
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const segments = parseDecimalText(text);
+---
+
+{
+  segments.map((segment) =>
+    segment.kind === "text" ? (
+      segment.value
+    ) : (
+      <span class="mixed-fraction">
+        {segment.whole ? <span class="whole">{segment.whole}</span> : null}
+        <span class="fraction" aria-hidden="true">
+          <span class="numerator">{segment.numerator}</span>
+          <span class="denominator">{segment.denominator}</span>
+        </span>
+      </span>
+    )
+  )
+}
+
+<style>
+  .mixed-fraction {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.12em;
+    vertical-align: middle;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .whole {
+    font-size: 1em;
+    font-weight: inherit;
+    line-height: 1;
+  }
+
+  .fraction {
+    display: inline-grid;
+    grid-template-rows: auto auto;
+    align-items: center;
+    justify-items: center;
+    min-width: 0.8em;
+    vertical-align: middle;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .numerator {
+    display: block;
+    padding: 0 0.15em 0.06em;
+    border-bottom: 0.06em solid currentColor;
+    font-size: 0.82em;
+    font-weight: inherit;
+    line-height: 1;
+  }
+
+  .denominator {
+    display: block;
+    padding: 0.06em 0.15em 0;
+    font-size: 0.82em;
+    font-weight: inherit;
+    line-height: 1;
+  }
+</style>
