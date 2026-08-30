@@ -1,0 +1,493 @@
+---
+import type { DataDiagram } from "./types";
+
+interface Props {
+  diagram: DataDiagram;
+}
+
+const { diagram } = Astro.props;
+
+// Precompute chart geometry in frontmatter
+let barTicks: { v: number; yPos: number }[] = [];
+let barElements: { x: number; y: number; width: number; height: number; label: string }[] = [];
+
+if (diagram.kind === "bar-chart") {
+  const yMax = diagram.yMax || 20;
+  const yStep = diagram.yStep || Math.ceil(yMax / 4);
+  for (let v = 0; v <= yMax; v += yStep) {
+    const yPos = 58 - (v / yMax) * 44;
+    barTicks.push({ v, yPos });
+  }
+  const barWidth = Math.min(18, Math.floor(90 / diagram.bars.length) - 4);
+  const gap = (100 - barWidth * diagram.bars.length) / (diagram.bars.length + 1);
+  barElements = diagram.bars.map((bar, i) => {
+    const x = 24 + gap + i * (barWidth + gap);
+    const height = (bar.value / yMax) * 44;
+    const y = 58 - height;
+    return { x, y, width: barWidth, height, label: bar.label };
+  });
+}
+
+let lineTicks: { v: number; yPos: number }[] = [];
+let lineCoords: { x: number; y: number; label: string }[] = [];
+let linePolyline = "";
+
+if (diagram.kind === "line-graph") {
+  const yMin = diagram.yMin ?? 0;
+  const yMax = diagram.yMax || 20;
+  const yRange = Math.max(1, yMax - yMin);
+  const yStep = diagram.yStep || Math.ceil(yRange / 4);
+  for (let v = yMin; v <= yMax; v += yStep) {
+    const yPos = 58 - ((v - yMin) / yRange) * 44;
+    lineTicks.push({ v, yPos });
+  }
+  const n = diagram.points.length;
+  const stepX = 94 / Math.max(1, n - 1);
+  lineCoords = diagram.points.map((pt, i) => {
+    const x = 26 + i * stepX;
+    const y = 58 - ((pt.y - yMin) / yRange) * 44;
+    return { x, y, label: pt.x };
+  });
+  linePolyline = lineCoords.map((c) => `${c.x},${c.y}`).join(" ");
+}
+
+let pieSlices: {
+  pathData: string;
+  color: string;
+  lx: number;
+  ly: number;
+  display?: string;
+  label: string;
+}[] = [];
+
+if (diagram.kind === "pie-chart") {
+  let cumulative = 0;
+  const cx = 38;
+  const cy = 37;
+  const r = 30;
+  const colors = ["#2f9d8a", "#e07a3f", "#3b82f6", "#c45c6a", "#8b5cf6", "#f59e0b"];
+
+  pieSlices = diagram.slices.map((slice, idx) => {
+    const startAngle = (cumulative / 100) * 2 * Math.PI - Math.PI / 2;
+    cumulative += slice.percent;
+    const endAngle = (cumulative / 100) * 2 * Math.PI - Math.PI / 2;
+
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const largeArc = slice.percent > 50 ? 1 : 0;
+
+    const pathData =
+      slice.percent >= 100
+        ? `M ${cx},${cy - r} A ${r},${r} 0 1,1 ${cx},${cy + r} A ${r},${r} 0 1,1 ${cx},${cy - r} Z`
+        : `M ${cx},${cy} L ${x1},${y1} A ${r},${r} 0 ${largeArc},1 ${x2},${y2} Z`;
+
+    const midAngle = (startAngle + endAngle) / 2;
+    const labelR = r * 0.65;
+    const lx = cx + labelR * Math.cos(midAngle);
+    const ly = cy + labelR * Math.sin(midAngle);
+
+    return {
+      pathData,
+      color: colors[idx % colors.length],
+      lx,
+      ly,
+      display: slice.display,
+      label: slice.label
+    };
+  });
+}
+---
+
+{
+  diagram.kind === "pictogram" ? (
+    <div class="diagram-wrapper">
+      <div class="pictogram-box">
+        <div class="pictogram-key">{diagram.keyText}</div>
+        <div class="pictogram-rows">
+          {diagram.rows.map((row) => (
+            <div class="picto-row">
+              <span class="picto-label">{row.label}:</span>
+              <div class="picto-icons">
+                {Array.from({ length: row.count }).map(() => (
+                  <svg viewBox="0 0 14 14" class="picto-icon" aria-hidden="true">
+                    <circle cx="7" cy="7" r="5.5" class="picto-full" />
+                  </svg>
+                ))}
+                {row.half ? (
+                  <svg viewBox="0 0 14 14" class="picto-icon" aria-hidden="true">
+                    <path d="M 7,1.5 A 5.5,5.5 0 0,0 7,12.5 Z" class="picto-full" />
+                    <path d="M 7,1.5 A 5.5,5.5 0 0,1 7,12.5 Z" class="picto-empty" />
+                  </svg>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : diagram.kind === "bar-chart" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 130 74" class="diagram-svg" aria-hidden="true">
+        <line x1="22" y1="10" x2="22" y2="58" class="axis-line" />
+        <line x1="22" y1="58" x2="124" y2="58" class="axis-line" />
+        {barTicks.map((t) => (
+          <g>
+            <line x1="19" y1={t.yPos} x2="22" y2={t.yPos} class="tick-line" />
+            <line x1="22" y1={t.yPos} x2="124" y2={t.yPos} class="grid-line" />
+            <text x="17" y={t.yPos + 2.5} class="axis-text-y">{t.v}</text>
+          </g>
+        ))}
+        {barElements.map((b) => (
+          <g>
+            <rect x={b.x} y={b.y} width={b.width} height={b.height} rx="1" class="bar-rect" />
+            <text x={b.x + b.width / 2} y="66" class="axis-text-x">{b.label}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "line-graph" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 130 74" class="diagram-svg" aria-hidden="true">
+        <line x1="22" y1="10" x2="22" y2="58" class="axis-line" />
+        <line x1="22" y1="58" x2="124" y2="58" class="axis-line" />
+        {lineTicks.map((t) => (
+          <g>
+            <line x1="19" y1={t.yPos} x2="22" y2={t.yPos} class="tick-line" />
+            <line x1="22" y1={t.yPos} x2="124" y2={t.yPos} class="grid-line" />
+            <text x="17" y={t.yPos + 2.5} class="axis-text-y">{t.v}</text>
+          </g>
+        ))}
+        <polyline points={linePolyline} class="graph-line" />
+        {lineCoords.map((c) => (
+          <g>
+            <circle cx={c.x} cy={c.y} r="2.2" class="graph-point" />
+            <text x={c.x} y="66" class="axis-text-x">{c.label}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
+  ) : diagram.kind === "pie-chart" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 110 74" class="diagram-svg pie-svg" aria-hidden="true">
+        {pieSlices.map((slice) => (
+          <g>
+            <path
+              d={slice.pathData}
+              fill={slice.color}
+              stroke="#fff"
+              stroke-width="1"
+            />
+            {slice.display ? (
+              <text x={slice.lx} y={slice.ly + 2} class="pie-slice-text">{slice.display}</text>
+            ) : null}
+          </g>
+        ))}
+        {/* Legend on the right */}
+        <g transform="translate(74, 14)">
+          {pieSlices.map((slice, idx) => (
+            <g transform={`translate(0, ${idx * 11})`}>
+              <rect width="6" height="6" rx="1" fill={slice.color} />
+              <text x="8" y="5.5" class="legend-text">{slice.label}</text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    </div>
+  ) : diagram.kind === "table" ? (
+    <div class="diagram-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            {diagram.headers.map((h) => (
+              <th>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {diagram.rows.map((row) => (
+            <tr>
+              {row.map((cell) => (
+                <td>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : diagram.kind === "venn" ? (
+    <div class="diagram-wrapper">
+      <svg viewBox="0 0 120 70" class="diagram-svg" aria-hidden="true">
+        {/* Outer box */}
+        <rect x="5" y="5" width="110" height="60" rx="3" class="venn-box" />
+        {/* Circle A */}
+        <circle cx="45" cy="35" r="23" class="venn-circle venn-circle-a" />
+        {/* Circle B */}
+        <circle cx="75" cy="35" r="23" class="venn-circle venn-circle-b" />
+        {/* Labels */}
+        <text x="32" y="18" class="venn-label">{diagram.labelA}</text>
+        <text x="88" y="18" class="venn-label">{diagram.labelB}</text>
+        {/* Values */}
+        {diagram.onlyA !== undefined ? (
+          <text x="35" y="38" class="venn-val">{diagram.onlyA}</text>
+        ) : null}
+        {diagram.both !== undefined ? (
+          <text x="60" y="38" class="venn-val">{diagram.both}</text>
+        ) : null}
+        {diagram.onlyB !== undefined ? (
+          <text x="85" y="38" class="venn-val">{diagram.onlyB}</text>
+        ) : null}
+        {diagram.neither !== undefined ? (
+          <text x="16" y="58" class="venn-val neither-val">{diagram.neither}</text>
+        ) : null}
+      </svg>
+    </div>
+  ) : diagram.kind === "carroll" ? (
+    <div class="diagram-wrapper">
+      <table class="carroll-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>{diagram.colHeader[0]}</th>
+            <th>{diagram.colHeader[1]}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>{diagram.rowHeader[0]}</th>
+            <td>{diagram.data[0]?.[0]}</td>
+            <td>{diagram.data[0]?.[1]}</td>
+          </tr>
+          <tr>
+            <th>{diagram.rowHeader[1]}</th>
+            <td>{diagram.data[1]?.[0]}</td>
+            <td>{diagram.data[1]?.[1]}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  ) : null
+}
+
+<style>
+  .diagram-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    max-height: 16mm;
+    max-width: 100%;
+  }
+
+  .diagram-svg {
+    height: 15.5mm;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .pie-svg {
+    height: 16mm;
+  }
+
+  /* Pictogram Styles */
+  .pictogram-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6mm;
+    font-size: 6.5pt;
+    font-weight: 700;
+  }
+
+  .pictogram-key {
+    color: var(--blue-strong);
+    font-size: 6.2pt;
+    font-weight: 800;
+  }
+
+  .pictogram-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4mm;
+  }
+
+  .picto-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2mm;
+  }
+
+  .picto-label {
+    min-width: 7mm;
+    color: #152b3d;
+    font-size: 6.2pt;
+  }
+
+  .picto-icons {
+    display: flex;
+    align-items: center;
+    gap: 0.8mm;
+  }
+
+  .picto-icon {
+    width: 3.2mm;
+    height: 3.2mm;
+  }
+
+  .picto-full {
+    fill: #2f9d8a;
+    stroke: #1b6357;
+    stroke-width: 1;
+  }
+
+  .picto-empty {
+    fill: #e8f4f2;
+    stroke: #1b6357;
+    stroke-width: 1;
+  }
+
+  /* Bar chart and line graph axes */
+  .axis-line {
+    stroke: #2b5b7a;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+  }
+
+  .tick-line {
+    stroke: #2b5b7a;
+    stroke-width: 1;
+  }
+
+  .grid-line {
+    stroke: #e2e8f0;
+    stroke-width: 0.8;
+    stroke-dasharray: 1.5 1.5;
+  }
+
+  .axis-text-y {
+    fill: #5b7588;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 5.5pt;
+    font-weight: 700;
+    text-anchor: end;
+    dominant-baseline: central;
+  }
+
+  .axis-text-x {
+    fill: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 5.8pt;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .bar-rect {
+    fill: #38bdf8;
+    stroke: #0284c7;
+    stroke-width: 0.9;
+  }
+
+  .graph-line {
+    fill: none;
+    stroke: #e07a3f;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .graph-point {
+    fill: #c45c6a;
+    stroke: #fff;
+    stroke-width: 0.8;
+  }
+
+  /* Pie Chart */
+  .pie-slice-text {
+    fill: #fff;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 5pt;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .legend-text {
+    fill: #152b3d;
+    font-size: 4.8pt;
+    font-weight: 700;
+    dominant-baseline: central;
+  }
+
+  /* Tables */
+  .data-table,
+  .carroll-table {
+    border-collapse: collapse;
+    font-size: 6pt;
+    line-height: 1.1;
+  }
+
+  .data-table th,
+  .carroll-table th {
+    padding: 0.4mm 1.2mm;
+    border: 0.25mm solid #94a3b8;
+    background: #e2e8f0;
+    color: #1e293b;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .data-table td,
+  .carroll-table td {
+    padding: 0.4mm 1.2mm;
+    border: 0.25mm solid #cbd5e1;
+    color: #152b3d;
+    font-weight: 700;
+    text-align: center;
+    background: #fff;
+  }
+
+  /* Venn Diagram */
+  .venn-box {
+    fill: #f8fafc;
+    stroke: #94a3b8;
+    stroke-width: 0.8;
+  }
+
+  .venn-circle {
+    fill-opacity: 0.35;
+    stroke-width: 1.2;
+  }
+
+  .venn-circle-a {
+    fill: #38bdf8;
+    stroke: #0284c7;
+  }
+
+  .venn-circle-b {
+    fill: #f472b6;
+    stroke: #db2777;
+  }
+
+  .venn-label {
+    fill: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 5pt;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+
+  .venn-val {
+    fill: #0f172a;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 6.5pt;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .neither-val {
+    fill: #64748b;
+    font-size: 5.5pt;
+  }
+</style>

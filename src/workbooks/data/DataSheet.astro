@@ -1,0 +1,177 @@
+---
+import PageNumber from "../../components/PageNumber.astro";
+import SheetShell from "../../components/SheetShell.astro";
+import StudentDetails from "../../components/StudentDetails.astro";
+import DataProblem from "./DataProblem.astro";
+import type { DataDifficulty, DataSheet } from "./types";
+
+interface Props {
+  sheet: DataSheet;
+}
+
+const bands: readonly { key: DataDifficulty; title: string }[] = [
+  { key: "easy", title: "Easy" },
+  { key: "medium", title: "Medium" },
+  { key: "hard", title: "Hard" }
+];
+
+const { sheet } = Astro.props;
+const questionCount = sheet.problems.length;
+---
+
+<SheetShell label={`${sheet.label} worksheet, page ${sheet.page}`}>
+  <header class="worksheet-header">
+    <div class="title-icon" aria-hidden="true">11+</div>
+    <div class="heading">
+      <h1>{sheet.title}</h1>
+      <p>{sheet.instruction}</p>
+    </div>
+    <PageNumber page={sheet.page} />
+  </header>
+
+  <StudentDetails questionCount={questionCount} />
+
+  <section class="bands" aria-label={`${questionCount} data questions`}>
+    {
+      bands.map((band) => {
+        const problems = sheet.problems.filter(
+          (problem) => problem.difficulty === band.key
+        );
+        const startIndex = sheet.problems.findIndex(
+          (problem) => problem.difficulty === band.key
+        );
+
+        return (
+          <div class={`band ${band.key}`}>
+            <h2 class="band-title">
+              <span class="band-name">{band.title}</span>
+              <span class="band-rule" aria-hidden="true" />
+            </h2>
+            <div class="band-problems">
+              {problems.map((problem, index) => (
+                <DataProblem
+                  problem={problem}
+                  index={startIndex + index}
+                  width={index < 3 ? "narrow" : "wide"}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })
+    }
+  </section>
+</SheetShell>
+
+<style>
+  .worksheet-header {
+    display: flex;
+    gap: 4mm;
+    align-items: center;
+    border-bottom: 1mm solid var(--blue-strong);
+  }
+
+  .title-icon {
+    display: grid;
+    width: 14mm;
+    height: 14mm;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 4mm;
+    color: #fff;
+    background: var(--blue-strong);
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 13pt;
+    font-weight: 800;
+  }
+
+  .heading {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .heading h1 {
+    margin: 0;
+    color: #152b3d;
+    font-size: 15pt;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .heading p {
+    margin: 0.5mm 0 0;
+    color: var(--muted);
+    font-size: 7.5pt;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .bands {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+    min-height: 0;
+  }
+
+  .band {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2mm;
+  }
+
+  .band-title {
+    display: flex;
+    gap: 2.5mm;
+    align-items: center;
+    margin: 0;
+    font-size: 7.5pt;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .band.easy .band-name {
+    color: #fff;
+    background: #2f9d8a;
+  }
+
+  .band.medium .band-name {
+    color: #fff;
+    background: #e07a3f;
+  }
+
+  .band.hard .band-name {
+    color: #fff;
+    background: #c45c6a;
+  }
+
+  .band-name {
+    display: inline-block;
+    padding: 0.4mm 1.8mm;
+    border-radius: 1.2mm;
+  }
+
+  .band-rule {
+    flex: 1;
+    height: 0.3mm;
+    background: #e1eff5;
+  }
+
+  .band.easy .band-rule {
+    background: #d4ece7;
+  }
+
+  .band.medium .band-rule {
+    background: #fae4d7;
+  }
+
+  .band.hard .band-rule {
+    background: #f4dce0;
+  }
+
+  .band-problems {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.6mm;
+  }
+</style>

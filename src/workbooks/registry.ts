@@ -20,6 +20,7 @@ import { sheets as operationsSheets } from "./operations/data";
 import { sheets as fractionsSheets } from "./fractions/data";
 import { sheets as decimalsSheets } from "./decimals/data";
 import { sheets as measurementSheets } from "./measurement/data";
+import { sheets as dataSheets } from "./data/data";
 
 export const workbookGroups = [
   {
@@ -258,6 +259,17 @@ export const workbooks = [
     pageCount: measurementSheets.length,
     status: "ready",
     icon: "📏",
+    group: "assessment"
+  },
+  {
+    id: "data",
+    title: "Data",
+    description:
+      "Pictograms, bar charts, line graphs, pie charts, tables, Venn diagrams, mean, median, mode and range.",
+    href: withBase("topic/data/"),
+    pageCount: dataSheets.length,
+    status: "ready",
+    icon: "📊",
     group: "assessment"
   }
 ] as const satisfies readonly WorkbookMeta[];

@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import DataSheet from "../../../workbooks/data/DataSheet.astro";
+import { sheets } from "../../../workbooks/data/data";
+---
+
+<WorkbookLayout
+  title="Data Handling Worksheets"
+  workbookId="data"
+  expectedPages={sheets.length}
+  workbookTitle="Data"
+>
+  {sheets.map((sheet) => <DataSheet sheet={sheet} />)}
+</WorkbookLayout>
