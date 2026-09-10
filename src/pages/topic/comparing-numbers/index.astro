@@ -1,0 +1,14 @@
+---
+import WorkbookLayout from "../../../layouts/WorkbookLayout.astro";
+import ComparingNumbersSheet from "../../../workbooks/comparing-numbers/ComparingNumbersSheet.astro";
+import { sheets } from "../../../workbooks/comparing-numbers/data";
+---
+
+<WorkbookLayout
+  title="Comparing Numbers Worksheets"
+  workbookId="comparing-numbers"
+  expectedPages={sheets.length}
+  workbookTitle="Comparing Numbers"
+>
+  {sheets.map((sheet) => <ComparingNumbersSheet sheet={sheet} />)}
+</WorkbookLayout>

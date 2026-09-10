@@ -1,0 +1,146 @@
+---
+import type { ComparingProblem } from "./types";
+import {
+  compareSign,
+  formatAccessibleQuestion,
+  formatOperand
+} from "./expression";
+import FractionText from "./FractionText.astro";
+
+interface Props {
+  problem: ComparingProblem;
+  index: number;
+  compact?: boolean;
+}
+
+const { problem, index, compact = false } = Astro.props;
+const left = formatOperand(problem.left);
+const right = formatOperand(problem.right);
+const answer = compareSign(problem);
+const question = formatAccessibleQuestion(problem);
+---
+
+<article
+  class:list={["problem", problem.difficulty, { compact }]}
+  aria-label={`Question ${index + 1}: ${question}`}
+>
+  <span class="problem-number">{index + 1}</span>
+
+  <div class="calculation">
+    <span class="given">
+      <FractionText text={left} />
+    </span>
+    <span class="answer-slot">
+      <span class="answer">{answer}</span>
+    </span>
+    <span class="given">
+      <FractionText text={right} />
+    </span>
+  </div>
+
+  {compact ? null : <div class="working" aria-hidden="true" />}
+</article>
+
+<style>
+  .problem {
+    --band: var(--blue-strong);
+
+    position: relative;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    align-items: center;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    padding: 4.2mm 2.6mm 2mm;
+    border: 0.35mm solid #c7d7e1;
+    border-radius: 3mm;
+    background: #fff;
+  }
+
+  .problem:not(.compact) {
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 1.6mm;
+  }
+
+  .problem.easy {
+    --band: #2f9d8a;
+  }
+
+  .problem.medium {
+    --band: #e07a3f;
+  }
+
+  .problem.hard {
+    --band: #c45c6a;
+  }
+
+  .problem-number {
+    position: absolute;
+    top: 1.4mm;
+    left: 1.6mm;
+    display: grid;
+    width: 4.4mm;
+    height: 4.4mm;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--band);
+    font-size: 6.5pt;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .calculation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 9mm minmax(0, 1fr);
+    gap: 1.2mm;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .given {
+    display: flex;
+    min-width: 0;
+    justify-content: center;
+    color: #152b3d;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.15;
+    padding: 0.4mm 0.8mm;
+    border-radius: 1.8mm;
+    background: var(--blue);
+    white-space: nowrap;
+  }
+
+  .answer-slot {
+    display: flex;
+    width: 9mm;
+    min-height: 1.2em;
+    align-items: center;
+    justify-content: center;
+    border: 0.35mm dashed var(--rule);
+    border-radius: 1.5mm;
+  }
+
+  .answer {
+    color: var(--blue-strong);
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: 800;
+    line-height: 1.1;
+    text-align: center;
+    visibility: hidden;
+  }
+
+  :global(.answers-visible) .answer {
+    visibility: visible;
+  }
+
+  .working {
+    min-height: 0;
+  }
+</style>

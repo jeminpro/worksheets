@@ -11,6 +11,7 @@ import { sheets as multiplicationSheets } from "./multiplication/data";
 import { sheets as divisionSheets } from "./division/data";
 import { sheets as bidmasSheets } from "./bidmas/data";
 import { sheets as positiveNegativeSheets } from "./positive-negative/data";
+import { sheets as comparingNumbersSheets } from "./comparing-numbers/data";
 import { sheets as algebraSubstitutionSheets } from "./algebra-substitution/data";
 import { sheets as algebraSolvingEquationsSheets } from "./algebra-solving-equations/data";
 import { sheets as formingExpressionsSheets } from "./forming-expressions/data";
@@ -39,7 +40,7 @@ export const workbookGroups = [
   {
     id: "number-skills",
     title: "Number skills",
-    description: "Integers, order of operations, and simplifying calculations."
+    description: "Integers, comparing numbers, order of operations, and simplifying calculations."
   },
   {
     id: "algebra",
@@ -137,6 +138,17 @@ export const workbooks = [
     pageCount: positiveNegativeSheets.length,
     status: "ready",
     icon: "±",
+    group: "number-skills"
+  },
+  {
+    id: "comparing-numbers",
+    title: "Comparing Numbers",
+    description:
+      "Write <, > or = for whole numbers, decimals and fractions — easy through hard.",
+    href: withBase("topic/comparing-numbers/"),
+    pageCount: comparingNumbersSheets.length,
+    status: "ready",
+    icon: "<>",
     group: "number-skills"
   },
   {
