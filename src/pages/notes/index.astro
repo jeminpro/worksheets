@@ -3,18 +3,28 @@ import AuthControl from "../../components/AuthControl.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { withBase } from "../../lib/base";
 import { GENERAL_NOTE_ID } from "../../lib/workbook-notes";
-import { workbooks } from "../../workbooks/registry";
+import { groupedWorkbooks } from "../../workbooks/registry";
 
-const noteTiles = [
+const noteGroups = [
   {
-    id: GENERAL_NOTE_ID,
+    id: "general",
     title: "General",
-    general: true as const
+    tiles: [
+      {
+        id: GENERAL_NOTE_ID,
+        title: "General",
+        general: true as const
+      }
+    ]
   },
-  ...workbooks.map((workbook) => ({
-    id: workbook.id,
-    title: workbook.title,
-    general: false as const
+  ...groupedWorkbooks.map((group) => ({
+    id: group.id,
+    title: group.title,
+    tiles: group.workbooks.map((workbook) => ({
+      id: workbook.id,
+      title: workbook.title,
+      general: false as const
+    }))
   }))
 ];
 ---
@@ -66,37 +76,55 @@ const noteTiles = [
         </div>
       </header>
 
-      <section class="mosaic" aria-label="Workbook notes">
-        <ul class="mosaic-grid" data-mosaic-grid>
-          {
-            noteTiles.map((tile) => (
-              <li class:list={["tile", { "tile-general": tile.general }]} data-mosaic-item>
-                <button
-                  class:list={["sticky", { "sticky-general": tile.general }]}
-                  type="button"
-                  data-note-tile
-                  data-workbook-id={tile.id}
-                  data-workbook-title={tile.title}
-                  data-has-note="false"
-                  aria-label={
-                    tile.general ? "Add general note" : `Add note for ${tile.title}`
-                  }
-                >
-                  <span class="sticky-header">
-                    <span class="sticky-title">{tile.title}</span>
-                  </span>
-                  <span class="sticky-body" data-note-body>
-                    <span class="sticky-text" data-note-text hidden></span>
-                    <span class="sticky-empty" data-note-empty>
-                      {tile.general ? "Add a general note…" : "Add a note…"}
-                    </span>
-                  </span>
-                </button>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
+      <div class="notes-groups">
+        {
+          noteGroups.map((group) => (
+            <section
+              class="notes-group"
+              aria-labelledby={`notes-group-${group.id}`}
+              style={
+                group.id === "general"
+                  ? undefined
+                  : `--accent: var(--accent-${group.id}); --accent-bright: var(--accent-${group.id}-bright);`
+              }
+            >
+              <h2 class="group-title" id={`notes-group-${group.id}`}>
+                <span>{group.title}</span>
+                <span class="group-count">{group.tiles.length}</span>
+              </h2>
+              <ul class="mosaic-grid">
+                {
+                  group.tiles.map((tile) => (
+                    <li class:list={["tile", { "tile-general": tile.general }]}>
+                      <button
+                        class:list={["sticky", { "sticky-general": tile.general }]}
+                        type="button"
+                        data-note-tile
+                        data-workbook-id={tile.id}
+                        data-workbook-title={tile.title}
+                        data-has-note="false"
+                        aria-label={
+                          tile.general ? "Add general note" : `Add note for ${tile.title}`
+                        }
+                      >
+                        <span class="sticky-header">
+                          <span class="sticky-title">{tile.title}</span>
+                        </span>
+                        <span class="sticky-body" data-note-body>
+                          <span class="sticky-text" data-note-text hidden></span>
+                          <span class="sticky-empty" data-note-empty>
+                            {tile.general ? "Add a general note…" : "Add a note…"}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  ))
+                }
+              </ul>
+            </section>
+          ))
+        }
+      </div>
     </div>
   </main>
 </SiteLayout>
@@ -117,15 +145,11 @@ const noteTiles = [
     replaceWorkbookNotes
   } from "../../lib/workbook-notes";
 
-  const grid = document.querySelector("[data-mosaic-grid]");
   const tiles = Array.from(document.querySelectorAll("[data-note-tile]"));
-  const items = Array.from(document.querySelectorAll("[data-mosaic-item]"));
   const exportButton = document.querySelector("[data-export-notes]");
   const importButton = document.querySelector("[data-import-notes]");
   const importInput = document.querySelector("[data-import-input]");
   const statusEl = document.querySelector("[data-notes-status]");
-
-  const GAP = 18;
 
   function setStatus(message: string): void {
     if (!(statusEl instanceof HTMLElement)) return;
@@ -203,46 +227,6 @@ const noteTiles = [
     );
   }
 
-  function columnCount(width: number): number {
-    if (width >= 1060) return 4;
-    if (width >= 820) return 3;
-    if (width >= 560) return 2;
-    return 1;
-  }
-
-  function layoutMosaic() {
-    if (!(grid instanceof HTMLElement)) return;
-
-    const width = grid.clientWidth;
-    const cols = columnCount(width);
-    const colWidth = (width - GAP * (cols - 1)) / cols;
-    const heights = Array.from({ length: cols }, () => 0);
-
-    for (const item of items) {
-      if (!(item instanceof HTMLElement)) continue;
-      item.style.position = "absolute";
-      item.style.width = `${colWidth}px`;
-      item.style.left = "0";
-      item.style.top = "0";
-    }
-
-    // Measure after width is applied so heights reflect content.
-    // Place each tile into the shortest column so order reads left → right.
-    for (const item of items) {
-      if (!(item instanceof HTMLElement)) continue;
-      const col = heights.indexOf(Math.min(...heights));
-      const left = col * (colWidth + GAP);
-      const top = heights[col] ?? 0;
-      item.style.left = `${left}px`;
-      item.style.top = `${top}px`;
-      heights[col] = top + item.offsetHeight + GAP;
-    }
-
-    const totalHeight = Math.max(0, ...heights) - (cols > 0 ? GAP : 0);
-    grid.style.height = `${Math.max(totalHeight, 0)}px`;
-    grid.dataset.ready = "true";
-  }
-
   function renderTile(button: HTMLElement, note: string | undefined) {
     const textEl = button.querySelector("[data-note-text]");
     const emptyEl = button.querySelector("[data-note-empty]");
@@ -283,8 +267,6 @@ const noteTiles = [
       if (!id) continue;
       renderTile(tile, notes[id]);
     }
-
-    layoutMosaic();
   }
 
   for (const tile of tiles) {
@@ -326,13 +308,6 @@ const noteTiles = [
   subscribeNotesChanges(() => refreshAll());
 
   refreshAll();
-
-  const resizeObserver =
-    typeof ResizeObserver !== "undefined"
-      ? new ResizeObserver(() => layoutMosaic())
-      : null;
-  if (grid instanceof HTMLElement) resizeObserver?.observe(grid);
-  window.addEventListener("resize", layoutMosaic);
 </script>
 
 <style>
@@ -473,16 +448,51 @@ const noteTiles = [
     display: none;
   }
 
+  .notes-groups {
+    display: grid;
+    gap: 0;
+  }
+
+  .notes-group + .notes-group {
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px solid rgb(43 131 184 / 14%);
+  }
+
+  .group-title {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0 0 16px;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .group-title::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent, var(--blue-strong));
+  }
+
+  .group-count {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
   .mosaic-grid {
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
     margin: 0;
     padding: 0;
     list-style: none;
-    min-height: 1px;
-  }
-
-  .mosaic-grid:not([data-ready="true"]) .tile {
-    margin-bottom: 18px;
   }
 
   .tile {
@@ -616,9 +626,25 @@ const noteTiles = [
     line-height: 1.55;
   }
 
+  @media (max-width: 1059px) {
+    .mosaic-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 819px) {
+    .mosaic-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media (max-width: 560px) {
     .notes-inner {
       padding: clamp(20px, 4vh, 40px) 16px 48px;
+    }
+
+    .mosaic-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .notes-actions {
